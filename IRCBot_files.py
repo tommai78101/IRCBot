@@ -1,0 +1,82 @@
+import os
+import string
+from IRCBot import IRCBot
+from IRCBot_updates import UpdateBot
+from IRCBot_quotes import QuotesBot
+
+global FILE_SEPARATOR
+FILE_SEPARATOR = "\\"
+
+class FilesBot(QuotesBot):
+	saveFileName = "quote"
+	temp = "quote.tmp"
+	saveFilePath = ""
+
+	def __init__(self, host, port, channel):
+		super().__init__(host, port, channel)
+		self.saveFilePath = os.getcwd()
+		self.load(0)
+
+	def createTempFile(self):
+		file = open(self.saveFilePath + FILE_SEPARATOR + self.temp, "wb")
+		file.write("".encode())
+
+	def openTempFile(self):
+		return open(self.saveFilePath + FILE_SEPARATOR + self.temp, "ab")
+
+	def save(self, mode):
+		self.createTempFile()
+		file = self.openTempFile()
+		#Quotes = 0
+		if (mode == 0):
+			with file as f:
+				for line in self.quotes:
+					f.write(line.encode())
+					f.write("\n".encode())
+		file.close()
+		os.replace(self.saveFilePath + FILE_SEPARATOR + self.temp, self.saveFilePath + FILE_SEPARATOR + self.saveFileName)
+
+	def load(self, mode):
+		if (mode == 0):
+			file = open(self.saveFilePath + FILE_SEPARATOR + self.saveFileName, "rb")
+			with file as f:
+				self.quotes.clear()
+				f.seek(0)
+				for line in file:
+					self.quotes.append(line.decode())
+			file.close()
+
+	def handlePrivateMessage(self, user, recipient, message):
+		super().handlePrivateMessage(user, recipient, message)
+		messageTokens = message.strip().split(" ")
+		if (messageTokens[0] == ".quote" and len(messageTokens) == 2):
+			if (messageTokens[1] == "help"):
+				self.sendMessage(self.channel, ".quote save - Saves the Quotes List.")
+				self.sendMessage(self.channel, ".quote load - Loads the Quotes List.")
+			elif (messageTokens[1] == "save"):
+				try:
+					self.save(0)
+					print("Quotes List saved.")
+					self.sendMessage(self.channel, "Quotes List saved.")
+				except Exception as error:
+					print("Unable to save - %s" % (str(error)))
+					self.sendMessage(self.channel, "Unable to save. Please notify " + self.master + " to fix this issue.")
+			elif (messageTokens[1] == "load"):
+				try:
+					self.load(0)
+					print("Quotes List loaded...")
+					self.sendMessage(self.channel, "Quotes List loaded.")
+				except Exception as error:
+					print("Unable to load - %s" % (str(error)))
+					self.sendMessage(self.channel, "Unable to load. Please notify " + self.master + " to fix this issue.")
+
+	def __quit__(self):
+		self.save(0)
+					
+
+
+
+
+
+
+
