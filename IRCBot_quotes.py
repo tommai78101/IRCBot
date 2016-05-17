@@ -68,4 +68,4 @@ class QuotesBot(UpdateBot):
 				self.sendMessage(user, ".wedr <Command> - Type \".wedr help\" for more info.", 1)
 		elif (messageTokens[0] == ".help"):
 			print("Requiring help detected.")
-			self.sendMessage(self.channel, ".wedr <Command> - Type \".wedr help\" for more info.", 0)
+			self.sendMessage(user, ".wedr <Command> - Type \".wedr help\" for more info.", 1)
