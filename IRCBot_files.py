@@ -51,24 +51,24 @@ class FilesBot(QuotesBot):
 		messageTokens = message.strip().split(" ")
 		if (messageTokens[0] == ".wedr" and len(messageTokens) == 2):
 			if (messageTokens[1] == "help"):
-				self.sendMessage(self.channel, ".wedr save - Saves the Quotes List.")
-				self.sendMessage(self.channel, ".wedr load - Loads the Quotes List.")
+				self.sendMessage(user, ".wedr save - Saves the Quotes List.", 1)
+				self.sendMessage(user, ".wedr load - Loads the Quotes List.", 1)
 			elif (messageTokens[1] == "save"):
 				try:
 					self.save(0)
 					print("Quotes List saved.")
-					self.sendMessage(self.channel, "Quotes List saved.")
+					self.sendMessage(self.channel, "Quotes List saved.", 0)
 				except Exception as error:
 					print("Unable to save - %s" % (str(error)))
-					self.sendMessage(self.channel, "Unable to save. Please notify " + self.master + " to fix this issue.")
+					self.sendMessage(self.channel, "Unable to save. Please notify " + self.master + " to fix this issue.", 0)
 			elif (messageTokens[1] == "load"):
 				try:
 					self.load(0)
 					print("Quotes List loaded...")
-					self.sendMessage(self.channel, "Quotes List loaded.")
+					self.sendMessage(self.channel, "Quotes List loaded.", 0)
 				except Exception as error:
 					print("Unable to load - %s" % (str(error)))
-					self.sendMessage(self.channel, "Unable to load. Please notify " + self.master + " to fix this issue.")
+					self.sendMessage(self.channel, "Unable to load. Please notify " + self.master + " to fix this issue.", 0)
 
 
 	def __del__(self):

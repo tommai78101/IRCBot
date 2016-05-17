@@ -71,11 +71,11 @@ def processMessage(thekeyfile, user, messageString):
 	messageTokens[0] = messageTokens[0].strip(":")
 	messageTokens.pop()
 	if (messageTokens[0] == ".help"):
-		sendMessage(CHANNEL, "Usage: .checkTicket [Your TitleID] [Your Title Key]")
+		sendMessage(CHANNEL, "Usage: .checkTicket [Your TitleID] [Your Title Key]", 0)
 		return False
 	if (messageTokens[0] == ".checkTicket"):
 		if (len(messageTokens) > 3 or len(messageTokens) < 3):
-			sendMessage(CHANNEL, "Usage: .checkTicket [Your TitleID] [Your Title Key]")
+			sendMessage(CHANNEL, "Usage: .checkTicket [Your TitleID] [Your Title Key]", 0)
 			return False
 		try:
 			if ((len(messageTokens[1]) != 16) or (len(messageTokens[2]) != 32)):
@@ -121,11 +121,11 @@ def processMessage(thekeyfile, user, messageString):
 			if (titleID != b""):
 				errorFlag = processContent(titleID, titleKey)
 				validity = "valid" if not (errorFlag) else "invalid"
-				sendMessage(CHANNEL, "%s, this ticket is %s." % (user, validity))
+				sendMessage(user, "%s, this ticket is %s." % (user, validity), 1)
 		except FileNotFoundError as fileError:
-			sendMessage(CHANNEL, "Unable to obtain key file.")
+			sendMessage(user, "Unable to obtain key file.", 1)
 		except Exception as error:
-			sendMessage(CHANNEL, "%s, this ticket is %s. Error message: %s" % (user, "invalid", error))
+			sendMessage(user, "%s, this ticket is %s. Error message: %s" % (user, "invalid", error), 1)
 	return True
 
 def getUserNickname(userToken):
@@ -173,7 +173,7 @@ def handleTokens(thekeyfile, tokens):
 
 
 def main():
-	sendMessage("wedr", "Hello world.")
+	sendMessage("wedr", "Hello world.", 0)
 	quitFlag = False
 	readBuffer = ""
 	while not quitFlag:

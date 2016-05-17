@@ -50,8 +50,11 @@ class IRCBot:
 		print("Joining %s" % self.channel)
 		self.s.send(BYTE("JOIN %s\r\n" % self.channel))
 
-	def sendMessage(self, recipient, message):
-		self.s.send(BYTE("PRIVMSG %s :%s\r\n" % (recipient, message)))
+	def sendMessage(self, recipient, message, mode):
+		if (mode == 0):
+			self.s.send(BYTE("PRIVMSG %s :%s\r\n" % (recipient, message)))
+		elif (mode == 1):
+			self.s.send(BYTE("NOTICE %s :%s\r\n" % (recipient, message)))
 
 	def handleTokens(self, tokens):
 		#PING protocol
@@ -72,9 +75,9 @@ class IRCBot:
 		if (len(tokens) > 1 and tokens[1] == "PRIVMSG"):
 			if (len(tokens) > 2 and tokens[3] == ":\x01VERSION\x01"):
 				print("Sending VERSION")
-				self.sendMessage("NickServ", "identify a1b2c3d4")
+				self.sendMessage("NickServ", "identify a1b2c3d4", 0)
 				self.s.send(BYTE("JOIN %s\r\n" % self.channel))
-				self.sendMessage("wedr", "Hello world.")
+				self.sendMessage("wedr", "Hello world.", 1)
 				self.userInput.start()
 			else:
 				caller = self.getUser(tokens[0])
@@ -108,7 +111,7 @@ class IRCBot:
 		return message
 
 	def run(self):
-		self.sendMessage("wedr", "Hello world.")
+		self.sendMessage("wedr", "Hello world.", 0)
 		while not (self.quitFlag):
 			readBuffer = ""
 			try:
@@ -141,12 +144,12 @@ class IRCBot:
 						messageEnd = ""
 						for i in range(2, len(message)):
 							messageEnd += message[i] + " "
-						self.parent.sendMessage(message[1], messageEnd)
+						self.parent.sendMessage(message[1], messageEnd, 0)
 					else:
 						messageEnd = ""
 						for i in range(0, len(message)):
 							messageEnd += message[i] + " "
-						self.parent.sendMessage(self.parent.channel, messageEnd)
+						self.parent.sendMessage(self.parent.channel, messageEnd, 0)
 				except Exception as error:
 					print(error)
 
