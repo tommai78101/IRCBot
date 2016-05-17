@@ -49,10 +49,10 @@ class FilesBot(QuotesBot):
 	def handlePrivateMessage(self, user, recipient, message):
 		super().handlePrivateMessage(user, recipient, message)
 		messageTokens = message.strip().split(" ")
-		if (messageTokens[0] == ".quote" and len(messageTokens) == 2):
+		if (messageTokens[0] == ".wedr" and len(messageTokens) == 2):
 			if (messageTokens[1] == "help"):
-				self.sendMessage(self.channel, ".quote save - Saves the Quotes List.")
-				self.sendMessage(self.channel, ".quote load - Loads the Quotes List.")
+				self.sendMessage(self.channel, ".wedr save - Saves the Quotes List.")
+				self.sendMessage(self.channel, ".wedr load - Loads the Quotes List.")
 			elif (messageTokens[1] == "save"):
 				try:
 					self.save(0)
@@ -70,7 +70,8 @@ class FilesBot(QuotesBot):
 					print("Unable to load - %s" % (str(error)))
 					self.sendMessage(self.channel, "Unable to load. Please notify " + self.master + " to fix this issue.")
 
-	def __quit__(self):
+
+	def __del__(self):
 		self.save(0)
 					
 
