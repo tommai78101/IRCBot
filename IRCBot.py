@@ -55,8 +55,12 @@ class IRCBot:
 			self.s.send(BYTE("PRIVMSG %s :%s\r\n" % (recipient, message)))
 		elif (mode == 1):
 			self.s.send(BYTE("NOTICE %s :%s\r\n" % (recipient, message)))
+		elif (mode == 2):
+			self.s.send(BYTE("PRIVMSG %s :\x01ACTION %s\x01\r\n" % (recipient, message)))
 
 	def handleTokens(self, tokens):
+		#print(tokens)
+
 		#PING protocol
 		#tokens[0] is the command, which is PING.
 		#tokens[1] is the sender.
@@ -145,6 +149,11 @@ class IRCBot:
 						for i in range(2, len(message)):
 							messageEnd += message[i] + " "
 						self.parent.sendMessage(message[1], messageEnd, 0)
+					elif (message[0] == "/me"):
+						messageEnd = ""
+						for i in range(1, len(message)):
+							messageEnd += message[i] + " "
+						self.parent.sendMessage(self.parent.channel, messageEnd, 2)
 					else:
 						messageEnd = ""
 						for i in range(0, len(message)):

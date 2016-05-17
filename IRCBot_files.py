@@ -38,13 +38,18 @@ class FilesBot(QuotesBot):
 
 	def load(self, mode):
 		if (mode == 0):
-			file = open(self.saveFilePath + FILE_SEPARATOR + self.saveFileName, "rb")
-			with file as f:
-				self.quotes.clear()
-				f.seek(0)
-				for line in file:
-					self.quotes.append(line.decode())
-			file.close()
+			file = None
+			try:
+				file = open(self.saveFilePath + FILE_SEPARATOR + self.saveFileName, "rb")
+				with file as f:
+					self.quotes.clear()
+					f.seek(0)
+					for line in file:
+						self.quotes.append(line.decode())
+				file.close()
+			except:
+				if (file != None):
+					file.close()
 
 	def handlePrivateMessage(self, user, recipient, message):
 		super().handlePrivateMessage(user, recipient, message)
