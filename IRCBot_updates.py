@@ -44,7 +44,7 @@ class UpdateBot(IRCBot):
 				if (exitNestedLoop):
 					break
 				lineTokens = line.split(",")
-				if (len(lineTokens) > 4 and lineTokens[0][0:4] == "0004" and lineTokens[0] == titleID and lineTokens[1] == region):
+				if (lineTokens[0][0:4] == "0004" and lineTokens[0] == titleID and lineTokens[1] == region):
 					for index in range(2, len(lineTokens)):
 						if (lineTokens[index][0] != "v"):
 							self.sendMessage(user, "Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]), 1)
