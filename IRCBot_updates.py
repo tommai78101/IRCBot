@@ -28,9 +28,9 @@ class UpdateBot(IRCBot):
 				else:
 					self.sendMessage(user, "Incorrect Title ID.", 1)
 			else:
-				self.sendMessage(self.channel, ".lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required.", 0)
+				self.sendMessage(self.channel, ".lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 0)
 		elif (temp == ".help"):
-			self.sendMessage(user, ".lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required.", 1)
+			self.sendMessage(user, ".lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 1)
 			self.sendMessage(user, ".explain - Returns explanation of WedrBot.", 1)
 		elif (temp == ".explain"):
 			self.sendMessage(user, "Purpose: WedrBot is created in Python 3, for the only sole purpose of practicing Python 3 programming.", 1)
@@ -47,10 +47,11 @@ class UpdateBot(IRCBot):
 				if (lineTokens[0][0:4] == "0004" and lineTokens[0] == titleID and lineTokens[1] == region):
 					for index in range(2, len(lineTokens)):
 						if (lineTokens[index][0] != "v"):
+							print("Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]))
 							self.sendMessage(self.channel, "Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]), 0)
 							return
-			print("Failed to locate titleID or region for %s. May not exist." % ("O3DS" if isOld3DS else "N3DS"))
-			self.sendMessage(user, "Cannot locate titleID or region for %s. May not exist." % ("O3DS" if isOld3DS else "N3DS"), 1)
+			print("Failed to locate titleID or region for %s. Required firmware version may not exist." % ("O3DS" if isOld3DS else "N3DS"))
+			self.sendMessage(self.channel, "Cannot locate titleID or region for %s. Required firmware version may not exist." % ("O3DS" if isOld3DS else "N3DS"), 0)
 		else:
 			print("Incorrect CSV List: " + csvList)
 			self.sendMessage(user, "This bot encountered a bug. Please report to wedr to fix this.", 1)

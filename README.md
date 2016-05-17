@@ -1,10 +1,10 @@
-# IRC Bot
+# IRC Bot + Client
 
 ### Description:
 
-This is an internet relay chat (IRC) bot written in Python 3.5.1, using Visual Studio 2015 Community as the primary IDE for Python.
+This is an internet relay chat (IRC) bot written in Python 3.5.1, using Visual Studio 2015 Community as the primary IDE for Python. This bot can also act as an IRC client that the user can interact with others with.
 
-The main purpose of this project is for me to learn about Python 3, how to create a feature complete IRC bot, and touch up on using scripting languages as well.
+The main purpose of this project is for me to learn about Python 3, how to create a feature complete IRC bot, add support for an IRC client, and touch up on using scripting languages as well.
 
 Please create new issues to request for new features, report bugs, and other things in general for any IRC Bot improvements.
 

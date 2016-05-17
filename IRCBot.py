@@ -18,6 +18,7 @@ class IRCBot:
 	master = "wedr"
 	email = "wedr53-trash@yahoo.com.tw"
 	channel = ""
+	joinedChannels = []
 	quitFlag = False
 	readBuffer = ""
 	currentDate = datetime.now()
@@ -49,6 +50,8 @@ class IRCBot:
 		#else:
 		print("Joining %s" % self.channel)
 		self.s.send(BYTE("JOIN %s\r\n" % self.channel))
+		self.joinedChannels.append(self.channel)
+		print("Adding channel to joined list.")
 
 	def sendMessage(self, recipient, message, mode):
 		if (mode == 0):
@@ -115,7 +118,7 @@ class IRCBot:
 		return message
 
 	def run(self):
-		self.sendMessage("wedr", "Hello world.", 0)
+		self.sendMessage("wedr", "Hello world. Where am I?", 1)
 		while not (self.quitFlag):
 			readBuffer = ""
 			try:
@@ -154,6 +157,36 @@ class IRCBot:
 						for i in range(1, len(message)):
 							messageEnd += message[i] + " "
 						self.parent.sendMessage(self.parent.channel, messageEnd, 2)
+					elif (message[0] == "/j"):
+						messageEnd = ""
+						for i in range(1, len(message)):
+							messageEnd += message[i] + " "
+						if (len(messageEnd.split(" ")) > 1):
+							for j in range(1, len(message)):
+								self.parent.s.send(BYTE("JOIN %s\r\n" % message[i]))
+								self.parent.sendMessage("NickServ", "identify a1b2c3d4", 0)
+								if (message[i][0] != "#"):
+									message[i].insert(0, "#")
+								self.parent.joinedChannels.append(message[i])
+						else:
+							self.parent.s.send(BYTE("JOIN %s\r\n" % messageEnd))
+							self.parent.sendMessage("NickServ", "identify a1b2c3d4", 0)
+							if (messageEnd[0] != "#"):
+									messageEnd.insert(0, "#")
+							self.parent.joinedChannels.append(messageEnd)
+						print("Remember to /switch to the new channel to speak there.")
+					elif (message[0] == "/switch"):
+						if (len(message) == 2):
+							channelName = message[1]
+							checkFlag = False
+							for joined in self.parent.joinedChannels:
+								if (channelName == joined):
+									checkFlag = True
+									break
+							if (checkFlag):
+								self.parent.channel = message[1]
+						else:
+							print("Usage: /switch [CHANNEL TO SPEAK IN] - And make sure you type in the number sign.")
 					else:
 						messageEnd = ""
 						for i in range(0, len(message)):
