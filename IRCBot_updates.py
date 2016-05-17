@@ -47,7 +47,7 @@ class UpdateBot(IRCBot):
 				if (lineTokens[0][0:4] == "0004" and lineTokens[0] == titleID and lineTokens[1] == region):
 					for index in range(2, len(lineTokens)):
 						if (lineTokens[index][0] != "v"):
-							self.sendMessage(user, "Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]), 1)
+							self.sendMessage(self.channel, "Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]), 0)
 							return
 			print("Failed to locate titleID or region for %s. May not exist." % ("O3DS" if isOld3DS else "N3DS"))
 			self.sendMessage(user, "Cannot locate titleID or region for %s. May not exist." % ("O3DS" if isOld3DS else "N3DS"), 1)
