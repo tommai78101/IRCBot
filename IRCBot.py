@@ -195,7 +195,7 @@ class IRCBot:
 					elif (message != [""]):
 						messageEnd = ""
 						for i in range(0, len(message)):
-							messageEnd += message[i] + " "
+							messageEnd += message[i] + " " 
 						self.parent.sendMessage(self.parent.channel, messageEnd, 0)
 				except Exception as error:
 					print(error)
