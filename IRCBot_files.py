@@ -31,8 +31,8 @@ class FilesBot(QuotesBot):
 		if (mode == 0):
 			with file as f:
 				for line in self.quotes:
+					temp = "%s%s" % (line.encode(), "\n")
 					f.write(line.encode())
-					f.write("\n".encode())
 		file.close()
 		os.replace(self.saveFilePath + FILE_SEPARATOR + self.temp, self.saveFilePath + FILE_SEPARATOR + self.saveFileName)
 
@@ -45,7 +45,9 @@ class FilesBot(QuotesBot):
 					self.quotes.clear()
 					f.seek(0)
 					for line in file:
-						self.quotes.append(line.decode())
+						temp = line.decode()
+						if (temp != "\n"):
+							self.quotes.append(temp)
 				file.close()
 			except:
 				if (file != None):
