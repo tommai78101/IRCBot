@@ -117,7 +117,7 @@ class IRCBot:
 		for i in range(startingIndex, len(tokens)):
 			if (i == startingIndex):
 				tokens[i] = tokens[i].strip(":")
-			message += str(tokens[i]).strip("\x01") + " "
+			message += tokens[i].strip("\x01") + " "
 		return message
 
 	def run(self):
