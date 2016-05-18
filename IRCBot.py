@@ -50,7 +50,6 @@ class IRCBot:
 		#else:
 		print("Joining %s" % self.channel)
 		self.s.send(BYTE("JOIN %s\r\n" % self.channel))
-		self.joinedChannels.append(self.channel)
 		self.switchAndJoinChannel(self.channel)
 		print("Adding channel to joined list.")
 
@@ -83,7 +82,7 @@ class IRCBot:
 				print("Sending VERSION")
 				self.s.send(BYTE("NOTICE %s :\x01VERSION WedrBot v1.0\x01" % tokens[0]))
 				self.sendMessage("NickServ", "identify a1b2c3d4", 0)
-				self.s.send(BYTE("JOIN %s\r\n" % self.channel))
+				self.switchAndJoinChannel(self.channel)
 				self.sendMessage("wedr", "Hello world.", 0)
 				if (self.userInput.isStarting != True):
 					print("Starting Input thread.")
@@ -118,6 +117,7 @@ class IRCBot:
 			else:
 				self.joinedChannels.append(channel)
 				self.s.send(BYTE("JOIN %s\r\n" % channel))
+				self.sendMessage("NickServ", "identify a1b2c3d4", 0)
 				self.channel = channel
 		else:
 			print("Usage: /switch [CHANNEL TO SPEAK IN] - And make sure you type in the number sign.")

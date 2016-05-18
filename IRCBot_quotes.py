@@ -30,7 +30,7 @@ class QuotesBot(UpdateBot):
 						quoteIndex = int(messageTokens[1])
 						if (quoteIndex > len(self.quotes) or quoteIndex <= 0):
 							print("Index is invalid.")
-							self.sendMessage(self.channel, "Invalid quote index. Enter number from 1 to current size of Quotes List.", 0)
+							self.sendMessage(self.channel, "Invalid quote index. Enter number from 1 to %d." % (len(self.quotes)), 0)
 						else:
 							print("Showing quote #%s" % (str(self.quotes[quoteIndex - 1])))
 							self.sendMessage(self.channel, "Quote #%s: %s" % (str(quoteIndex), str(self.quotes[quoteIndex - 1])), 0)
@@ -43,7 +43,7 @@ class QuotesBot(UpdateBot):
 						quoteIndex = int(messageTokens[2])
 						if (quoteIndex > len(self.quotes) or quoteIndex <= 0):
 							print("Index is invalid.")
-							self.sendMessage(self.channel, "Invalid quote index. Enter number from 1 to current size of Quotes List.", 0)
+							self.sendMessage(self.channel, "Invalid quote index. Enter number from 1 to %d." % (len(self.quotes)), 0)
 						else:
 							self.quotes.remove(self.quotes[quoteIndex - 1])
 							print("Successfully removed quote #%s" % (messageTokens[2]))
@@ -53,7 +53,7 @@ class QuotesBot(UpdateBot):
 						self.sendMessage(self.channel, "Quote #%s does not exist." % (messageTokens[2]), 0)
 				elif (messageTokens[1] == "capacity" or messageTokens[1] == "size"):
 					print("Showing quotes list size.")
-					self.sendMessage(self.channel, "Quotes List size : %s" % (str(len(self.quotes))), 0)
+					self.sendMessage(self.channel, "Quotes List size : %d" % (len(self.quotes)), 0)
 				elif (messageTokens[1] == "help"):
 					self.sendMessage(user, ".wedr add <MESSAGE> - Add MESSAGE to Quotes List.", 1)
 					self.sendMessage(user, ".wedr remove <INDEX> - Removes quote from Quotes List.", 1)
