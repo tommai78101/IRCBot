@@ -187,7 +187,7 @@ class IRCBot:
 								self.parent.channel = message[1]
 						else:
 							print("Usage: /switch [CHANNEL TO SPEAK IN] - And make sure you type in the number sign.")
-					else:
+					elif (message != [""]):
 						messageEnd = ""
 						for i in range(0, len(message)):
 							messageEnd += message[i] + " "

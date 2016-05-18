@@ -5,7 +5,7 @@ from IRCBot_files import FilesBot
 #Global constants
 HOST = "irc.rizon.net"
 PORT = 6667
-CHANNEL = "#wedrbot"
+CHANNEL = "#3dshacks"
 
 def main():
 	bot = FilesBot(HOST, PORT, CHANNEL)
