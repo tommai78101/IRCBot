@@ -82,10 +82,13 @@ class IRCBot:
 		if (len(tokens) > 1 and tokens[1] == "PRIVMSG"):
 			if (len(tokens) > 2 and tokens[3] == ":\x01VERSION\x01"):
 				print("Sending VERSION")
+				self.s.send(BYTE("NOTICE %s :\x01VERSION WedrBot v1.0\x01" % tokens[0]))
 				self.sendMessage("NickServ", "identify a1b2c3d4", 0)
 				self.s.send(BYTE("JOIN %s\r\n" % self.channel))
 				self.sendMessage("wedr", "Hello world.", 1)
-				self.userInput.start()
+				if (self.userInput.isStarting != True):
+					print("Starting Input thread.")
+					self.userInput.start()
 			else:
 				caller = self.getUser(tokens[0])
 				message = self.getMessage(tokens, 3)
@@ -118,7 +121,6 @@ class IRCBot:
 		return message
 
 	def run(self):
-		self.sendMessage("wedr", "Hello world. Where am I?", 1)
 		while not (self.quitFlag):
 			readBuffer = ""
 			try:
@@ -136,13 +138,16 @@ class IRCBot:
 
 	class UserInput(threading.Thread):
 		parent = None
+		isStarting = False
 
 		def __init__(self, parent):
 			threading.Thread.__init__(self)
 			self.parent = parent
+			self.isStarting = False
 			print("Initializing input.")
 		
 		def run(self):
+			self.isStarting = True
 			while (self.parent.quitFlag != True):
 				try:
 					message = input()
