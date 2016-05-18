@@ -1,4 +1,4 @@
-import sys
+﻿import sys
 import socket
 import string
 from datetime import datetime
@@ -51,6 +51,7 @@ class IRCBot:
 		print("Joining %s" % self.channel)
 		self.s.send(BYTE("JOIN %s\r\n" % self.channel))
 		self.joinedChannels.append(self.channel)
+		self.switchAndJoinChannel(self.channel)
 		print("Adding channel to joined list.")
 
 	def sendMessage(self, recipient, message, mode):
@@ -62,8 +63,6 @@ class IRCBot:
 			self.s.send(BYTE("PRIVMSG %s :\x01ACTION %s\x01\r\n" % (recipient, message)))
 
 	def handleTokens(self, tokens):
-		#print(tokens)
-
 		#PING protocol
 		#tokens[0] is the command, which is PING.
 		#tokens[1] is the sender.
@@ -85,7 +84,7 @@ class IRCBot:
 				self.s.send(BYTE("NOTICE %s :\x01VERSION WedrBot v1.0\x01" % tokens[0]))
 				self.sendMessage("NickServ", "identify a1b2c3d4", 0)
 				self.s.send(BYTE("JOIN %s\r\n" % self.channel))
-				self.sendMessage("wedr", "Hello world.", 1)
+				self.sendMessage("wedr", "Hello world.", 0)
 				if (self.userInput.isStarting != True):
 					print("Starting Input thread.")
 					self.userInput.start()
@@ -106,6 +105,22 @@ class IRCBot:
 
 	def handlePrivateMessage(self, user, recipient, message):
 		raise NotImplementedError("Subclass must implement this.")
+
+	def switchAndJoinChannel(self, channel):
+		if (channel[0] == "#"):
+			checkFlag = False
+			for joined in self.joinedChannels:
+				if (channel == joined):
+					checkFlag = True
+					break
+			if (checkFlag):
+				self.channel = channel
+			else:
+				self.joinedChannels.append(channel)
+				self.s.send(BYTE("JOIN %s\r\n" % channel))
+				self.channel = channel
+		else:
+			print("Usage: /switch [CHANNEL TO SPEAK IN] - And make sure you type in the number sign.")
 
 	def getUser(self, token):
 		user = token.strip(":")
@@ -166,32 +181,31 @@ class IRCBot:
 						messageEnd = ""
 						for i in range(1, len(message)):
 							messageEnd += message[i] + " "
-						if (len(messageEnd.split(" ")) > 1):
-							for j in range(1, len(message)):
-								self.parent.s.send(BYTE("JOIN %s\r\n" % message[i]))
+						messageEnd = messageEnd.split(" ")
+						messageEnd.pop()
+						if (len(messageEnd) > 1):
+							for chans in messageEnd:
+								self.parent.s.send(BYTE("JOIN %s\r\n" % chans))
 								self.parent.sendMessage("NickServ", "identify a1b2c3d4", 0)
-								if (message[i][0] != "#"):
-									message[i].insert(0, "#")
-								self.parent.joinedChannels.append(message[i])
+								if (chans[0] != "#"):
+									chans.insert(0, "#")
+								checkFlag = False
+								for check in self.parent.joinedChannels:
+									if (check == chans):
+										checkFlag = True
+										break
+								if (not checkFlag):
+									self.parent.joinedChannels.append(chans)
+							print("Remember to /switch to the new channel to speak there.")
 						else:
-							self.parent.s.send(BYTE("JOIN %s\r\n" % messageEnd))
+							if (messageEnd[0][0] != "#"):
+								messageEnd[0] = "#%s" % messageEnd[0]
+							self.parent.s.send(BYTE("JOIN %s\r\n" % messageEnd[0]))
 							self.parent.sendMessage("NickServ", "identify a1b2c3d4", 0)
-							if (messageEnd[0] != "#"):
-									messageEnd.insert(0, "#")
-							self.parent.joinedChannels.append(messageEnd)
-						print("Remember to /switch to the new channel to speak there.")
+							print("Joining channel: %s" % messageEnd[0])
+							self.parent.switchAndJoinChannel(messageEnd[0])
 					elif (message[0] == "/switch"):
-						if (len(message) == 2):
-							channelName = message[1]
-							checkFlag = False
-							for joined in self.parent.joinedChannels:
-								if (channelName == joined):
-									checkFlag = True
-									break
-							if (checkFlag):
-								self.parent.channel = message[1]
-						else:
-							print("Usage: /switch [CHANNEL TO SPEAK IN] - And make sure you type in the number sign.")
+						self.parent.switchChannel(message)
 					elif (message != [""]):
 						messageEnd = ""
 						for i in range(0, len(message)):
