@@ -148,11 +148,7 @@ class IRCBot:
 	def getUser(self, token):
 		user = token.strip(":")
 		user = user.split("!")[0]
-		user = user.split("|")
-		for userTemp in user:
-			if (userTemp == self.master):
-				user = userTemp
-				break;
+		user = user.split("|")[0]
 		return user
 
 	def getMessage(self, tokens, startingIndex):
