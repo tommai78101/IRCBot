@@ -67,6 +67,7 @@ class IRCBot:
 		print("Joining %s" % self.channel)
 		self.s.send(BYTE("JOIN %s\r\n" % self.channel))
 		time.sleep(0.5)
+		print("Requesting verbose mode.")
 		self.sendMessage("NickServ", "identify a1b2c3d4", 0)
 		time.sleep(0.5)
 		self.switchAndJoinChannel(self.channel)
