@@ -1,12 +1,25 @@
 ﻿import sys
 import socket
 import string
+import time
 from datetime import datetime
 import threading
 
 
 def BYTE(message):
 	return bytes(message, "UTF-8")
+
+class StoppableThread(threading.Thread):
+	def __init__(self):
+		super(StoppableThread, self).__init__()
+		self._stop = threading.Event()
+
+	def stop(self):
+		self._stop.set()
+
+	def isStopped(self):
+		return self._stop.isSet()
+
 
 class IRCBot:
 	host = ""
@@ -39,10 +52,13 @@ class IRCBot:
 			self.s = socket.socket()
 		print("Connecting to host: %s:%s" % (self.host, self.port))
 		self.s.connect((self.host, self.port))
+		time.sleep(0.5)
 		print("Identifying as %s." % self.realName)
 		self.s.send(BYTE("USER %s %s bla :%s\r\n" % (self.identify, self.host, self.realName)))
+		time.sleep(0.5)
 		print("Logging in as %s" % self.nickName)
 		self.s.send(BYTE("NICK %s\r\n" % self.nickName))
+		time.sleep(0.5)
 		#if (len(self.channel) > 1):
 		#	print("Joining the list of channels: %s" % self.channel)
 		#	for chan in self.channel:
@@ -50,6 +66,7 @@ class IRCBot:
 		#else:
 		print("Joining %s" % self.channel)
 		self.s.send(BYTE("JOIN %s\r\n" % self.channel))
+		time.sleep(0.5)
 		self.switchAndJoinChannel(self.channel)
 		print("Adding channel to joined list.")
 
@@ -81,9 +98,10 @@ class IRCBot:
 			if (len(tokens) > 2 and tokens[3] == ":\x01VERSION\x01"):
 				print("Sending VERSION")
 				self.s.send(BYTE("NOTICE %s :\x01VERSION WedrBot v1.0\x01" % tokens[0]))
-				self.sendMessage("NickServ", "identify a1b2c3d4", 0)
-				self.switchAndJoinChannel(self.channel)
-				self.sendMessage("wedr", "Hello world.", 0)
+				#self.sendMessage("NickServ", "identify a1b2c3d4", 0)
+				#time.sleep(0.5)
+				#self.switchAndJoinChannel(self.channel)
+				#self.s.send(BYTE("NAMES %s\r\n" % self.channel))
 				if (self.userInput.isStarting != True):
 					print("Starting Input thread.")
 					self.userInput.start()
@@ -115,9 +133,11 @@ class IRCBot:
 			if (checkFlag):
 				self.channel = channel
 			else:
-				self.joinedChannels.append(channel)
+				print("Joining channel %s" % channel)
 				self.s.send(BYTE("JOIN %s\r\n" % channel))
+				time.sleep(0.5)
 				self.sendMessage("NickServ", "identify a1b2c3d4", 0)
+				self.joinedChannels.append(channel)
 				self.channel = channel
 		else:
 			print("Usage: /switch [CHANNEL TO SPEAK IN] - And make sure you type in the number sign.")
@@ -125,6 +145,11 @@ class IRCBot:
 	def getUser(self, token):
 		user = token.strip(":")
 		user = user.split("!")[0]
+		user = token.split("|")
+		for userTemp in user:
+			if (userTemp == self.master):
+				user = userTemp
+				break;
 		return user
 
 	def getMessage(self, tokens, startingIndex):
@@ -135,13 +160,20 @@ class IRCBot:
 			message += tokens[i].strip("\x01") + " "
 		return message
 
+	def stop(self):
+		self.quitFlag = True
+
 	def run(self):
+		readBuffer = ""
 		while not (self.quitFlag):
-			readBuffer = ""
 			try:
 				readBuffer += self.s.recv(1024).decode("UTF-8")
 				temp = str.split(readBuffer, "\n")
 				readBuffer = temp.pop()
+				if (len(temp) == 0):
+					print("Quit Flag is True, exiting loop.")
+					self.quitFlag = True
+					pass
 				for line in temp:
 					line = line.rstrip()
 					tokens = line.split(" ")
@@ -150,20 +182,27 @@ class IRCBot:
 				print("Bot encountered an error. Quitting...")
 				print("Error message: %s" % str(error))
 				#self.quitFlag = True
-
-	class UserInput(threading.Thread):
+		
+		print("Stopping thread.")
+		self.userInput.stop()
+		while (not self.userInput.isStopped()):
+			print("Waiting...")
+			self.userInput.join()
+		
+	class UserInput(StoppableThread):
 		parent = None
 		isStarting = False
 
 		def __init__(self, parent):
-			threading.Thread.__init__(self)
+			StoppableThread.__init__(self)
 			self.parent = parent
 			self.isStarting = False
+			self.daemon = True
 			print("Initializing input.")
-		
+
 		def run(self):
 			self.isStarting = True
-			while (self.parent.quitFlag != True):
+			while (self.isStarting):
 				try:
 					message = input()
 					message = message.split(" ")
@@ -206,6 +245,11 @@ class IRCBot:
 							self.parent.switchAndJoinChannel(messageEnd[0])
 					elif (message[0] == "/switch"):
 						self.parent.switchChannel(message)
+					elif (message[0] == "/quitBot"):
+						print("Quitting bot.")
+						self.parent.s.send(BYTE("PART %s Bot has left the scene.\r\n" % self.parent.channel))
+						self.parent.s.send(BYTE("QUIT %s\r\n" % "Test"))
+						self.isStarting = False
 					elif (message != [""]):
 						messageEnd = ""
 						for i in range(0, len(message)):
@@ -213,6 +257,7 @@ class IRCBot:
 						self.parent.sendMessage(self.parent.channel, messageEnd, 0)
 				except Exception as error:
 					print(error)
+			print("Input Thread is closing.")
 
 				
 

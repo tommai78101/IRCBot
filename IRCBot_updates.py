@@ -12,6 +12,7 @@ class UpdateBot(IRCBot):
 		super().__init__(host, port, channel)
 
 	def handlePrivateMessage(self, user, recipient, message):
+		super().handlePrivateMessage(user, recipient, message)
 		messageTokens = message.split(" ")
 		messageTokens.pop()
 		temp = messageTokens[0].lower()

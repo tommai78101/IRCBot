@@ -3,7 +3,7 @@ from IRCBot_quotes import QuotesBot
 from IRCBot_files import FilesBot
 
 global DEBUG
-DEBUG = False
+DEBUG = True
 
 #Global constants
 HOST = "irc.rizon.net"
@@ -14,7 +14,7 @@ else:
 	CHANNEL = "#3dshacks"
 
 def main():
-	bot = FilesBot(HOST, PORT, CHANNEL)
+	bot = UpdateBot(HOST, PORT, CHANNEL)
 	#bot.setChannels(["#3dshacks"])
 	bot.connect()
 	bot.run()

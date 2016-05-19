@@ -28,12 +28,16 @@ class FilesBot(QuotesBot):
 		self.createTempFile()
 		file = self.openTempFile()
 		#Quotes = 0
-		if (mode == 0):
-			with file as f:
-				for line in self.quotes:
-					temp = "%s%s" % (line.encode(), "\n")
-					f.write(line.encode())
-		file.close()
+		try:
+			if (mode == 0):
+				with file as f:
+					for line in self.quotes:
+						temp = "%s%s" % (line.encode(), "\n")
+						f.write(line.encode())
+		finally:
+			if (file != None):
+				file.close()
+				file = None
 		os.replace(self.saveFilePath + FILE_SEPARATOR + self.temp, self.saveFilePath + FILE_SEPARATOR + self.saveFileName)
 
 	def load(self, mode):
@@ -48,10 +52,14 @@ class FilesBot(QuotesBot):
 						temp = line.decode()
 						if (temp != "\n"):
 							self.quotes.append(temp)
-				file.close()
 			except:
 				if (file != None):
 					file.close()
+					file = None
+			finally:
+				if (file != None):
+					file.close()
+					file = None
 
 	def handlePrivateMessage(self, user, recipient, message):
 		super().handlePrivateMessage(user, recipient, message)
