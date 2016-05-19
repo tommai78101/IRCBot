@@ -12,7 +12,7 @@ class UpdateBot(IRCBot):
 		super().__init__(host, port, channel)
 
 	def handlePrivateMessage(self, user, recipient, message):
-		super().handlePrivateMessage(user, recipient, message)
+		#There's no need to call on super(), because the base class contains the virtual method for this method.
 		messageTokens = message.split(" ")
 		messageTokens.pop()
 		temp = messageTokens[0].lower()

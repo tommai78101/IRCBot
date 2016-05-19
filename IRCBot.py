@@ -67,6 +67,8 @@ class IRCBot:
 		print("Joining %s" % self.channel)
 		self.s.send(BYTE("JOIN %s\r\n" % self.channel))
 		time.sleep(0.5)
+		self.sendMessage("NickServ", "identify a1b2c3d4", 0)
+		time.sleep(0.5)
 		self.switchAndJoinChannel(self.channel)
 		print("Adding channel to joined list.")
 
@@ -145,7 +147,7 @@ class IRCBot:
 	def getUser(self, token):
 		user = token.strip(":")
 		user = user.split("!")[0]
-		user = token.split("|")
+		user = user.split("|")
 		for userTemp in user:
 			if (userTemp == self.master):
 				user = userTemp
