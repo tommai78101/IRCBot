@@ -1,5 +1,6 @@
 import os
 import string
+import atexit
 from IRCBot import IRCBot
 from IRCBot_updates import UpdateBot
 from IRCBot_quotes import QuotesBot
@@ -16,6 +17,7 @@ class FilesBot(QuotesBot):
 		super().__init__(host, port, channel)
 		self.saveFilePath = os.getcwd()
 		self.load(0)
+		atexit.register(save, mode = 0)
 
 	def createTempFile(self):
 		file = open(self.saveFilePath + FILE_SEPARATOR + self.temp, "wb")
@@ -84,11 +86,6 @@ class FilesBot(QuotesBot):
 				except Exception as error:
 					print("Unable to load - %s" % (str(error)))
 					self.sendMessage(self.channel, "Unable to load. Please notify " + self.master + " to fix this issue.", 0)
-
-
-	def __del__(self):
-		self.save(0)
-					
 
 
 
