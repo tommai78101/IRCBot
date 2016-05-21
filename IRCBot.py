@@ -38,14 +38,6 @@ class IRCBot:
 	currentDate = datetime.now()
 	userInput = None
 
-	def __init__(self, host, port, channel):
-		self.host = host
-		self.port = port
-		self.channel = channel
-		self.quitFlag = False
-		self.userInput = self.UserInput(self)
-		atexit.register(quit)
-
 	#def setChannels(self, channels):
 	#	self.channel = channels
 
@@ -195,6 +187,14 @@ class IRCBot:
 			print("Waiting...")
 			self.userInput.join()
 		
+	def __init__(self, host, port, channel):
+		self.host = host
+		self.port = port
+		self.channel = channel
+		self.quitFlag = False
+		self.userInput = self.UserInput(self)
+		atexit.register(self.quit)		
+
 	class UserInput(StoppableThread):
 		parent = None
 		isStarting = False
@@ -264,6 +264,5 @@ class IRCBot:
 					print(error)
 			print("Input Thread is closing.")
 
-				
-
+		
 	
