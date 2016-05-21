@@ -1,4 +1,4 @@
-﻿from IRCBot_updates import UpdateBot
+from IRCBot_updates import UpdateBot
 from IRCBot_quotes import QuotesBot
 from IRCBot_files import FilesBot
 
