@@ -19,7 +19,7 @@ class StoppableThread(threading.Thread):
 		self._stop.set()
 
 	def isStopped(self):
-		return self._stop.isSet()
+		return self._stop.is_set()
 
 
 class IRCBot:

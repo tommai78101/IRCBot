@@ -3,7 +3,7 @@ from IRCBot_quotes import QuotesBot
 from IRCBot_files import FilesBot
 
 global DEBUG
-DEBUG = False
+DEBUG = True
 
 #Global constants
 HOST = "irc.rizon.net"

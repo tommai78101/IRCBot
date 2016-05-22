@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>99d00902-082d-486c-b747-d6db61f50508</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>main.py</StartupFile>
+    <StartupFile>pluginLoader.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -43,6 +43,19 @@
     <Compile Include="IRCBot_files.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="StoppableThread.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="pluginLoader.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="plugins\plugin1.py" />
+    <Compile Include="threadTest.py">
+      <SubType>Code</SubType>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="plugins\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
