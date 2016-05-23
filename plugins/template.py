@@ -4,11 +4,12 @@ from time import sleep
 def BYTE(message):
 	return bytes("%s\r\n" % message, "UTF-8")
 
+
 def getUser(self, token):
-		user = token.strip(":")
-		user = user.split("!")[0]
-		user = user.split("|")[0]
-		return user
+	user = token.strip(":")
+	user = user.split("!")[0]
+	user = user.split("|")[0]
+	return user
 
 def getMessage(self, tokens, startingIndex):
 	message = ""
@@ -50,3 +51,6 @@ def plugin_main(s, channel, tokens):
 				print("%s: %s" % (caller, message))
 			except Exception as error:
 				print("Plugin Error: ", error)
+
+	assert True
+

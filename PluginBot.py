@@ -119,8 +119,8 @@ class PluginBot:
 
 	def handleTokens(self, tokens):
 		for i in range(len(self.loadedModules)):
-			self.loadedModules[i][1].plugin_main(self.s, self.channel, tokens)
-
+			if ("plugin_main" in dir(self.loadedModules[i][1])):
+				self.loadedModules[i][1].plugin_main(self.s, self.channel, tokens)
 
 def main():
 	bot = PluginBot()
