@@ -54,4 +54,4 @@ def test():
 	main(checkFlag)
 
 if (__name__ == "__main__"):
-	pdb.run("test()")
+	test()
