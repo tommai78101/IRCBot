@@ -1,6 +1,7 @@
 #This is a unit test script. It should be called outside of the program.
 import os
 import sys
+import pdb
 import PluginBot
 import threading
 from time import sleep
@@ -42,12 +43,15 @@ def main(isTest):
 
 		sys.exit(0)
 	
-if (__name__ == "__main__"):
+def test():
 	print(sys.argv)
 	checkFlag = True
 	for i in range(len(sys.argv)):
 		value = sys.argv[i]
-		if (isinstance(value, (int)) and value == 1):
+		if (value == "1"):
 			checkFlag = False
 
 	main(checkFlag)
+
+if (__name__ == "__main__"):
+	pdb.run("test()")
