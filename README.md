@@ -14,6 +14,20 @@ Please create new issues to request for new features, report bugs, and other thi
 * **Saving/Loading** - Allowing the bot host to store and load the quotes list.   
 * **Updates Lookup** - For Nintendo 3DS, this bot parses the data gather from [this site](https://yls8.mtheall.com/ninupdates/reports.php), and tells the users what the minimum firmware update is required for their respective games. The updates repository can be located [here](https://github.com/yellows8/ninupdates).   
 
+### How to Use:
+
+1. Download the [ZIP file here](https://github.com/tommai78101/IRCBot/archive/master.zip) and extract the contents to a new folder/directory.
+2. Run "start.py".
+
+### How to Create Plugins:
+
+1. Download the [ZIP file here](https://github.com/tommai78101/IRCBot/archive/master.zip) and extract the contents to a new folder/directory.
+2. In the `/plugins` folder, duplicate the `template.py`, and rename.
+3. Edit your renamed copy, and follow the instructions written in the comments.
+4. Save your plugin in `/plugins` folder/directory.
+5. Run "start.py"
+6. To reload your plugins, type `"/reload"` in the command prompt/terminal to reload all plugins.
+
 ### Credits:
 
 **asperatology (wedr) / tom_mai78101** - Creation of the IRC Bot.    
