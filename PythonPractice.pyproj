@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>99d00902-082d-486c-b747-d6db61f50508</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>pluginLoader.py</StartupFile>
+    <StartupFile>PluginBot.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -43,16 +43,13 @@
     <Compile Include="IRCBot_files.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="StoppableThread.py">
+    <Compile Include="PluginBot.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="pluginLoader.py">
+    <Compile Include="UserInput.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="plugins\plugin1.py" />
-    <Compile Include="threadTest.py">
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="plugins\template.py" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="plugins\" />
