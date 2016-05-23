@@ -18,20 +18,36 @@ class WorkerThread(threading.Thread):
 	def stopBot(self):
 		self.bot.quit()
 
+
+def main(isTest):
+	if (isTest):
+		bot = PluginBot.PluginBot()
+		bot.run()
+		bot.userInput.join()
+	else:
+		worker = WorkerThread()
+		worker.start()
+
+		print("Sleeping for 3 seconds.")
+		sleep(3)
+
+		print("Reloading plugin.")
+		worker.bot.reloadAll()
+
+		print("Sleeping for 2 seconds.")
+		sleep(2)
+
+		worker.stopBot()
+		print("Success!")
+
+		sys.exit(0)
+	
 if (__name__ == "__main__"):
-	worker = WorkerThread()
-	worker.start()
+	print(sys.argv)
+	checkFlag = True
+	for i in range(len(sys.argv)):
+		value = sys.argv[i]
+		if (isinstance(value, (int)) and value == 1):
+			checkFlag = False
 
-	print("Sleeping for 3 seconds.")
-	sleep(3)
-
-	print("Reloading plugin.")
-	worker.bot.reloadAll()
-
-	print("Sleeping for 2 seconds.")
-	sleep(2)
-
-	worker.stopBot()
-	print("Success!")
-
-	sys.exit(0)
+	main(checkFlag)

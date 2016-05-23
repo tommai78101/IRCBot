@@ -9,4 +9,4 @@ python:
 # command to install dependencies
 install: true
 # command to run tests
-script: "python3 test.py"
+script: "python3 test.py 1"

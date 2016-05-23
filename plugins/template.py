@@ -21,8 +21,9 @@ def getMessage(tokens, startingIndex):
 	return message
 
 #Required
+#Returns string value (str)
 def version():
-	print("Template (Blank Plugin) - v1.0")
+	return ("Template (Blank Plugin) - v1.0")
 
 #Required
 def plugin_main(parent, tokens):

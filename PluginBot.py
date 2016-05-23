@@ -1,4 +1,5 @@
 import os
+import sys
 import random
 import socket
 import string
@@ -66,8 +67,11 @@ class PluginBot:
 			name = pluginFiles
 			module = self.loadModule(str("plugins." + pluginFiles[i])[:-3])
 			self.loadedModules.append((name, module))
-			self.loadedModules[i][1].version()
-			print("Loaded plugin %s successfully." % name)
+			if ("version" in dir(self.loadedModules[i][1])):
+				print(" --- %s" % self.loadedModules[i][1].version())
+			else:
+				print(" --- Plugin %s - No version specified." % name)
+		print("All plugins loaded successfully.")
 
 	def loadModule(self, name):
 		return importlib.import_module(name)
@@ -76,7 +80,10 @@ class PluginBot:
 		for i in range(len(self.loadedModules)):
 			print("Reloading plugin")
 			self.loadedModules[i] = (self.loadedModules[i][0], importlib.reload(self.loadedModules[i][1]))
-			self.loadedModules[i][1].version()
+			if ("version" in dir(self.loadedModules[i][1])):
+				self.loadedModules[i][1].version()
+			else:
+				print("Plugin %s does not specify its version." % name)
 
 	def quit(self):
 		print("Quitting by closing window.")
@@ -124,12 +131,3 @@ class PluginBot:
 		for i in range(len(self.loadedModules)):
 			if ("plugin_main" in dir(self.loadedModules[i][1])):
 				self.loadedModules[i][1].plugin_main(self, tokens)
-
-#def main():
-#	bot = PluginBot()
-#	bot.run()
-#	bot.userInput.join()
-	
-
-#if __name__ == "__main__":
-#	main()
