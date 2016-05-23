@@ -1,4 +1,4 @@
-# IRC Bot + Client
+# IRC Bot + Client  [![Build Status](https://travis-ci.org/tommai78101/IRCBot.svg?branch=master)](https://travis-ci.org/tommai78101/IRCBot)
 
 ### Description:
 
