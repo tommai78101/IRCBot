@@ -19,9 +19,8 @@ def getMessage(self, tokens, startingIndex):
 		message += tokens[i].strip("\x01") + " "
 	return message
 
-def plugin_main(s, channel, tokens):
-	#s := Parent bot socket object
-	#channel := Channel the parent bot is focused on.
+def plugin_main(parent, tokens):
+	#parent := Parent bot socket object
 	#tokens := Read Buffer tokens passed from parent bot.
 
 	#PING protocol
@@ -32,7 +31,7 @@ def plugin_main(s, channel, tokens):
 		currentDate = datetime.now()
 		print("[%02s:%02s] Received PING PONG" % (str(currentDate.hour).zfill(2), str(currentDate.minute).zfill(2)))
 		str1 = ("PONG %s" % tokens[1].strip(":"))
-		s.send(BYTE(str1))
+		parent.s.send(BYTE(str1))
 
 	#PRIVMSG protocol
 	#tokens[0] gets the full user account. This needs to be stripped and splitted out.
@@ -42,7 +41,7 @@ def plugin_main(s, channel, tokens):
 	if (len(tokens) > 1 and tokens[1] == "PRIVMSG"):
 		if (len(tokens) > 2 and tokens[3] == ":\x01VERSION\x01"):
 			print("Sending VERSION")
-			s.send(BYTE("NOTICE %s :\x01VERSION WedrBot v1.0\x01" % tokens[0]))
+			parent.s.send(BYTE("NOTICE %s :\x01VERSION WedrBot v1.0\x01" % tokens[0]))
 		else:
 			caller = getUser(tokens[0])
 			message = getMessage(tokens, 3)
@@ -52,5 +51,5 @@ def plugin_main(s, channel, tokens):
 			except Exception as error:
 				print("Plugin Error: ", error)
 
-	assert True
+	
 

@@ -15,6 +15,7 @@ class UserInput(threading.Thread):
 	def __init__(self, bot):
 		super().__init__()
 		self.parent = bot
+		self.setDaemon(True)
 		self.isRunning = False
 		self.start()
 
@@ -40,7 +41,6 @@ class UserInput(threading.Thread):
 					elif (message[0] == "/quit"):
 						print("Quitting.")
 						self.parent.quit()
-						self.parent.isRunning = False
 						self.isRunning = False
 					elif (message[0] == "/j"):
 						if (len(message) < 2 or len(message) > 2):
@@ -51,4 +51,5 @@ class UserInput(threading.Thread):
 						self.parent.s.send(BYTE("PRIVMSG %s :%s" % (self.parent.channel, self.createMessage(message))))
 			except Exception as error:
 				print(error)
+				self.isRunning = False
 		

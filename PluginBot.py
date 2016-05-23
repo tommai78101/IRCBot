@@ -80,6 +80,7 @@ class PluginBot:
 		print("Quitting by closing window.")
 		self.s.send(BYTE("PART %s Bot has left the scene.\r\n" % self.channel))
 		self.s.send(BYTE("QUIT %s\r\n" % "Test"))
+		self.isRunning = False
 
 	def switch(self, newChannel):
 		if (newChannel[0] != "#"):
@@ -120,13 +121,13 @@ class PluginBot:
 	def handleTokens(self, tokens):
 		for i in range(len(self.loadedModules)):
 			if ("plugin_main" in dir(self.loadedModules[i][1])):
-				self.loadedModules[i][1].plugin_main(self.s, self.channel, tokens)
+				self.loadedModules[i][1].plugin_main(self, tokens)
 
-def main():
-	bot = PluginBot()
-	bot.run()
-	bot.userInput.join()
+#def main():
+#	bot = PluginBot()
+#	bot.run()
+#	bot.userInput.join()
 	
 
-if __name__ == "__main__":
-	main()
+#if __name__ == "__main__":
+#	main()
