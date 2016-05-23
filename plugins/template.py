@@ -1,17 +1,18 @@
 from datetime import datetime
 from time import sleep
 
+#Useful? You decide
 def BYTE(message):
 	return bytes("%s\r\n" % message, "UTF-8")
 
 
-def getUser(self, token):
+def getUser(token):
 	user = token.strip(":")
 	user = user.split("!")[0]
 	user = user.split("|")[0]
 	return user
 
-def getMessage(self, tokens, startingIndex):
+def getMessage(tokens, startingIndex):
 	message = ""
 	for i in range(startingIndex, len(tokens)):
 		if (i == startingIndex):
@@ -19,8 +20,13 @@ def getMessage(self, tokens, startingIndex):
 		message += tokens[i].strip("\x01") + " "
 	return message
 
+#Required
+def version():
+	print("Template (Blank Plugin) - v1.0")
+
+#Required
 def plugin_main(parent, tokens):
-	#parent := Parent bot socket object
+	#parent := Parent bot
 	#tokens := Read Buffer tokens passed from parent bot.
 
 	#PING protocol

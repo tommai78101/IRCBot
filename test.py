@@ -22,8 +22,14 @@ if (__name__ == "__main__"):
 	worker = WorkerThread()
 	worker.start()
 
-	print("Sleeping for 5 seconds.")
-	sleep(5)
+	print("Sleeping for 3 seconds.")
+	sleep(3)
+
+	print("Reloading plugin.")
+	worker.bot.reloadAll()
+
+	print("Sleeping for 2 seconds.")
+	sleep(2)
 
 	worker.stopBot()
 	print("Success!")

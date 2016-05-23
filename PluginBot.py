@@ -66,6 +66,7 @@ class PluginBot:
 			name = pluginFiles
 			module = self.loadModule(str("plugins." + pluginFiles[i])[:-3])
 			self.loadedModules.append((name, module))
+			self.loadedModules[i][1].version()
 			print("Loaded plugin %s successfully." % name)
 
 	def loadModule(self, name):
@@ -75,6 +76,7 @@ class PluginBot:
 		for i in range(len(self.loadedModules)):
 			print("Reloading plugin")
 			self.loadedModules[i] = (self.loadedModules[i][0], importlib.reload(self.loadedModules[i][1]))
+			self.loadedModules[i][1].version()
 
 	def quit(self):
 		print("Quitting by closing window.")
