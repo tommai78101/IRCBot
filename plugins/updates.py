@@ -1,5 +1,6 @@
 import socket
 from urllib import request
+from inspect import currentframe, getframeinfo
 from PluginBot import BYTE
 
 csv_old3DS = "https://yls8.mtheall.com/ninupdates/titlelist.php?sys=ctr&csv=1"
@@ -39,17 +40,17 @@ def parseCSVList(parent, csv, user, titleID, region, isOld3DS):
 				for index in range(2, len(lineTokens)):
 					if (lineTokens[index][0] != "v"):
 						print("Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]))
-						parent.s.send(PRIVMSG(self.channel, "Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]), 0))
+						parent.s.send(PRIVMSG(parent.channel, "Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]), 0))
 						return
 		print("Failed to locate titleID or region for %s. Required firmware version may not exist." % ("O3DS" if isOld3DS else "N3DS"))
-		parent.s.send(PRIVMSG(self.channel, "Cannot locate titleID or region for %s. Required firmware version may not exist." % ("O3DS" if isOld3DS else "N3DS"), 0))
+		parent.s.send(PRIVMSG(parent.channel, "Cannot locate titleID or region for %s. Required firmware version may not exist." % ("O3DS" if isOld3DS else "N3DS"), 0))
 	else:
 		print("Incorrect CSV List: " + csvList)
 		parent.s.send(PRIVMSG(user, "This bot encountered a bug. Please report to wedr to fix this.", 1))
 
 def getRequiredUpdates(parent, user, messageTokens, isOld3DS):
 	csvList = None
-	requestURL = request.Request(self.csv_old3DS if (isOld3DS) else self.csv_new3DS)
+	requestURL = request.Request(csv_old3DS if (isOld3DS) else csv_new3DS)
 	csvList = request.urlopen(requestURL)
 	csvList = csvList.read().decode("UTF-8")
 	if (csvList != None):
@@ -66,8 +67,8 @@ def handlePrivateMessage(parent, user, message):
 		if (len(messageTokens) == 3):
 			if (len(messageTokens[1]) == 16):
 				try:
-					getRequiredUpdates(user, messageTokens, True)
-					getRequiredUpdates(user, messageTokens, False)
+					getRequiredUpdates(parent, user, messageTokens, True)
+					getRequiredUpdates(parent, user, messageTokens, False)
 				except Exception as error:
 					frameinfo = getframeinfo(currentframe())
 					print("Cannot parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)))
@@ -75,7 +76,7 @@ def handlePrivateMessage(parent, user, message):
 			else:
 				parent.s.send(PRIVMSG(user, "Incorrect Title ID.", 1))
 		else:
-			parent.s.send(PRIVMSG(self.channel, ".lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 0))
+			parent.s.send(PRIVMSG(parent.channel, ".lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 0))
 	elif (temp == ".help"):
 		parent.s.send(PRIVMSG(user, ".lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 1))
 		parent.s.send(PRIVMSG(user, ".explain - Returns explanation of WedrBot.", 1))

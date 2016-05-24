@@ -1,6 +1,20 @@
 def BYTE(message):
 	return bytes("%s\r\n" % message, "UTF-8")
 
+def getUser(token):
+	user = token[0].strip(":")
+	user = user.split("!")[0]
+	user = user.split("|")[0]
+	return user
+
+def getMessage(tokens, startingIndex = 3):
+	message = ""
+	for i in range(startingIndex, len(tokens)):
+		if (i == startingIndex):
+			tokens[i] = tokens[i].strip(":")
+		message += tokens[i].strip("\x01") + " "
+	return message
+
 def version():
 	return "PrivMsg - v1.0"
 
@@ -15,7 +29,7 @@ def plugin_main(parent, tokens):
 			print("Sending VERSION")
 			parent.s.send(BYTE("NOTICE %s :\x01VERSION WedrBot v1.0\x01" % tokens[0]))
 		else:
-			caller = getUser(tokens[0])
+			caller = getUser(tokens)
 			message = getMessage(tokens, 3)
 			recipient = tokens[2]
 			try:

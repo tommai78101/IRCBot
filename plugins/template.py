@@ -7,7 +7,7 @@ def BYTE(message):
 
 
 def getUser(token):
-	user = token.strip(":")
+	user = token[0].strip(":")
 	user = user.split("!")[0]
 	user = user.split("|")[0]
 	return user
@@ -50,7 +50,7 @@ def plugin_main(parent, tokens):
 			print("Sending VERSION")
 			parent.s.send(BYTE("NOTICE %s :\x01VERSION WedrBot v1.0\x01" % tokens[0]))
 		else:
-			caller = getUser(tokens[0])
+			caller = getUser(tokens)
 			message = getMessage(tokens, 3)
 			recipient = tokens[2]
 			try:
