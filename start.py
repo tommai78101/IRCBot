@@ -29,13 +29,14 @@ def main(isTest):
 		worker = WorkerThread()
 		worker.start()
 		print("Sleeping for 3 seconds.")
-		sleep(3)
-		print("Reloading plugin.")
+		sleep(2)
+		print("Test reloading plugin.")
 		worker.bot.reloadAll()
 		print("Sleeping for 2 seconds.")
-		sleep(2)
+		sleep(1)
 		worker.stopBot()
 		print("Success!")
+		sleep(1)
 
 	sys.exit(0)
 	
@@ -45,8 +46,8 @@ def test():
 		value = sys.argv[i]
 		if (value == "1"):
 			checkFlag = False
-
 	main(checkFlag)
 
 if (__name__ == "__main__"):
+	#pdb.run("test()")
 	test()

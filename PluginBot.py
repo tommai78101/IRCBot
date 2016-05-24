@@ -88,8 +88,8 @@ class PluginBot(threading.Thread):
 		return importlib.import_module(name)
 
 	def reloadAll(self):
+		print("Reloading plugin")
 		for i in range(len(self.loadedModules)):
-			print("Reloading plugin")
 			self.loadedModules[i] = (self.loadedModules[i][0], importlib.reload(self.loadedModules[i][1]))
 			if ("version" in dir(self.loadedModules[i][1])):
 				self.loadedModules[i][1].version()
@@ -98,8 +98,9 @@ class PluginBot(threading.Thread):
 
 	def quit(self):
 		print("Quitting by closing window.")
-		self.s.send(BYTE("PART %s Bot has left the scene.\r\n" % self.channel))
-		self.s.send(BYTE("QUIT %s\r\n" % "Test"))
+		if (self.s != None):
+			self.s.send(BYTE("PART %s Bot has left the scene.\r\n" % self.channel))
+			self.s.send(BYTE("QUIT %s\r\n" % "Test"))
 		self.isRunning = False
 
 	def switch(self, newChannel):
@@ -115,7 +116,8 @@ class PluginBot(threading.Thread):
 			self.channel = newChannel
 		else:
 			print("Joining and switching to channel %s" % newChannel)
-			self.s.send(BYTE("JOIN %s" % newChannel))
+			if (self.s != None):
+				self.s.send(BYTE("JOIN %s" % newChannel))
 			self.channels.append(newChannel)
 			self.channel = newChannel
 
@@ -124,17 +126,18 @@ class PluginBot(threading.Thread):
 		readBuffer = ""
 		while (self.isRunning):
 			try:
-				temp = self.s.recv(1024).decode("UTF-8")
-				if (temp == ""):
-					self.isRunning = False
-				else:
-					readBuffer += temp
-					temp = readBuffer.split("\n")
-					readBuffer = temp.pop()
-					for line in temp:
-						line = line.rstrip()
-						tokens = line.split(" ")
-						self.handleTokens(tokens)
+				if (self.s != None):
+					temp = self.s.recv(1024).decode("UTF-8")
+					if (temp == ""):
+						self.isRunning = False
+					else:
+						readBuffer += temp
+						temp = readBuffer.split("\n")
+						readBuffer = temp.pop()
+						for line in temp:
+							line = line.rstrip()
+							tokens = line.split(" ")
+							self.handleTokens(tokens)
 			except Exception as error:
 				print("PluginBot Error: ", error)
 
