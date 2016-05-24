@@ -33,15 +33,6 @@
     <Compile Include="IRCBot_quotes.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IRCBot_tickets.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="IRCBot_updates.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="main.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="IRCBot_files.py">
       <SubType>Code</SubType>
     </Compile>
