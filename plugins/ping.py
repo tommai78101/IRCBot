@@ -1,7 +1,5 @@
 from datetime import datetime
-
-def BYTE(message):
-	return bytes("%s\r\n" % message, "UTF-8")
+from PluginBot import BYTE
 
 def version():
 	return "Ping - v1.0"

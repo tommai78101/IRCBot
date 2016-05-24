@@ -6,6 +6,7 @@ import string
 import importlib
 import atexit
 import threading
+import traceback
 from time import sleep
 
 import UserInput
@@ -15,6 +16,28 @@ DEBUG = True
 
 def BYTE(message):
 	return bytes("%s\r\n" % message, "UTF-8")
+
+def PRIVMSG(recipient, message, mode):
+	if (mode == 0):
+		return BYTE("PRIVMSG %s :%s" % (recipient, message))
+	elif (mode == 1):
+		return BYTE("NOTICE %s :%s" % (recipient, message))
+	else:
+		print("Unrecognized mode. Not sending message.")
+
+def getUser(token):
+	user = token[0].strip(":")
+	user = user.split("!")[0]
+	user = user.split("|")[0]
+	return user
+
+def getMessage(tokens, startingIndex = 3):
+	message = ""
+	for i in range(startingIndex, len(tokens)):
+		if (i == startingIndex):
+			tokens[i] = tokens[i].strip(":")
+		message += tokens[i].strip("\x01") + " "
+	return message
 
 
 class PluginBot(threading.Thread):
@@ -142,8 +165,8 @@ class PluginBot(threading.Thread):
 							line = line.rstrip()
 							tokens = line.split(" ")
 							self.handleTokens(tokens)
-			except Exception as error:
-				print("PluginBot Error: ", error)
+			except Exception:
+				traceback.print_tb(sys.exc_info()[2])
 
 	def handleTokens(self, tokens):
 		for i in range(len(self.loadedModules)):

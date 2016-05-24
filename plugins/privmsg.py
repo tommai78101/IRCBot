@@ -1,19 +1,7 @@
-def BYTE(message):
-	return bytes("%s\r\n" % message, "UTF-8")
-
-def getUser(token):
-	user = token[0].strip(":")
-	user = user.split("!")[0]
-	user = user.split("|")[0]
-	return user
-
-def getMessage(tokens, startingIndex = 3):
-	message = ""
-	for i in range(startingIndex, len(tokens)):
-		if (i == startingIndex):
-			tokens[i] = tokens[i].strip(":")
-		message += tokens[i].strip("\x01") + " "
-	return message
+from PluginBot import BYTE
+from PluginBot import PRIVMSG
+from PluginBot import getUser
+from PluginBot import getMessage
 
 def version():
 	return "PrivMsg - v1.0"

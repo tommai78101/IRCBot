@@ -1,32 +1,15 @@
 import socket
+
 from urllib import request
 from inspect import currentframe, getframeinfo
 from PluginBot import BYTE
+from PluginBot import PRIVMSG
+from PluginBot import getUser
+from PluginBot import getMessage
+
 
 csv_old3DS = "https://yls8.mtheall.com/ninupdates/titlelist.php?sys=ctr&csv=1"
 csv_new3DS = "https://yls8.mtheall.com/ninupdates/titlelist.php?sys=ktr&csv=1"
-
-def PRIVMSG(recipient, message, mode):
-	if (mode == 0):
-		return BYTE("PRIVMSG %s :%s" % (recipient, message))
-	elif (mode == 1):
-		return BYTE("NOTICE %s :%s" % (recipient, message))
-	else:
-		print("Unrecognized mode. Not sending message.")
-
-def getUser(token):
-	user = token[0].strip(":")
-	user = user.split("!")[0]
-	user = user.split("|")[0]
-	return user
-
-def getMessage(tokens, startingIndex = 3):
-	message = ""
-	for i in range(startingIndex, len(tokens)):
-		if (i == startingIndex):
-			tokens[i] = tokens[i].strip(":")
-		message += tokens[i].strip("\x01") + " "
-	return message
 
 def parseCSVList(parent, csv, user, titleID, region, isOld3DS):
 	csvList = csv.split("\n")
