@@ -54,6 +54,9 @@
     <Compile Include="plugins\privmsg.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="plugins\tickets.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="plugins\updates.py">
       <SubType>Code</SubType>
     </Compile>

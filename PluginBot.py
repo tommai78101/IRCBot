@@ -68,6 +68,7 @@ class PluginBot(threading.Thread):
 		print("Type \"/help\" for all bot commands.")
 
 	def loadPlugins(self):
+		print("Loading plugins from /plugins folder:")
 		directory = os.getcwd()
 		pluginFiles = next(os.walk(directory + "/plugins"))[2]
 		self.loadedModules.clear()
@@ -81,8 +82,11 @@ class PluginBot(threading.Thread):
 			if ("version" in dir(self.loadedModules[i][1])):
 				print(" --- %s" % self.loadedModules[i][1].version())
 			else:
-				print(" --- Plugin %s - No version specified." % name)
+				print(" --- %s - No plugin version specified." % self.loadedModules[i][0])
 		print("All plugins loaded successfully.")
+		print()
+		print("------------------------------------")
+		print()
 
 	def loadModule(self, name):
 		return importlib.import_module(name)

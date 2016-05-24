@@ -1,23 +1,8 @@
-import sys
-import socket
 import string
 import binascii
 import hashlib
 from urllib import request
-#import urllib
 from random import randint
-
-#Rizon host name
-HOST = "irc.rizon.net"
-PORT = 6667
-CHANNEL = "#wedrbot"
-
-#Bot properties
-NICKNAME = "WedrBot"
-IDENTIFY = "a1b2c3d4"
-REALNAME = "WedrPython3Bot"
-MASTER = "wedr"
-EMAIL = "wedr53-trash@yahoo.com.tw"
 
 #Constants
 WIN32_PLATFORM = "9c4f88f706dedde3bc0ebb66e34963e5"
@@ -26,16 +11,10 @@ tiktem = binascii.a2b_hex("00010004d15ea5e0d15ea5e0d15ea5e0d15ea5e0d15ea5e0d15ea
 tk = 0x140
 thekeyfile = None
 
-
-#Will constantly reference this socket object. Use a single letter.
-s = socket.socket()
-s.connect((HOST, PORT))
-
-#The % operator in package, "string",    does what printf() does by 
-#formatting the string with the variables given as parameters. 
-s.send(bytes("USER %s %s bla :%s\r\n" % (IDENTIFY, HOST, REALNAME), "UTF-8"))
-s.send(bytes("NICK %s\r\n" % NICKNAME, "UTF-8"))
-s.send(bytes("JOIN %s\r\n" % CHANNEL, "UTF-8"))
+def getUserNickname(userToken):
+	user = userToken.strip(":")
+	user = user.split("!")[0]
+	return user
 
 def processContent(titleID, key):
 	error = False
@@ -57,31 +36,38 @@ def processContent(titleID, key):
 	return error
 
 
-def getMessage(tokens, startingIndex):
+def getMessage(tokens, startingIndex = 3):
 	message = ""
-	for index in range(startingIndex, len(tokens)):
-		message += tokens[index] + " "
-	return message
+	for i in range(startingIndex, len(tokens)):
+		if (i == startingIndex):
+			tokens[i] = tokens[i].strip(":")
+		message += tokens[i].strip("\x01") + " "
+	return message.rstrip(" ")
 
-def sendMessage(recipient, message):
-	s.send(bytes("PRIVMSG %s :%s\r\n" % (recipient, message), "UTF-8"))
+def sendMessage(parent, recipient, message, mode):
+	if (mode == 0):
+		parent.s.send(bytes("PRIVMSG %s :%s\r\n" % (recipient, message), "UTF-8"))
+	elif (mode == 1):
+		parent.s.send(bytes("NOTICE %s :%s\r\n" % (recipient, message), "UTF-8"))
 
-def processMessage(thekeyfile, user, messageString):
-	messageTokens = messageString.split(" ")
-	messageTokens[0] = messageTokens[0].strip(":")
-	messageTokens.pop()
-	if (messageTokens[0] == ".help"):
-		sendMessage(CHANNEL, "Usage: .checkTicket [Your TitleID] [Your Title Key]", 0)
-		return False
-	if (messageTokens[0] == ".checkTicket"):
-		if (len(messageTokens) > 3 or len(messageTokens) < 3):
-			sendMessage(CHANNEL, "Usage: .checkTicket [Your TitleID] [Your Title Key]", 0)
+def version():
+	return "Tickets - v1.0"
+
+def plugin_main(parent, tokens):
+	#Most inefficient way of doing this.
+	user = tokens[0].strip(":")
+	message = getMessage(tokens, 3)
+	if (message == ".help"):
+		sendMessage(parent, parent.channel, ".checkTicket [Your TitleID] [Your Title Key] - Check if TitleID and TitleKey are all valid.", 0)
+	elif (message == ".checkTicket"):
+		if (len(message) > 3 or len(message) < 3):
+			sendMessage(parent, parent.channel, ".checkTicket [Your TitleID] [Your Title Key] - Check if TitleID and TitleKey are all valid.", 0)
 			return False
 		try:
-			if ((len(messageTokens[1]) != 16) or (len(messageTokens[2]) != 32)):
+			if ((len(message[1]) != 16) or (len(message[2]) != 32)):
 				raise ValueError
-			titleID = binascii.a2b_hex(messageTokens[1])
-			titleKey = binascii.a2b_hex(messageTokens[2])
+			titleID = binascii.a2b_hex(message[1])
+			titleKey = binascii.a2b_hex(message[2])
 
 			#if (thekeyfile == None):
 			#	print("Downloading encrypted title keys binary file from 3ds.nfshost.com...")
@@ -121,72 +107,9 @@ def processMessage(thekeyfile, user, messageString):
 			if (titleID != b""):
 				errorFlag = processContent(titleID, titleKey)
 				validity = "valid" if not (errorFlag) else "invalid"
-				sendMessage(user, "%s, this ticket is %s." % (user, validity), 1)
+				sendMessage(parent, user, "%s, this ticket is %s." % (user, validity), 1)
 		except FileNotFoundError as fileError:
-			sendMessage(user, "Unable to obtain key file.", 1)
+			sendMessage(parent, user, "Unable to obtain key file.", 1)
 		except Exception as error:
-			sendMessage(user, "%s, this ticket is %s. Error message: %s" % (user, "invalid", error), 1)
-	return True
-
-def getUserNickname(userToken):
-	user = userToken.strip(":")
-	user = user.split("!")[0]
-	return user
-
-def handlePing(tokens):
-	if (len(tokens) == 2):
-		if (tokens[0] != "PING"):
-			return
-		print("Sending PING PONG back.")
-		s.send(bytes("PONG %s\r\n" % tokens[1], "UTF-8"))
+			sendMessage(parent, user, "%s, this ticket is %s. Error message: %s" % (user, "invalid", error), 1)
 	return
-
-def handlePrivateMessage(thekeyfile, tokens):
-	if (tokens[1] == "PRIVMSG"):
-		try:
-			user = getUserNickname(tokens[0])
-			message = getMessage(tokens, 3)
-			if (user == "wedr" and message == ".quitBot"):
-				return True
-			processMessage(thekeyfile, user, message)
-		except Exception as error:
-			print(error)
-	return False
-
-
-def handleTokens(thekeyfile, tokens):
-	#PING protocol
-	#tokens[0] is the command, which is PING.
-	#tokens[1] is the sender.
-	#PING requires the bot to return PONG.
-	handlePing(tokens)
-
-	#PRIVMSG protocol
-	#tokens[0] gets the full user account. This needs to be stripped and splitted out.
-	#tokens[1] is the command. PRIVMSG is a command.
-	#tokens[2] is the channel or recipient name.
-	#tokens[3] is the full message with a leading colon. This needs to be stripped.
-	quitFlag = handlePrivateMessage(thekeyfile, tokens)
-
-	#End of Handling
-	return quitFlag
-
-
-def main():
-	sendMessage("wedr", "Hello world.", 0)
-	quitFlag = False
-	readBuffer = ""
-	while not quitFlag:
-		readBuffer = readBuffer + s.recv(1024).decode("UTF-8")
-		temp = str.split(readBuffer, "\n")
-		readBuffer = temp.pop()
-
-		for line in temp:
-			line = line.rstrip()
-			tokens = line.split(" ")
-			quitFlag = handleTokens(thekeyfile, tokens)
-
-
-main()
-			
-
