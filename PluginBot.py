@@ -5,6 +5,7 @@ import socket
 import string
 import importlib
 import atexit
+import threading
 from time import sleep
 
 import UserInput
@@ -16,7 +17,7 @@ def BYTE(message):
 	return bytes("%s\r\n" % message, "UTF-8")
 
 
-class PluginBot:
+class PluginBot(threading.Thread):
 	userInput = None
 	s = None
 	channel = ""
@@ -25,10 +26,9 @@ class PluginBot:
 	isRunning = False
 
 	def __init__(self):
+		super().__init__()
 		self.userInput = UserInput.UserInput(self)
-		self.connect()
 		self.loadPlugins()
-		self.isRunning = False
 		atexit.register(self.quit)
 
 	def connect(self):
@@ -44,29 +44,40 @@ class PluginBot:
 			self.s = socket.socket()
 		print("Connecting to host \"%s\" with port %d." % (host, port))
 		self.s.connect((host, port))
-		sleep(0.2)
-		print("Identifying as %s" % (realName))
+		sleep(0.5)
+		print("Starting bot main thread.")
+		self.start()
+		sleep(0.5)
+		print("Setting mode for %s" % (realName))
 		self.s.send(BYTE("USER %s %s unused :%s" % (identify, host, realName)))
-		sleep(0.2)
+		sleep(0.5)
 		print("Logging in using nickname.")
 		self.s.send(BYTE("NICK %s" % nickName))
-		sleep(0.2)
+		sleep(0.5)
+		print("Identifying...")
+		self.s.send(BYTE("PRIVMSG NickServ :identify %s" % identify))
+		sleep(0.5)
 		print("Joining %s" % self.channel)
 		self.s.send(BYTE("JOIN %s" % self.channel))
 		self.channels.append(self.channel)
-		sleep(0.2)
+		sleep(0.5)
 		print("Requesting Verbose mode.")
 		self.s.send(BYTE("PRIVMSG NickServ identify %s" % identify))
-		sleep(0.2)
+		sleep(0.5)
+		print("You can now type inside this command prompt/terminal.")
+		print("Type \"/help\" for all bot commands.")
 
 	def loadPlugins(self):
 		directory = os.getcwd()
 		pluginFiles = next(os.walk(directory + "/plugins"))[2]
 		self.loadedModules.clear()
 		for i in range(len(pluginFiles)):
-			name = pluginFiles
+			name = pluginFiles[i]
+			if (name == "template.py"):
+				continue
 			module = self.loadModule(str("plugins." + pluginFiles[i])[:-3])
 			self.loadedModules.append((name, module))
+		for i in range(len(self.loadedModules)):
 			if ("version" in dir(self.loadedModules[i][1])):
 				print(" --- %s" % self.loadedModules[i][1].version())
 			else:

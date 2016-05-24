@@ -47,6 +47,12 @@ class UserInput(threading.Thread):
 							print("Incorrect usage.")
 						else:
 							self.parent.switch(message[1])
+					elif (message[0] == "/help"):
+						print("1. Type anything to chat with others in %s." % self.parent.channel)
+						print("2. /help -- Bring up the bot commands.")
+						print("3. /j -- Join a new channel. Channel focus will switch over.")
+						print("4. /reload -- Reload all plugins. (Hotswapping is supported.)")
+						print("5. /quit -- Quit the bot.")
 					else:
 						self.parent.s.send(BYTE("PRIVMSG %s :%s" % (self.parent.channel, self.createMessage(message))))
 			except Exception as error:

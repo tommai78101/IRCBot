@@ -12,7 +12,7 @@ def getUser(token):
 	user = user.split("|")[0]
 	return user
 
-def getMessage(tokens, startingIndex):
+def getMessage(tokens, startingIndex = 3):
 	message = ""
 	for i in range(startingIndex, len(tokens)):
 		if (i == startingIndex):

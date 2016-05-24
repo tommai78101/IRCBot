@@ -46,6 +46,15 @@
     <Compile Include="PluginBot.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="plugins\ping.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="plugins\privmsg.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="plugins\updates.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="start.py">
       <SubType>Code</SubType>
     </Compile>

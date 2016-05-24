@@ -23,28 +23,23 @@ class WorkerThread(threading.Thread):
 def main(isTest):
 	if (isTest):
 		bot = PluginBot.PluginBot()
-		bot.run()
+		bot.connect()
 		bot.userInput.join()
 	else:
 		worker = WorkerThread()
 		worker.start()
-
 		print("Sleeping for 3 seconds.")
 		sleep(3)
-
 		print("Reloading plugin.")
 		worker.bot.reloadAll()
-
 		print("Sleeping for 2 seconds.")
 		sleep(2)
-
 		worker.stopBot()
 		print("Success!")
 
-		sys.exit(0)
+	sys.exit(0)
 	
 def test():
-	print(sys.argv)
 	checkFlag = True
 	for i in range(len(sys.argv)):
 		value = sys.argv[i]
