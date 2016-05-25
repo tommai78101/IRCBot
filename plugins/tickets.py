@@ -50,10 +50,10 @@ def plugin_main(parent, tokens):
 	user = tokens[0].strip(":")
 	message = getMessage(tokens, 3)
 	if (message == ".help"):
-		sendMessage(parent, parent.channel, ".checkTicket [Your TitleID] [Your Title Key] - Check if TitleID and TitleKey are all valid.", 0)
+		sendMessage(parent, tokens[2], ".checkTicket [Your TitleID] [Your Title Key] - Check if TitleID and TitleKey are all valid.", 0)
 	elif (message == ".checkTicket"):
 		if (len(message) > 3 or len(message) < 3):
-			sendMessage(parent, parent.channel, ".checkTicket [Your TitleID] [Your Title Key] - Check if TitleID and TitleKey are all valid.", 0)
+			sendMessage(parent, tokens[2], ".checkTicket [Your TitleID] [Your Title Key] - Check if TitleID and TitleKey are all valid.", 0)
 			return False
 		try:
 			if ((len(message[1]) != 16) or (len(message[2]) != 32)):

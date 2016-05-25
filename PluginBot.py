@@ -126,7 +126,7 @@ class PluginBot(threading.Thread):
 	def quit(self):
 		print("Quitting by closing window.")
 		if (self.s != None):
-			self.s.send(BYTE("PART %s Bot has left the scene.\r\n" % self.channel))
+			self.s.send(BYTE("PART %s :Bot has left the scene.\r\n" % self.channel))
 			self.s.send(BYTE("QUIT %s\r\n" % "Test"))
 		self.isRunning = False
 

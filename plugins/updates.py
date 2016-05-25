@@ -23,10 +23,10 @@ def parseCSVList(parent, csv, user, titleID, region, isOld3DS):
 				for index in range(2, len(lineTokens)):
 					if (lineTokens[index][0] != "v"):
 						print("Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]))
-						parent.s.send(PRIVMSG(parent.channel, "Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]), 0))
+						parent.s.send(PRIVMSG(tokens[2], "Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]), 0))
 						return
 		print("Failed to locate titleID or region for %s. Required firmware version may not exist." % ("O3DS" if isOld3DS else "N3DS"))
-		parent.s.send(PRIVMSG(parent.channel, "Cannot locate titleID or region for %s. Required firmware version may not exist." % ("O3DS" if isOld3DS else "N3DS"), 0))
+		parent.s.send(PRIVMSG(tokens[2], "Cannot locate titleID or region for %s. Required firmware version may not exist." % ("O3DS" if isOld3DS else "N3DS"), 0))
 	else:
 		print("Incorrect CSV List: " + csvList)
 		parent.s.send(PRIVMSG(user, "This bot encountered a bug. Please report to wedr to fix this.", 1))
@@ -55,11 +55,11 @@ def handlePrivateMessage(parent, user, message):
 				except Exception as error:
 					frameinfo = getframeinfo(currentframe())
 					print("Cannot parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)))
-					parent.s.send(PRIVMSG(parent.channel, "Unable to parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)), 0))
+					parent.s.send(PRIVMSG(tokens[2], "Unable to parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)), 0))
 			else:
 				parent.s.send(PRIVMSG(user, "Incorrect Title ID.", 1))
 		else:
-			parent.s.send(PRIVMSG(parent.channel, ".lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 0))
+			parent.s.send(PRIVMSG(tokens[2], ".lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 0))
 	elif (temp == ".help"):
 		parent.s.send(PRIVMSG(user, ".lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 1))
 		parent.s.send(PRIVMSG(user, ".explain - Returns explanation of WedrBot.", 1))
