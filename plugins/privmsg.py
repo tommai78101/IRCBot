@@ -12,7 +12,6 @@ def plugin_main(parent, tokens):
 	#tokens[1] is the command. PRIVMSG is a command.
 	#tokens[2] is the channel or recipient name.
 	#tokens[3] is the full message with a leading colon. This needs to be stripped.
-	print(tokens)
 	if (len(tokens) > 1 and tokens[1] == "PRIVMSG"):
 		if (len(tokens) > 2 and tokens[3] == ":\x01VERSION\x01"):
 			print("Sending VERSION")
@@ -22,6 +21,6 @@ def plugin_main(parent, tokens):
 			message = getMessage(tokens, 3)
 			recipient = tokens[2]
 			try:
-				print("%s: %s" % (caller, message))
+				print("<%s> %s: %s" % (tokens[2], caller, message))
 			except Exception as error:
 				print("Plugin Error: ", error)

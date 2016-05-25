@@ -57,13 +57,12 @@ def version():
 	return "Quotes - v1.0"
 
 def plugin_main(parent, tokens):
-	#Blocking channels.
-	if (tokens[2] == "#3dshacks"):
-		return
-
 	tokens[0] = getUser(tokens)
 	message = getMessage(tokens)
 	if (len(tokens) > 3):
+		#Blocking channels.
+		if (tokens[2] == "#3dshacks"):
+			return
 		if (tokens[3] == ".wedr"):
 			if (len(tokens) > 4):
 				if (tokens[4] == "add"):

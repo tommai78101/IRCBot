@@ -43,13 +43,18 @@ def getMessage(tokens, startingIndex = 3):
 class PluginBot(threading.Thread):
 	userInput = None
 	s = None
-	channel = ""
+	focusedChannel = ""
 	channels = []
 	loadedModules = []
 	isRunning = False
 
 	def __init__(self):
 		super().__init__()
+		print()
+		print("┌------------------------------------┐")
+		print("|   IRC Client + Plugins Bot  v1.0   |")
+		print("└------------------------------------┘")
+		print()
 		self.userInput = UserInput.UserInput(self)
 		self.loadPlugins()
 		atexit.register(self.quit)
@@ -57,7 +62,7 @@ class PluginBot(threading.Thread):
 	def connect(self):
 		host = "irc.rizon.net"
 		port = random.randrange(6667, 6669)
-		self.channel = "#wedrbot" if DEBUG else "#3dshacks"
+		self.focusedChannel = "#wedrbot" if DEBUG else "#3dshacks"
 		realName = "WedrPython3Bot"
 		identify = "a1b2c3d4"
 		nickName = "WedrBot"
@@ -80,15 +85,18 @@ class PluginBot(threading.Thread):
 		print("Identifying...")
 		self.s.send(BYTE("PRIVMSG NickServ :identify %s" % identify))
 		sleep(0.5)
-		print("Joining %s" % self.channel)
-		self.s.send(BYTE("JOIN %s" % self.channel))
-		self.channels.append(self.channel)
+		print("Joining %s" % self.focusedChannel)
+		self.s.send(BYTE("JOIN %s" % self.focusedChannel))
+		self.channels.append(self.focusedChannel)
 		sleep(0.5)
 		print("Requesting Verbose mode.")
 		self.s.send(BYTE("PRIVMSG NickServ identify %s" % identify))
 		sleep(0.5)
 		print("You can now type inside this command prompt/terminal.")
 		print("Type \"/help\" for all bot commands.")
+		print()
+		print("--------------------------------------")
+		print()
 
 	def loadPlugins(self):
 		print("Loading plugins from /plugins folder:")
@@ -108,7 +116,7 @@ class PluginBot(threading.Thread):
 				print(" --- %s - No plugin version specified." % self.loadedModules[i][0])
 		print("All plugins loaded successfully.")
 		print()
-		print("------------------------------------")
+		print("--------------------------------------")
 		print()
 
 	def loadModule(self, name):
@@ -126,8 +134,10 @@ class PluginBot(threading.Thread):
 	def quit(self):
 		print("Quitting by closing window.")
 		if (self.s != None):
-			self.s.send(BYTE("PART %s :Bot has left the scene.\r\n" % self.channel))
-			self.s.send(BYTE("QUIT %s\r\n" % "Test"))
+			while (len(self.channels) > 0):
+				self.s.send(BYTE("PART %s [Bot has left the scene.]" % self.channels[len(self.channels)-1]))
+				self.channels.pop()
+			self.s.send(BYTE("QUIT %s" % "Test"))
 		self.isRunning = False
 
 	def switch(self, newChannel):
@@ -140,13 +150,13 @@ class PluginBot(threading.Thread):
 				break
 		if (checkFlag):
 			print("Switching to channel %s" % newChannel)
-			self.channel = newChannel
+			self.focusedChannel = newChannel
 		else:
 			print("Joining and switching to channel %s" % newChannel)
 			if (self.s != None):
 				self.s.send(BYTE("JOIN %s" % newChannel))
 			self.channels.append(newChannel)
-			self.channel = newChannel
+			self.focusedChannel = newChannel
 
 	def run(self):
 		self.isRunning = True
