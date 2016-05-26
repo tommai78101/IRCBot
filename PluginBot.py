@@ -60,7 +60,7 @@ class PluginBot(threading.Thread):
 		atexit.register(self.quit)
 
 	def connect(self):
-		host = "chat.freenode.net" #"irc.rizon.net"
+		host = "irc.rizon.net" #"chat.freenode.net" #
 		port = 6667 #random.randrange(6667, 6669)
 		self.focusedChannel = "#wedrbot"
 		realName = "WedrPython3Bot"
