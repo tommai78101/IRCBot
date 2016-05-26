@@ -40,6 +40,9 @@
     <Compile Include="plugins\quotes.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="plugins\rip.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="plugins\tickets.py">
       <SubType>Code</SubType>
     </Compile>

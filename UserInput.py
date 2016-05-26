@@ -36,7 +36,6 @@ class UserInput(threading.Thread):
 				message = message.split(" ")
 				if (message[0] != ""):
 					if (message[0] == "/reload"):
-						print("Reloading all plugins.")
 						self.parent.reloadAll()
 					elif (message[0] == "/quit"):
 						print("Quitting.")

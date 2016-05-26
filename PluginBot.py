@@ -108,28 +108,45 @@ class PluginBot(threading.Thread):
 			if (name == "template.py"):
 				continue
 			module = self.loadModule(str("plugins." + pluginFiles[i])[:-3])
-			self.loadedModules.append((name, module))
-		for i in range(len(self.loadedModules)):
-			if ("version" in dir(self.loadedModules[i][1])):
-				print(" --- %s" % self.loadedModules[i][1].version())
+			if (module != ""):
+				self.loadedModules.append((name, module))
 			else:
-				print(" --- %s - No plugin version specified." % self.loadedModules[i][0])
-		print("All plugins loaded successfully.")
+				print(" --- %s - Invalid plugin." % name)
+		for i in range(len(self.loadedModules)):
+			print(" --- %s" % self.loadedModules[i][1].version())
 		print()
 		print("--------------------------------------")
 		print()
 
 	def loadModule(self, name):
-		return importlib.import_module(name)
+		temp = importlib.import_module(name)
+		if ("version" in dir(temp) and "plugin_main" in dir(temp)):
+			return temp
+		return ""
 
 	def reloadAll(self):
 		print("Reloading plugin")
 		for i in range(len(self.loadedModules)):
 			self.loadedModules[i] = (self.loadedModules[i][0], importlib.reload(self.loadedModules[i][1]))
-			if ("version" in dir(self.loadedModules[i][1])):
-				self.loadedModules[i][1].version()
+		directory = os.getcwd()
+		pluginFiles = next(os.walk(directory + "/plugins"))[2]
+		for i in range(len(pluginFiles)):
+			name = pluginFiles[i]
+			if (name == "template.py"):
+				continue
+			if (any(name in sub for sub in self.loadedModules)):
+				continue
+			module = self.loadModule(str("plugins." + pluginFiles[i])[:-3])
+			if (module != ""):
+				self.loadedModules.append((name, module))
 			else:
-				print("Plugin %s does not specify its version." % name)
+				print(" --- %s - Invalid plugin." % name)
+		for i in range(len(self.loadedModules)):
+			print(" --- %s" % self.loadedModules[i][1].version())
+		print()
+		print("--------------------------------------")
+		print()
+
 
 	def quit(self):
 		print("Quitting by closing window.")
