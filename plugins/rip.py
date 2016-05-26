@@ -2,6 +2,7 @@ from PluginBot import BYTE
 from PluginBot import PRIVMSG
 
 class RIP:
+	ripCount = 0
 	previousUser = ""
 ripObject = RIP()
 	
@@ -14,13 +15,23 @@ def plugin_main(parent, tokens):
 	if (len(tokens) > 3):
 		if (tokens[3] == ".rip"):
 			if (len(tokens) > 4):
-				parent.s.send(PRIVMSG(parent.focusedChannel, ".rip - Gives the last spoken user an empathetic message.", 0))
+				if (tokens[4] == "count"):
+					parent.s.send(PRIVMSG(tokens[2], "Total R.I.P. Count: %d" % ripObject.ripCount, 0))
+				elif (tokens[4] == "help"):
+					parent.s.send(PRIVMSG(tokens[0], ".rip - Gives the last spoken user an empathetic message.", 1))
+					parent.s.send(PRIVMSG(tokens[0], ".rip [USER] - Gives the USER an empathetic message.", 1))
+					parent.s.send(PRIVMSG(tokens[0], ".rip count - Shows the stats of total number of R.I.P.s.", 1))
+					parent.s.send(PRIVMSG(tokens[0], ".rip help - Show all .rip commands.", 1))
+				else:
+					ripObject.previousUser = tokens[4]
+					parent.s.send(PRIVMSG(tokens[2], " -  R.I.P. %s   :(" % ripObject.previousUser, 0))
+					ripObject.ripCount += 1
 			else:
 				if (ripObject.previousUser != ""):
-					parent.s.send(PRIVMSG(parent.focusedChannel, " -  R.I.P. %s   :(" % ripObject.previousUser, 0))			
+					ripObject.ripCount += 1
+					parent.s.send(PRIVMSG(tokens[2], " -  R.I.P. %s   :(" % ripObject.previousUser, 0))			
 		elif (tokens[3] == ".help"):
-			parent.s.send(PRIVMSG(tokens[0], ".rip - Gives the last spoken user an empathetic message.", 1))
-			
+			parent.s.send(PRIVMSG(tokens[0], ".rip help - Show all .rip commands.", 1))
 		else:
 			ripObject.previousUser = tokens[0]
 		
