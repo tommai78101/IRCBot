@@ -11,8 +11,8 @@ from time import sleep
 
 import UserInput
 
-global DEBUG
-DEBUG = True
+
+#For distribution, it will connect to #wedrbot.
 
 def BYTE(message):
 	return bytes("%s\r\n" % message, "UTF-8")
@@ -62,7 +62,7 @@ class PluginBot(threading.Thread):
 	def connect(self):
 		host = "irc.rizon.net"
 		port = random.randrange(6667, 6669)
-		self.focusedChannel = "#wedrbot" if DEBUG else "#3dshacks"
+		self.focusedChannel = "#wedrbot"
 		realName = "WedrPython3Bot"
 		identify = "a1b2c3d4"
 		nickName = "WedrBot"
