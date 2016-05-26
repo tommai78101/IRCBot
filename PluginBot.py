@@ -191,6 +191,9 @@ class PluginBot(threading.Thread):
 						for line in temp:
 							line = line.rstrip()
 							tokens = line.split(" ")
+							tokens[0] = getUser(tokens)
+							if (len(tokens) > 3):
+								tokens[3] = tokens[3][1:]
 							self.handleTokens(tokens)
 			except Exception:
 				traceback.print_tb(sys.exc_info()[2])

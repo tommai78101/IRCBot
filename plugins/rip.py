@@ -1,5 +1,6 @@
 from PluginBot import BYTE
 from PluginBot import PRIVMSG
+from PluginBot import getMessage
 
 class RIP:
 	ripCount = 0
@@ -24,7 +25,8 @@ def plugin_main(parent, tokens):
 					parent.s.send(PRIVMSG(tokens[0], ".rip help - Show all .rip commands.", 1))
 				else:
 					ripObject.previousUser = tokens[4]
-					parent.s.send(PRIVMSG(tokens[2], " -  R.I.P. %s   :(" % ripObject.previousUser, 0))
+					message = getMessage(tokens, 4)
+					parent.s.send(PRIVMSG(tokens[2], " -  R.I.P. %s   :(" % message, 0))
 					ripObject.ripCount += 1
 			else:
 				if (ripObject.previousUser != ""):

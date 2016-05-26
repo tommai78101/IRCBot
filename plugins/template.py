@@ -36,7 +36,7 @@ def plugin_main(parent, tokens):
 			print("Sending VERSION")
 			parent.s.send(BYTE("NOTICE %s :\x01VERSION WedrBot v1.0\x01" % tokens[0]))
 		else:
-			caller = getUser(tokens)
+			caller = tokens[0]
 			message = getMessage(tokens, 3)
 			recipient = tokens[2]
 			try:

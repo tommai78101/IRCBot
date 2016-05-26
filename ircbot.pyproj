@@ -31,6 +31,7 @@
     <Compile Include="PluginBot.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="plugins\afk.py" />
     <Compile Include="plugins\ping.py">
       <SubType>Code</SubType>
     </Compile>

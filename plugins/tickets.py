@@ -46,8 +46,7 @@ def version():
 	return "Tickets - v1.0"
 
 def plugin_main(parent, tokens):
-	#Most inefficient way of doing this.
-	user = tokens[0].strip(":")
+	user = tokens[0]
 	message = getMessage(tokens, 3)
 	if (message == ".help"):
 		sendMessage(parent, tokens[2], ".checkTicket [Your TitleID] [Your Title Key] - Check if TitleID and TitleKey are all valid.", 0)

@@ -17,9 +17,9 @@ def plugin_main(parent, tokens):
 			print("Sending VERSION")
 			parent.s.send(BYTE("NOTICE %s :\x01VERSION WedrBot v1.0\x01" % tokens[0]))
 		else:
-			caller = getUser(tokens)
-			message = getMessage(tokens, 3)
+			caller = tokens[0]
 			recipient = tokens[2]
+			message = getMessage(tokens, 3)
 			try:
 				print("<%s> %s: %s" % (tokens[2], caller, message))
 			except Exception as error:

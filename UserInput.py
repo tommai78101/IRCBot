@@ -56,5 +56,4 @@ class UserInput(threading.Thread):
 						self.parent.s.send(BYTE("PRIVMSG %s :%s" % (self.parent.focusedChannel, self.createMessage(message))))
 			except Exception as error:
 				print(error)
-				self.isRunning = False
 		

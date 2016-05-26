@@ -57,7 +57,6 @@ def version():
 	return "Quotes - v1.0"
 
 def plugin_main(parent, tokens):
-	tokens[0] = getUser(tokens)
 	message = getMessage(tokens)
 	if (len(tokens) > 3):
 		#Blocking channels.
