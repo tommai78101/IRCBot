@@ -60,8 +60,8 @@ class PluginBot(threading.Thread):
 		atexit.register(self.quit)
 
 	def connect(self):
-		host = "irc.rizon.net"
-		port = random.randrange(6667, 6669)
+		host = "chat.freenode.net" #"irc.rizon.net"
+		port = 6667 #random.randrange(6667, 6669)
 		self.focusedChannel = "#wedrbot"
 		realName = "WedrPython3Bot"
 		identify = "a1b2c3d4"
@@ -177,6 +177,11 @@ class PluginBot(threading.Thread):
 							self.handleTokens(tokens)
 			except Exception:
 				traceback.print_tb(sys.exc_info()[2])
+		print("Closing socket...")
+		self.s.shutdown(socket.SHUT_RDWR)
+		sleep(0.5)
+		self.s.close()
+		atexit.unregister(self.quit)
 
 	def handleTokens(self, tokens):
 		for i in range(len(self.loadedModules)):

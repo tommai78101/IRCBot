@@ -25,6 +25,7 @@ def main(isTest):
 		bot = PluginBot.PluginBot()
 		bot.connect()
 		bot.userInput.join()
+		bot.join()
 	else:
 		worker = WorkerThread()
 		worker.start()
@@ -38,7 +39,6 @@ def main(isTest):
 		print("Success!")
 		sleep(1)
 
-	sys.exit(0)
 	
 def test():
 	checkFlag = True
