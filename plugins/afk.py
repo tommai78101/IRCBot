@@ -44,8 +44,10 @@ def plugin_main(parent, tokens):
 		elif (tokens[3] == ".help"):
 			parent.s.send(PRIVMSG(tokens[0], ".afk help - Get all .afk commands.", 1))
 		else:
-			message = getMessage(tokens).lower()
+			message = getMessage(tokens).strip(";:.,\'\"")
+			if (any(tokens[0] == a for a in afkObject.afkList)):
+				afkObject.removeUser(parent, tokens[2], tokens[0])
 			if (any(name in message for name in afkObject.afkList)):
-				parent.s.send(PRIVMSG(tokens[2], "I'm sorry, but the user is currently AFK.", 0))
+				parent.s.send(PRIVMSG(tokens[0], "I'm sorry, but the user is currently AFK.", 1))
 
 
