@@ -35,6 +35,9 @@
     <Compile Include="plugins\ping.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="plugins\pingsite.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="plugins\privmsg.py">
       <SubType>Code</SubType>
     </Compile>
