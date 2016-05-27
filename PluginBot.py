@@ -45,7 +45,7 @@ class PluginBot(threading.Thread):
 	s = None
 	focusedChannel = ""
 	channels = []
-	loadedModules = []
+	loadedModules = dict()
 	isRunning = False
 
 	def __init__(self):
@@ -56,7 +56,7 @@ class PluginBot(threading.Thread):
 		print("└------------------------------------┘")
 		print()
 		self.userInput = UserInput.UserInput(self)
-		self.loadPlugins()
+		self.reloadAll()
 		atexit.register(self.quit)
 
 	def connect(self):
@@ -98,26 +98,6 @@ class PluginBot(threading.Thread):
 		print("--------------------------------------")
 		print()
 
-	def loadPlugins(self):
-		print("Loading plugins from /plugins folder:")
-		directory = os.getcwd()
-		pluginFiles = next(os.walk(directory + "/plugins"))[2]
-		self.loadedModules.clear()
-		for i in range(len(pluginFiles)):
-			name = pluginFiles[i]
-			if (name == "template.py"):
-				continue
-			module = self.loadModule(str("plugins." + pluginFiles[i])[:-3])
-			if (module != ""):
-				self.loadedModules.append((name, module))
-			else:
-				print(" --- %s - Invalid plugin." % name)
-		for i in range(len(self.loadedModules)):
-			print(" --- %s" % self.loadedModules[i][1].version())
-		print()
-		print("--------------------------------------")
-		print()
-
 	def loadModule(self, name):
 		temp = importlib.import_module(name)
 		if ("version" in dir(temp) and "plugin_main" in dir(temp)):
@@ -125,24 +105,43 @@ class PluginBot(threading.Thread):
 		return ""
 
 	def reloadAll(self):
+		print()
 		print("Reloading plugin")
-		for i in range(len(self.loadedModules)):
-			self.loadedModules[i] = (self.loadedModules[i][0], importlib.reload(self.loadedModules[i][1]))
 		directory = os.getcwd()
 		pluginFiles = next(os.walk(directory + "/plugins"))[2]
-		for i in range(len(pluginFiles)):
-			name = pluginFiles[i]
-			if (name == "template.py"):
-				continue
-			if (any(name in sub for sub in self.loadedModules)):
-				continue
-			module = self.loadModule(str("plugins." + pluginFiles[i])[:-3])
-			if (module != ""):
-				self.loadedModules.append((name, module))
-			else:
-				print(" --- %s - Invalid plugin." % name)
-		for i in range(len(self.loadedModules)):
-			print(" --- %s" % self.loadedModules[i][1].version())
+		if (len(pluginFiles) > len(self.loadedModules)):
+			for i in range(len(pluginFiles)):
+				name = pluginFiles[i]
+				if (name == "template.py"):
+					continue
+				if (name in self.loadedModules and name in pluginFiles):
+					self.loadedModules[name] = importlib.reload(self.loadedModules[name])
+				elif (name in self.loadedModules and not name in pluginFiles):
+					del self.loadedModules[name]
+				else:
+					module = self.loadModule(str("plugins." + name)[:-3])
+					if (module != ""):
+						self.loadedModules[name] = module
+					else:
+						print(" --- %s - Invalid plugin." % name)
+		else:
+			tempList = []
+			for i in self.loadedModules:
+				check = False
+				for name in pluginFiles:
+					if (i == name and name != "template.py"):
+						check = True
+						break
+				if (check):
+					self.loadedModules[i] = importlib.reload(self.loadedModules[i])
+				else:
+					tempList.append(i)
+			for i in tempList:
+				del self.loadedModules[i]
+					
+
+		for i in self.loadedModules:
+			print(" --- %s" % self.loadedModules[i].version())
 		print()
 		print("--------------------------------------")
 		print()
@@ -204,6 +203,6 @@ class PluginBot(threading.Thread):
 		atexit.unregister(self.quit)
 
 	def handleTokens(self, tokens):
-		for i in range(len(self.loadedModules)):
-			if ("plugin_main" in dir(self.loadedModules[i][1])):
-				self.loadedModules[i][1].plugin_main(self, tokens)
+		for i in self.loadedModules:
+			if ("plugin_main" in dir(self.loadedModules[i])):
+				self.loadedModules[i].plugin_main(self, tokens)
