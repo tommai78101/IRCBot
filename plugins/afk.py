@@ -26,6 +26,8 @@ def version():
 	return "Away From Keyboard - v1.0"
 
 def plugin_main(parent, tokens):
+	if ((len(tokens) > 2) and (tokens[2] == "#3dshacks" or tokens[2] == "#3dshacks-ot")):
+		return
 	if (len(tokens) > 3):
 		if (tokens[3] == ".afk"):
 			if (len(tokens) > 4):
