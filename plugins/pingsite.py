@@ -7,7 +7,9 @@ def version():
 def plugin_main(parent, tokens):
 	if (len(tokens) > 4 and tokens[3] == ".pingtest"):
 		url = tokens[4]
-		if (url[0:3] == "www"):
+		if (url[0:3] != "www"):
+			url = "https://www.%s" % url
+		elif (url[0:3] == "www"):
 			url = "https://%s" % url
 		try:
 			requestURL = request.Request(url)
