@@ -156,6 +156,15 @@ class PluginBot(threading.Thread):
 			self.s.send(BYTE("QUIT %s" % "Test"))
 		self.isRunning = False
 
+	def leave(self, channel, isKicked):
+		if (channel in self.channels):
+			if (isKicked):
+				self.s.send(BYTE("PART %s :%s" % (channel, "I am leaving.")))
+			self.channels.remove(channel)
+			print("Bot has left the channel, %s" % channel)
+		else:
+			print("Bot has already left the channel, %s" % channel)
+
 	def switch(self, newChannel):
 		if (newChannel[0] != "#"):
 			newChannel = "#%s" % newChannel
@@ -205,4 +214,7 @@ class PluginBot(threading.Thread):
 	def handleTokens(self, tokens):
 		for i in self.loadedModules:
 			if ("plugin_main" in dir(self.loadedModules[i])):
-				self.loadedModules[i].plugin_main(self, tokens)
+				try:
+					self.loadedModules[i].plugin_main(self, tokens)
+				except Exception as error:
+					print("%s: %s" % (i, error))
