@@ -32,6 +32,12 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="plugins\afk.py" />
+    <Compile Include="plugins\cheat_saltbot.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="plugins\kick.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="plugins\ping.py">
       <SubType>Code</SubType>
     </Compile>
