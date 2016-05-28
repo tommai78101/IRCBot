@@ -1,9 +1,14 @@
+import codecs
+
 from PluginBot import BYTE
 from PluginBot import PRIVMSG
 from PluginBot import getUser
 from PluginBot import getMessage
 
+
+
 def version():
+	codecs.register(lambda name: codecs.lookup("utf-8") if name == "cp65001" else None)
 	return "PrivMsg - v1.0"
 
 def plugin_main(parent, tokens):
@@ -20,7 +25,4 @@ def plugin_main(parent, tokens):
 			caller = tokens[0]
 			recipient = tokens[2]
 			message = getMessage(tokens, 3)
-			try:
-				print("<%s> %s: %s" % (tokens[2], caller, message))
-			except Exception as error:
-				print("Plugin Error: ", error)
+			print("<%s> %s: %s" % (tokens[2], caller, message))
