@@ -20,9 +20,12 @@ class CheckFlag(Thread):
 		self.channel = channel
 
 	def run(self):
-		sleep(2 + (randint(1, 3) / 3))
+		print("Waiting.")
+		sleep(4 + (randint(1, 15) / 3))
+		print("Any actions afterwards? ", myFlag.flag)
 		if (myFlag.flag == False):
-			self.parent.s.send(PRIVMSG(self.channel, ",bef", 0))
+			print("sending.")
+			self.parent.s.send(PRIVMSG(self.channel, "@bef", 0))
 
 
 
@@ -31,10 +34,10 @@ def version():
 	return "This is a temp cheat bot. - 0.1"
 
 def plugin_main(parent, tokens):
-	if (any(",bef" in a for a in tokens) or any(",bang" in a for a in tokens)):
+	if (any("@bef" in a for a in tokens) or any("@bang" in a for a in tokens)):
 		print("Duck Taken.")
 		myFlag.flag = True
-	elif ((any("\\_" in a for a in tokens) or any("\\?_" in a for a in tokens)) and not myFlag.flag and (tokens[0] == "SaltBot")):
+	elif ((any("\\_" in a for a in tokens) or any("\\?_" in a for a in tokens)) and not myFlag.flag and (tokens[0] == "Saltbot")):
 		print("Detected Saltbot")
 		checkFlag = CheckFlag(parent, tokens[2])
 		myFlag.flag = False
