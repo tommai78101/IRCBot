@@ -151,9 +151,9 @@ class PluginBot(threading.Thread):
 		print("Quitting by closing window.")
 		if (self.s != None):
 			while (len(self.channels) > 0):
-				self.s.send(BYTE("PART %s [Bot has left the scene.]" % self.channels[len(self.channels)-1]))
+				self.s.send(BYTE("PART %s :[Bot has left the scene.]" % self.channels[len(self.channels)-1]))
 				self.channels.pop()
-			self.s.send(BYTE("QUIT %s" % "Test"))
+			self.s.send(BYTE("QUIT %s :%s" % ("Test", "Hello world.")))
 		self.isRunning = False
 
 	def leave(self, channel, isKicked):
@@ -163,7 +163,7 @@ class PluginBot(threading.Thread):
 			self.channels.remove(channel)
 			print("Bot has left the channel, %s" % channel)
 		else:
-			print("Bot has already left the channel, %s" % channel)
+			print("Channel, %s, does not exist." % channel)
 
 	def switch(self, newChannel):
 		if (newChannel[0] != "#"):
