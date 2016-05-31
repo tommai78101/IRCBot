@@ -200,8 +200,9 @@ class PluginBot(threading.Thread):
 							line = line.rstrip()
 							tokens = line.split(" ")
 							tokens[0] = getUser(tokens)
-							if (len(tokens) > 3):
-								tokens[3] = tokens[3][1:]
+							index = self.getStartingIndex(line)
+							if (len(tokens) > index):
+								tokens[index] = tokens[index][1:]
 							self.handleTokens(tokens)
 			except Exception:
 				traceback.print_tb(sys.exc_info()[2])
@@ -210,6 +211,13 @@ class PluginBot(threading.Thread):
 		sleep(0.5)
 		self.s.close()
 		atexit.unregister(self.quit)
+
+	def getStartingIndex(self, tokens):
+		startingIndex = 1
+		tokens = tokens.split(" ")
+		while (startingIndex < len(tokens)-1 and tokens[startingIndex][0] != ":"):
+			startingIndex += 1
+		return startingIndex
 
 	def handleTokens(self, tokens):
 		for i in self.loadedModules:
