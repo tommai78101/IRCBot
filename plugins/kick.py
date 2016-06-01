@@ -11,3 +11,4 @@ def plugin_main(parent, tokens):
 	if (len(tokens) > 3):
 		if (tokens[1] == "KICK" and tokens[3] == "WedrBot"):
 			parent.leave(tokens[2], True)
+			print("WedrBot is kicked from channel, %s" % tokens[2])
