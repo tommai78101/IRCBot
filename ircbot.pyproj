@@ -6,7 +6,7 @@
     <ProjectGuid>99d00902-082d-486c-b747-d6db61f50508</ProjectGuid>
     <ProjectHome>
     </ProjectHome>
-    <StartupFile>start.py</StartupFile>
+    <StartupFile>gui.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -28,6 +28,9 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="gui.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="PluginBot.py">
       <SubType>Code</SubType>
     </Compile>
