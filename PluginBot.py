@@ -47,14 +47,24 @@ class PluginBot(threading.Thread):
 	channels = []
 	loadedModules = dict()
 	isRunning = False
+	guiParent = None
 
-	def __init__(self):
+	def __init__(self, gui = None):
 		super().__init__()
-		print()
-		print("┌------------------------------------┐")
-		print("|   IRC Client + Plugins Bot  v1.0   |")
-		print("└------------------------------------┘")
-		print()
+		if (gui != None):
+			self.guiParent = gui
+			self.guiParent.print()
+			self.guiParent.print("┌------------------------------------┐")
+			self.guiParent.print("|   IRC Client + Plugins Bot  v1.0   |")
+			self.guiParent.print("└------------------------------------┘")
+			self.guiParent.print()
+		else:
+			print()
+			print("┌------------------------------------┐")
+			print("|   IRC Client + Plugins Bot  v1.0   |")
+			print("└------------------------------------┘")
+			print()
+
 		self.userInput = UserInput.UserInput(self)
 		self.reloadAll()
 		atexit.register(self.quit)
@@ -70,33 +80,55 @@ class PluginBot(threading.Thread):
 
 		if (self.s == None):
 			self.s = socket.socket()
-		print("Connecting to host \"%s\" with port %d." % (host, port))
+		if (self.guiParent != None):
+			self.guiParent.print("Connecting to host \"%s\" with port %d." % (host, port))
+		else:
+			print("Connecting to host \"%s\" with port %d." % (host, port))
 		self.s.connect((host, port))
 		sleep(0.5)
-		print("Starting bot main thread.")
-		self.start()
-		sleep(0.5)
-		print("Setting mode for %s" % (realName))
+		if (self.guiParent != None):
+			self.guiParent.print("Setting mode for %s" % (realName))
+		else:
+			print("Setting mode for %s" % (realName))
 		self.s.send(BYTE("USER %s %s unused :%s" % (identify, host, realName)))
 		sleep(0.5)
-		print("Logging in using nickname.")
+		if (self.guiParent != None):
+			self.guiParent.print("Logging in using nickname.")
+		else:
+			print("Logging in using nickname.")
 		self.s.send(BYTE("NICK %s" % nickName))
 		sleep(0.5)
-		print("Identifying...")
+		if (self.guiParent != None):
+			self.guiParent.print("Identifying...")
+		else:
+			print("Identifying...")
 		self.s.send(BYTE("PRIVMSG NickServ :identify %s" % identify))
 		sleep(0.5)
-		print("Joining %s" % self.focusedChannel)
+		if (self.guiParent != None):
+			self.guiParent.print("Joining %s" % self.focusedChannel)
+		else:
+			print("Joining %s" % self.focusedChannel)
 		self.s.send(BYTE("JOIN %s" % self.focusedChannel))
 		self.channels.append(self.focusedChannel)
 		sleep(0.5)
-		print("Requesting Verbose mode.")
+		if (self.guiParent != None):
+			self.guiParent.print("Requesting Verbose mode.")
+		else:
+			print("Requesting Verbose mode.")
 		self.s.send(BYTE("PRIVMSG NickServ identify %s" % identify))
 		sleep(0.5)
-		print("You can now type inside this command prompt/terminal.")
-		print("Type \"/help\" for all bot commands.")
-		print()
-		print("--------------------------------------")
-		print()
+		if (self.guiParent != None):
+			self.guiParent.print("You can now type inside this command prompt/terminal.")
+			self.guiParent.print("Type \"/help\" for all bot commands.")
+			self.guiParent.print()
+			self.guiParent.print("--------------------------------------")
+			self.guiParent.print()
+		else:
+			print("You can now type inside this command prompt/terminal.")
+			print("Type \"/help\" for all bot commands.")
+			print()
+			print("--------------------------------------")
+			print()
 
 	def loadModule(self, name):
 		temp = importlib.import_module(name)
@@ -105,8 +137,12 @@ class PluginBot(threading.Thread):
 		return ""
 
 	def reloadAll(self):
-		print()
-		print("Reloading plugin")
+		if (self.guiParent != None):
+			self.guiParent.print()
+			self.guiParent.print("Reloading plugin")
+		else:
+			print()
+			print("Reloading plugin")
 		directory = os.getcwd()
 		pluginFiles = next(os.walk(directory + "/plugins"))[2]
 		if (len(pluginFiles) > len(self.loadedModules)):
@@ -123,7 +159,10 @@ class PluginBot(threading.Thread):
 					if (module != ""):
 						self.loadedModules[name] = module
 					else:
-						print(" --- %s - Invalid plugin." % name)
+						if (self.guiParent != None):
+							self.guiParent.print(" --- %s - Invalid plugin." % name)
+						else:
+							print(" --- %s - Invalid plugin." % name)
 		else:
 			tempList = []
 			for i in self.loadedModules:
@@ -141,10 +180,19 @@ class PluginBot(threading.Thread):
 					
 
 		for i in self.loadedModules:
-			print(" --- %s" % self.loadedModules[i].version())
-		print()
-		print("--------------------------------------")
-		print()
+			if (self.guiParent != None):
+				self.guiParent.print(" --- %s" % self.loadedModules[i].version())
+			else:
+				print(" --- %s" % self.loadedModules[i].version())
+
+		if (self.guiParent != None):
+			self.guiParent.print()
+			self.guiParent.print("--------------------------------------")
+			self.guiParent.print()
+		else:
+			print()
+			print("--------------------------------------")
+			print()
 
 
 	def quit(self):

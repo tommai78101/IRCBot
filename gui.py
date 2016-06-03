@@ -1,9 +1,12 @@
 import tkinter
 import tkinter.scrolledtext
+from PluginBot import PluginBot
+
 
 class GUI:
 	root = None
 	textOutput = None
+	bot = None
 
 	def __init__(self):
 		self.root = tkinter.Tk()
@@ -29,8 +32,22 @@ class GUI:
 		userInputFrame.grid_columnconfigure(0, weight = 1)
 		userInputFrame.grid_columnconfigure(1, weight = 7)
 
+		self.bot = PluginBot(self)
+		self.bot.connect()
+		self.print("Starting bot main thread.")
+		self.bot.start()
+		
 
 	def run(self):
 		self.root.mainloop()
+		self.bot.userInput.join()
+		self.bot.join()
 
-GUI().run()
+	def print(self, text = ""):
+		if (text == ""):
+			self.textOutput.insert(tkinter.END, "\n")
+		else:
+			self.textOutput.insert(tkinter.END, "\n%s" % text)
+
+myGUI = GUI()
+myGUI.run()
