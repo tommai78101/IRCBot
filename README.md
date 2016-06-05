@@ -1,5 +1,7 @@
 # IRC Bot + Client  [![Build Status](https://travis-ci.org/tommai78101/IRCBot.svg?branch=master)](https://travis-ci.org/tommai78101/IRCBot)
 
+![](http://i.imgur.com/xmM2oTC.gif)
+
 ### Description:
 
 This is an internet relay chat (IRC) bot written in Python 3.5.1, using Visual Studio 2015 Community as the primary IDE for Python. This bot can also act as an IRC client that the user can interact with others with.
