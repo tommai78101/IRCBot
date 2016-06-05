@@ -1,4 +1,5 @@
 import codecs
+import tkinter
 
 from PluginBot import BYTE
 from PluginBot import PRIVMSG
@@ -26,3 +27,6 @@ def plugin_main(parent, tokens):
 			recipient = tokens[2]
 			message = getMessage(tokens, 3)
 			print("<%s> %s: %s" % (tokens[2], caller, message))
+			if (parent.guiParent != None):
+				parent.guiParent.print(text = "<%s> %s: %s" % (recipient, caller, message))
+				parent.guiParent.textOutput.see(tkinter.END)
