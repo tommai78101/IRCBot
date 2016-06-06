@@ -3,6 +3,7 @@ import atexit
 import string
 import importlib
 import threading
+import socket
 from time import sleep
 
 def BYTE(message):
@@ -74,6 +75,12 @@ class UserInput(threading.Thread):
 						print("6. /q or /quit -- Quit the bot.")
 					else:
 						self.parent.s.send(BYTE("PRIVMSG %s :%s" % (self.parent.focusedChannel, self.createMessage(message))))
+			except WindowsError as winError:
+				print(winError)
+				if (self.parent.s != None):
+					self.parent.s.close(socket.SHUT_RDWR)
+					self.parent.s = None
+				self.parent.connect()
 			except Exception as error:
 				print(error)
 		

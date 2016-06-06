@@ -81,30 +81,35 @@ class PluginBot(threading.Thread):
 
 		if (self.s == None):
 			self.s = socket.socket()
+
 		if (self.guiParent != None):
 			self.guiParent.print("Connecting to host \"%s\" with port %d." % (host, port))
 		else:
 			print("Connecting to host \"%s\" with port %d." % (host, port))
 		self.s.connect((host, port))
 		sleep(0.5)
+
 		if (self.guiParent != None):
 			self.guiParent.print("Setting mode for %s" % (realName))
 		else:
 			print("Setting mode for %s" % (realName))
 		self.s.send(BYTE("USER %s %s unused :%s" % (identify, host, realName)))
 		sleep(0.5)
+
 		if (self.guiParent != None):
 			self.guiParent.print("Logging in using nickname.")
 		else:
 			print("Logging in using nickname.")
 		self.s.send(BYTE("NICK %s" % nickName))
 		sleep(0.5)
+
 		if (self.guiParent != None):
 			self.guiParent.print("Identifying...")
 		else:
 			print("Identifying...")
 		self.s.send(BYTE("PRIVMSG NickServ :identify %s" % identify))
 		sleep(0.5)
+
 		if (self.guiParent != None):
 			self.guiParent.print("Joining %s" % self.focusedChannel)
 		else:
@@ -112,12 +117,21 @@ class PluginBot(threading.Thread):
 		self.s.send(BYTE("JOIN %s" % self.focusedChannel))
 		self.channels.append(self.focusedChannel)
 		sleep(0.5)
+
 		if (self.guiParent != None):
 			self.guiParent.print("Requesting Verbose mode.")
 		else:
 			print("Requesting Verbose mode.")
 		self.s.send(BYTE("PRIVMSG NickServ identify %s" % identify))
 		sleep(0.5)
+
+		if (self.guiParent != None):
+			self.guiParent.print("Starting bot thread.")
+		else:
+			print("Starting bot thread.")
+			self.start()
+			sleep(0.5)
+
 		if (self.guiParent != None):
 			self.guiParent.print("You can now type inside this command prompt/terminal.")
 			self.guiParent.print("Type \"/help\" for all bot commands.")

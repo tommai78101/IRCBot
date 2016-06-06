@@ -50,20 +50,24 @@ class GUI:
 		self.root.mainloop()
 
 	def print(self, text = ""):
-		if (text == ""):
-			self.textOutput.insert(tkinter.END, "\n")
-		else:
+		if (text != ""):
 			self.textOutput.insert(tkinter.END, "\n%s" % text)
+		if (int(self.textOutput.index("end-1c").split(".")[0]) > 300):
+			self.textOutput.delete("0.0", "1.0")
+		self.textOutput.see(tkinter.END)
+
 
 	def sendMessage(self, event):
-		self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
-		self.print(text = "<%s> WedrBot: %s" % (self.bot.focusedChannel, self.entryMessage))
-		self.textOutput.see(tkinter.END)
-		self.entryMessage = ""
-		self.entry.delete(0, tkinter.END)
+		if (self.entryMessage != ""):
+			self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
+			self.print(text = "<%s> WedrBot: %s" % (self.bot.focusedChannel, self.entryMessage))
+			self.textOutput.see(tkinter.END)
+			self.entryMessage = ""
+			self.entry.delete(0, tkinter.END)
 
 	def getUserInput(self, event):
 		self.entryMessage = self.entry.get()
+		self.entry.delete(0, tkinter.END)
 
 	def entryCommand(self, event):
 		self.getUserInput(event)
@@ -96,5 +100,4 @@ class GUI:
 				self.print("6. /q or /quit -- Quit the bot.")
 			else:
 				self.sendMessage(event)
-		self.textOutput.see(tkinter.END)
 
