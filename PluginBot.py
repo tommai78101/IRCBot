@@ -65,7 +65,8 @@ class PluginBot(threading.Thread):
 			print("└------------------------------------┘")
 			print()
 
-		self.userInput = UserInput.UserInput(self)
+		if (self.guiParent == None):
+			self.userInput = UserInput.UserInput(self)
 		self.reloadAll()
 		atexit.register(self.quit)
 
