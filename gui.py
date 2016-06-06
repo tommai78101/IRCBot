@@ -98,5 +98,3 @@ class GUI:
 				self.sendMessage(event)
 		self.textOutput.see(tkinter.END)
 
-myGUI = GUI()
-myGUI.run()

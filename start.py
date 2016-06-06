@@ -4,6 +4,7 @@ import sys
 import pdb
 import PluginBot
 import threading
+import gui
 from time import sleep
 
 class WorkerThread(threading.Thread):
@@ -21,12 +22,12 @@ class WorkerThread(threading.Thread):
 
 
 def main(isTest):
-	if (isTest):
+	if (isTest == 0):
 		bot = PluginBot.PluginBot()
 		bot.connect()
 		bot.userInput.join()
 		bot.join()
-	else:
+	elif (isTest == 1):
 		worker = WorkerThread()
 		worker.start()
 		print("Sleeping for 3 seconds.")
@@ -38,15 +39,19 @@ def main(isTest):
 		worker.stopBot()
 		print("Success!")
 		sleep(1)
+	elif (isTest == 2):
+		myGUI = gui.GUI()
+		myGUI.run()
 
 	
 def test():
-	checkFlag = True
+	value = 0
 	for i in range(len(sys.argv)):
-		value = sys.argv[i]
-		if (value == "1"):
-			checkFlag = False
-	main(checkFlag)
+		try:
+			value = int(sys.argv[i])
+		except ValueError:
+			value = 0
+	main(value)
 
 if (__name__ == "__main__"):
 	#pdb.run("test()")
