@@ -1,8 +1,10 @@
 import tkinter
 import tkinter.scrolledtext
+
+from time import sleep
+
 from PluginBot import PluginBot
 from PluginBot import BYTE
-from time import sleep
 
 
 class GUI:
@@ -52,9 +54,15 @@ class GUI:
 	def print(self, text = ""):
 		if (text != ""):
 			self.textOutput.insert(tkinter.END, "\n%s" % text)
-		if (int(self.textOutput.index("end-1c").split(".")[0]) > 300):
-			self.textOutput.delete("0.0", "1.0")
-		self.textOutput.see(tkinter.END)
+			try:
+				indexCount = int(self.textOutput.index("%s-1c" % tkinter.END).split(".")[0])
+				if (indexCount > 300):
+					#Index number count starts from 1.0.
+					# X.Y:  X is the line number. Y is the character index of line X.
+					self.textOutput.delete("1.0", "2.0")
+			except Exception as err:
+				self.print(err)
+			self.textOutput.see(tkinter.END)
 
 
 	def sendMessage(self, event):
