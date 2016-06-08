@@ -1,4 +1,16 @@
 #This is a unit test script. It should be called outside of the program.
+
+#Default: GUI (parameter value = 0)
+
+#GUI           (Value: 2)     : User-friendly IRC bot client. Simple and minimalistic.
+#UNIT-TEST     (Value: 1)     : This is only for unit testing the bot client.
+#COMMANDLINE   (Value: 0)     : This is the bare-bone version of the IRC bot client.
+
+#Usage: $> python3 start.py [VALUE]
+#Definition:
+#	[VALUE]: The parameter value given above.
+
+
 import os
 import sys
 import pdb
@@ -45,14 +57,13 @@ def main(isTest):
 
 	
 def test():
-	value = 0
+	value = 2
 	for i in range(len(sys.argv)):
 		try:
 			value = int(sys.argv[i])
 		except ValueError:
-			value = 0
+			value = 2
 	main(value)
 
 if (__name__ == "__main__"):
-	#pdb.run("test()")
 	test()
