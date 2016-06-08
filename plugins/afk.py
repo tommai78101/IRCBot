@@ -36,15 +36,15 @@ def plugin_main(parent, tokens):
 				elif (tokens[4] == "leave" or tokens[4] == "l"):
 					afkObject.removeUser(parent, tokens[2], tokens[0])
 				elif (tokens[4] == "help"):
-					parent.s.send(PRIVMSG(tokens[0], ".afk join OR .afk j - Get yourself added to the AFK List.", 1))
-					parent.s.send(PRIVMSG(tokens[0], ".afk leave OR .afk l - Get yourself removed from the AFK List.", 1))
-					parent.s.send(PRIVMSG(tokens[0], ".afk help - Get all .afk commands.", 1))
+					parent.s.send(PRIVMSG(tokens[0], "USAGE: .afk join OR .afk j - Get yourself added to the AFK List.", 1))
+					parent.s.send(PRIVMSG(tokens[0], "USAGE: .afk leave OR .afk l - Get yourself removed from the AFK List.", 1))
+					parent.s.send(PRIVMSG(tokens[0], "USAGE: .afk help - Get all .afk commands.", 1))
 				else:
 					parent.s.send(PRIVMSG(tokens[2], "Invalid command. Type \".afk help\" for more info.", 0))
 			else:
 				parent.s.send(PRIVMSG(tokens[2], "Invalid command. Type \".afk help\" for more info.", 0))
 		elif (tokens[3] == ".help"):
-			parent.s.send(PRIVMSG(tokens[0], ".afk help - Get all .afk commands.", 1))
+			parent.s.send(PRIVMSG(tokens[0], "USAGE: .afk help - Get all .afk commands.", 1))
 		else:
 			message = getMessage(tokens).strip(";:.,\'\"")
 			if (any(tokens[0] == a for a in afkObject.afkList)):

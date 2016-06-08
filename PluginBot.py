@@ -260,13 +260,15 @@ class PluginBot(threading.Thread):
 						temp = readBuffer.split("\n")
 						readBuffer = temp.pop()
 						for line in temp:
-							line = line.rstrip()
-							tokens = line.split(" ")
-							tokens[0] = getUser(tokens)
-							index = self.getStartingIndex(line)
-							if (len(tokens) > index):
-								tokens[index] = tokens[index][1:]
-							self.handleTokens(tokens)
+							if (self.guiParent != None):
+								print(line)
+							#line = line.rstrip()
+							#tokens = line.split(" ")
+							#tokens[0] = getUser(tokens)
+							#index = self.getStartingIndex(line)
+							#if (len(tokens) > index):
+							#	tokens[index] = tokens[index][1:]
+							self.handleTokens(self.makeTokens(line))
 			except Exception:
 				traceback.print_tb(sys.exc_info()[2])
 		print("Closing socket...")
@@ -274,6 +276,15 @@ class PluginBot(threading.Thread):
 		sleep(0.5)
 		self.s.close()
 		atexit.unregister(self.quit)
+
+	def makeTokens(self, line):
+		line = line.rstrip()
+		tokens = line.split(" ")
+		tokens[0] = getUser(tokens)
+		index = self.getStartingIndex(line)
+		if (len(tokens) > index):
+			tokens[index] = tokens[index][1:]
+		return tokens
 
 	def getStartingIndex(self, tokens):
 		startingIndex = 1

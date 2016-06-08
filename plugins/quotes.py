@@ -73,7 +73,7 @@ def plugin_main(parent, tokens):
 						print("Quote has been added.")
 						parent.s.send(PRIVMSG(tokens[2], "Quote added.", 0))
 					else:
-						parent.s.send(PRIVMSG(tokens[2], ".wedr add <MESSAGE> - Add MESSAGE to Quotes List.", 0))
+						parent.s.send(PRIVMSG(tokens[2], "USAGE: .wedr add <MESSAGE> - Add MESSAGE to Quotes List.", 0))
 				elif (tokens[4].isnumeric()):
 					try:
 						quoteIndex = int(tokens[4])
@@ -104,20 +104,20 @@ def plugin_main(parent, tokens):
 					else:
 						if (len(quotesList) == 0):
 							print("Quotes List empty.")
-							parent.s.send(PRIVMSG(tokens[2], ".wedr remove <INDEX> - Remove MESSAGE matching INDEX from Quotes List. Quotes List is currently empty.", 0))
+							parent.s.send(PRIVMSG(tokens[2], "USAGE: .wedr remove <INDEX> - Remove MESSAGE matching INDEX from Quotes List. Quotes List is currently empty.", 0))
 						else:
 							print("Index not given.")
-							parent.s.send(PRIVMSG(tokens[2], ".wedr remove <INDEX> - Remove MESSAGE matching INDEX (range: 1 to %d) from Quotes List." % (len(quotesList)), 0))
+							parent.s.send(PRIVMSG(tokens[2], "USAGE: .wedr remove <INDEX> - Remove MESSAGE matching INDEX (range: 1 to %d) from Quotes List." % (len(quotesList)), 0))
 				elif (tokens[4] == "capacity" or tokens[4] == "size"):
 					print("Showing quotes list size.")
 					parent.s.send(PRIVMSG(tokens[2], "Quotes List size : %d" % (len(quotesList)), 0))
 				elif (tokens[4] == "help"):
-					parent.s.send(PRIVMSG(tokens[0], ".wedr add <MESSAGE> - Add MESSAGE to Quotes List.", 1))
-					parent.s.send(PRIVMSG(tokens[0], ".wedr remove <INDEX> - Removes quote from Quotes List.", 1))
-					parent.s.send(PRIVMSG(tokens[0], ".wedr <INDEX> - Outputs quote from Quotes List.", 1))
-					parent.s.send(PRIVMSG(tokens[0], ".wedr size - Outputs quote list size from Quotes List.", 1))
-					parent.s.send(PRIVMSG(tokens[0], ".wedr capacity - Outputs quote list size from Quotes List.", 1))
-					parent.s.send(PRIVMSG(tokens[0], ".wedr help - Brings up all commands and descriptions.", 1))
+					parent.s.send(PRIVMSG(tokens[0], "USAGE: .wedr add <MESSAGE> - Add MESSAGE to Quotes List.", 1))
+					parent.s.send(PRIVMSG(tokens[0], "USAGE: .wedr remove <INDEX> - Removes quote from Quotes List.", 1))
+					parent.s.send(PRIVMSG(tokens[0], "USAGE: .wedr <INDEX> - Outputs quote from Quotes List.", 1))
+					parent.s.send(PRIVMSG(tokens[0], "USAGE: .wedr size - Outputs quote list size from Quotes List.", 1))
+					parent.s.send(PRIVMSG(tokens[0], "USAGE: .wedr capacity - Outputs quote list size from Quotes List.", 1))
+					parent.s.send(PRIVMSG(tokens[0], "USAGE: .wedr help - Brings up all commands and descriptions.", 1))
 				elif (tokens[4] == "save"):
 					save()
 					print("Quotes List saved.")
@@ -128,7 +128,7 @@ def plugin_main(parent, tokens):
 					parent.s.send(PRIVMSG(tokens[2], "Quotes List is loaded.", 0))
 			else:
 				print("Incorrect usage detected.")
-				parent.s.send(PRIVMSG(tokens[0], ".wedr <Command> - Type \".wedr help\" for more info.", 1))
+				parent.s.send(PRIVMSG(tokens[0], "USAGE: .wedr <Command> - Type \".wedr help\" for more info.", 1))
 		elif (tokens[3] == ".help"):
 			print("Requiring help detected.")
-			parent.s.send(PRIVMSG(tokens[0], ".wedr <Command> - Type \".wedr help\" for more info.", 1))
+			parent.s.send(PRIVMSG(tokens[0], "USAGE: .wedr <Command> - Type \".wedr help\" for more info.", 1))
