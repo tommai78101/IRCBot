@@ -27,10 +27,11 @@ def plugin_main(parent, tokens):
 				caller = tokens[0]
 				recipient = tokens[2]
 				message = getMessage(tokens, 3)
-				print("<%s> %s: %s" % (tokens[2], caller, message))
 				if (parent.guiParent != None):
 					parent.guiParent.print(text = "<%s> %s: %s" % (recipient, caller, message))
 					parent.guiParent.textOutput.see(tkinter.END)
+				else:
+					print("<%s> %s: %s" % (tokens[2], caller, message))
 		elif (tokens[1] == "NOTICE"):
 			caller = tokens[0]
 			recipient = tokens[2]
@@ -39,4 +40,4 @@ def plugin_main(parent, tokens):
 				parent.guiParent.print(text = "<%s> -%s-: %s" % (recipient, caller, message))
 				parent.guiParent.textOutput.see(tkinter.END)
 			else:
-				print("<%s> %s: %s" % (tokens[2], caller, message))
+				print("<%s> -%s-: %s" % (tokens[2], caller, message))

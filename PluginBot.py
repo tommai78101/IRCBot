@@ -262,12 +262,6 @@ class PluginBot(threading.Thread):
 						for line in temp:
 							if (self.guiParent != None):
 								print(line)
-							#line = line.rstrip()
-							#tokens = line.split(" ")
-							#tokens[0] = getUser(tokens)
-							#index = self.getStartingIndex(line)
-							#if (len(tokens) > index):
-							#	tokens[index] = tokens[index][1:]
 							self.handleTokens(self.makeTokens(line))
 			except Exception:
 				traceback.print_tb(sys.exc_info()[2])
