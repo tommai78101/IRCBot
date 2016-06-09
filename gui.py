@@ -16,9 +16,10 @@ class GUI:
 
 	def __init__(self):
 		self.root = tkinter.Tk()
+		self.root.title("WedrBot - IRC Bot Client")
 
-		width = 450
-		height = 150
+		width = 650
+		height = 500
 		self.root.minsize(width, height)
 
 		logMessageFrame = tkinter.Frame(master = self.root)
