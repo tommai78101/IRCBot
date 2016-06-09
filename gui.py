@@ -23,12 +23,12 @@ class GUI:
 		self.root.minsize(width, height)
 
 		logMessageFrame = tkinter.Frame(master = self.root)
-		logMessageFrame.grid(row = 0, column = 0, sticky = (tkinter.N, tkinter.W, tkinter.E))
+		logMessageFrame.grid(row = 0, column = 0, sticky = (tkinter.N, tkinter.W, tkinter.E, tkinter.S))
 		self.textOutput = tkinter.scrolledtext.ScrolledText(master = logMessageFrame, wrap = tkinter.WORD)
-		self.textOutput.pack(expand = True)
+		self.textOutput.pack(expand = 1, fill = tkinter.BOTH)
 
-		userInputFrame = tkinter.Frame(master = self.root, borderwidth = 5)
-		userInputFrame.grid(row = 1, column = 0, sticky = (tkinter.W, tkinter.E, tkinter.S))
+		userInputFrame = tkinter.Frame(master = self.root, borderwidth = 4)
+		userInputFrame.grid(row = 1, column = 0, sticky = (tkinter.W, tkinter.E, tkinter.S), pady = 2)
 		button = tkinter.Button(master = userInputFrame, text = "Send", command = lambda: self.sendMessage(None))
 		button.bind("<Return>", self.sendMessage)
 		button.grid(row = 0, column = 0, sticky = (tkinter.W, tkinter.E), padx = 1.5)
@@ -36,7 +36,7 @@ class GUI:
 		self.entry.bind("<Return>", self.entryCommand)
 		self.entry.grid(row = 0, column = 1, sticky = (tkinter.W, tkinter.E), padx = 1.5)
 
-		self.root.grid_rowconfigure(0, weight = 7)
+		self.root.grid_rowconfigure(0, weight = 15)
 		self.root.grid_rowconfigure(1, weight = 1)
 		self.root.grid_columnconfigure(0, weight = 1)
 		userInputFrame.grid_rowconfigure(0, weight = 1)
@@ -91,9 +91,13 @@ class GUI:
 				#Joining channels
 				if (len(tokens) > 2):
 					for i in range(1, len(tokens)):
+						if (tokens[i][0] != "#"):
+							tokens[i] = "#%s" % tokens[i]
 						self.bot.switch(tokens[i])
 						self.print("Joining channel %s" % tokens[i])
 				elif (len(tokens) == 2):
+					if (tokens[1][0] != "#"):
+						tokens[1] = "#%s" % tokens[1]
 					self.bot.switch(tokens[1])
 					self.print("Joining channel %s" % tokens[1])
 				else:
@@ -116,11 +120,15 @@ class GUI:
 				#Leaving channels
 				if (len(tokens) > 2):
 					for i in range(1, len(tokens)):
-						self.bot.leave(tokens[i], False)
-						self.print("Left channel, %s" % tokens[i])
+						if (tokens[i][0] != "#"):
+							tokens[i] = "#%s" % tokens[i]
+						self.bot.leave(tokens[i], True)
+						self.print("Leaving channel %s" % tokens[i])
 				elif (len(tokens) == 2):
-					self.bot.leave(tokens[1], False)
-					self.print("Left channel, %s" % tokens[1])
+					if (tokens[1][0] != "#"):
+						tokens[1] = "#%s" % tokens[1]
+					self.bot.leave(tokens[1], True)
+					self.print("Leaving channel %s" % tokens[1])
 				else:
 					self.print("Incorrect usage:  /leave [channel]")
 			elif (tokens[0] == "/help" or tokens[0] == "/?"):

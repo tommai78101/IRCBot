@@ -31,13 +31,13 @@ def plugin_main(parent, tokens):
 					parent.guiParent.print(text = "<%s> %s: %s" % (recipient, caller, message))
 					parent.guiParent.textOutput.see(tkinter.END)
 				else:
-					print("<%s> %s: %s" % (tokens[2], caller, message))
+					print("<%s> %s: %s" % (recipient, caller, message))
 		elif (tokens[1] == "NOTICE"):
 			caller = tokens[0]
 			recipient = tokens[2]
 			message = getMessage(tokens, 3)
 			if (parent.guiParent != None):
-				parent.guiParent.print(text = "<%s> -%s-: %s" % (recipient, caller, message))
+				parent.guiParent.print(text = "<NOTICE> -%s-: %s" % (caller, message))
 				parent.guiParent.textOutput.see(tkinter.END)
 			else:
-				print("<%s> -%s-: %s" % (tokens[2], caller, message))
+				print("<NOTICE> -%s-: %s" % (caller, message))

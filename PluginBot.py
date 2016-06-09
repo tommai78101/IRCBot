@@ -28,7 +28,6 @@ def PRIVMSG(recipient, message, mode):
 def getUser(token):
 	user = token[0].strip(":")
 	user = user.split("!")[0]
-	user = user.split("|")[0]
 	return user
 
 def getMessage(tokens, startingIndex = 3):
