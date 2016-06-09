@@ -33,8 +33,6 @@ def getUser(token):
 def getMessage(tokens, startingIndex = 3):
 	message = ""
 	for i in range(startingIndex, len(tokens)):
-		if (i == startingIndex):
-			tokens[i] = tokens[i].strip(":")
 		message += tokens[i].strip("\x01") + " "
 	return message
 
@@ -47,6 +45,11 @@ class PluginBot(threading.Thread):
 	loadedModules = dict()
 	isRunning = False
 	guiParent = None
+	realName = "WedrPython3Bot"
+	password = "a1b2c3d4"
+	nickName = "WedrBot"
+	host = "irc.rizon.net" #"chat.freenode.net" #
+	port = 6667 #random.randrange(6667, 6669)
 
 	def __init__(self, gui = None):
 		super().__init__()
@@ -70,43 +73,38 @@ class PluginBot(threading.Thread):
 		atexit.register(self.quit)
 
 	def connect(self):
-		host = "irc.rizon.net" #"chat.freenode.net" #
-		port = 6667 #random.randrange(6667, 6669)
 		self.focusedChannel = "#wedrbot"
-		realName = "WedrPython3Bot"
-		identify = "a1b2c3d4"
-		nickName = "WedrBot"
 		self.channels.clear()
 
 		if (self.s == None):
 			self.s = socket.socket()
 
 		if (self.guiParent != None):
-			self.guiParent.print("Connecting to host \"%s\" with port %d." % (host, port))
+			self.guiParent.print("Connecting to host \"%s\" with port %d." % (self.host, self.port))
 		else:
-			print("Connecting to host \"%s\" with port %d." % (host, port))
-		self.s.connect((host, port))
+			print("Connecting to host \"%s\" with port %d." % (self.host, self.port))
+		self.s.connect((self.host, self.port))
 		sleep(0.5)
 
 		if (self.guiParent != None):
-			self.guiParent.print("Setting mode for %s" % (realName))
+			self.guiParent.print("Setting mode for %s" % (self.realName))
 		else:
-			print("Setting mode for %s" % (realName))
-		self.s.send(BYTE("USER %s %s unused :%s" % (identify, host, realName)))
+			print("Setting mode for %s" % (self.realName))
+		self.s.send(BYTE("USER %s %s unused :%s" % (self.password, self.host, self.realName)))
 		sleep(0.5)
 
 		if (self.guiParent != None):
 			self.guiParent.print("Logging in using nickname.")
 		else:
 			print("Logging in using nickname.")
-		self.s.send(BYTE("NICK %s" % nickName))
+		self.s.send(BYTE("NICK %s" % self.nickName))
 		sleep(0.5)
 
 		if (self.guiParent != None):
 			self.guiParent.print("Identifying...")
 		else:
 			print("Identifying...")
-		self.s.send(BYTE("PRIVMSG NickServ :identify %s" % identify))
+		self.s.send(BYTE("PRIVMSG NickServ :identify %s" % self.password))
 		sleep(0.5)
 
 		if (self.guiParent != None):
@@ -117,12 +115,12 @@ class PluginBot(threading.Thread):
 		self.channels.append(self.focusedChannel)
 		sleep(0.5)
 
-		if (self.guiParent != None):
-			self.guiParent.print("Requesting Verbose mode.")
-		else:
-			print("Requesting Verbose mode.")
-		self.s.send(BYTE("PRIVMSG NickServ identify %s" % identify))
-		sleep(0.5)
+		#if (self.guiParent != None):
+		#	self.guiParent.print("Requesting Verbose mode.")
+		#else:
+		#	print("Requesting Verbose mode.")
+		#self.s.send(BYTE("PRIVMSG NickServ :identify %s" % self.password))
+		#sleep(0.5)
 
 		if (self.guiParent != None):
 			self.guiParent.print("Starting bot thread.")
@@ -149,6 +147,16 @@ class PluginBot(threading.Thread):
 		if ("version" in dir(temp) and "plugin_main" in dir(temp)):
 			return temp
 		return ""
+
+	def identify(self):
+		if (self.guiParent != None):
+			self.guiParent.print("Identifying...")
+		else:
+			print("Identifying...")
+		self.s.send(BYTE("USER %s %s unused :%s" % (self.password, self.host, self.realName)))
+		sleep(0.5)
+		self.s.send(BYTE("PRIVMSG NickServ :identify %s" % self.password))
+		sleep(0.5)
 
 	def reloadAll(self):
 		if (self.guiParent != None):
@@ -259,8 +267,6 @@ class PluginBot(threading.Thread):
 						temp = readBuffer.split("\n")
 						readBuffer = temp.pop()
 						for line in temp:
-							if (self.guiParent != None):
-								print(line)
 							self.handleTokens(self.makeTokens(line))
 			except Exception:
 				traceback.print_tb(sys.exc_info()[2])
@@ -277,6 +283,7 @@ class PluginBot(threading.Thread):
 		index = self.getStartingIndex(line)
 		if (len(tokens) > index):
 			tokens[index] = tokens[index][1:]
+		tokens = list(filter(lambda x: x != "", tokens))
 		return tokens
 
 	def getStartingIndex(self, tokens):
