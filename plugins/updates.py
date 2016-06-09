@@ -49,43 +49,43 @@ def getRequiredUpdates(parent, user, messageTokens, isOld3DS):
 		parseCSVList(parent, csvList, user, messageTokens[1], messageTokens[2], isOld3DS)
 
 def handlePrivateMessage(parent, user, channel, message):
-	#There's no need to call on super(), because the base class contains the virtual method for this method.
 	messageTokens = message.split(" ")
 	messageTokens.pop()
 	if (len(messageTokens) <= 0):
+		parent.s.send(PRIVMSG(channel, "USAGE: .lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 0))
 		return
 	temp = messageTokens[0].lower()
-	if (temp == ".lookforupdate" or temp == ".lfu"):
-		if (len(messageTokens) == 3):
-			if (len(messageTokens[1]) == 16):
-				try:
-					getRequiredUpdates(parent, user, messageTokens, True)
-					getRequiredUpdates(parent, user, messageTokens, False)
-				except Exception as error:
-					frameinfo = getframeinfo(currentframe())
-					if (parent.guiParent != None):
-						parent.guiParent.print("Cannot parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)))
-					else:
-						print("Cannot parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)))
-					parent.s.send(PRIVMSG(channel, "Please contact wedr with this information: Unable to parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)), 0))
-			else:
-				parent.s.send(PRIVMSG(user, "Incorrect Title ID.", 1))
+	if (len(messageTokens) == 3):
+		if (len(messageTokens[1]) == 16):
+			try:
+				getRequiredUpdates(parent, user, messageTokens, True)
+				getRequiredUpdates(parent, user, messageTokens, False)
+			except Exception as error:
+				frameinfo = getframeinfo(currentframe())
+				if (parent.guiParent != None):
+					parent.guiParent.print("Cannot parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)))
+				else:
+					print("Cannot parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)))
+				parent.s.send(PRIVMSG(channel, "Please contact wedr with this information: Unable to parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)), 0))
 		else:
-			parent.s.send(PRIVMSG(channel, "USAGE: .lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 0))
-	elif (temp == ".help"):
-		parent.s.send(PRIVMSG(user, "USAGE: .lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 1))
-		parent.s.send(PRIVMSG(user, "USAGE: .explain - Returns explanation of WedrBot.", 1))
-	elif (temp == ".explain"):
-		parent.s.send(PRIVMSG(user, "Purpose: WedrBot is created in Python 3, for the only sole purpose of practicing Python 3 programming.", 1))
-		parent.s.send(PRIVMSG(user, "Future: If anyone wishes an IRC bot to do something they desire, please ask the creator, wedr, for suggestions.", 1))
+			parent.s.send(PRIVMSG(user, "Incorrect Title ID.", 1))
+	else:
+		parent.s.send(PRIVMSG(channel, "USAGE: .lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 0))
 
 def version():
 	return "Updates - v1.0"
 
 def plugin_main(parent, tokens):
 	if (len(tokens) > 3):
-		caller = getUser(tokens)
-		channel = tokens[2]
-		message = getMessage(tokens, 3)
-		handlePrivateMessage(parent, caller, channel, message) 
+		if (tokens[3] == ".lookforupdate" or tokens[3] == ".lfu"):
+			caller = getUser(tokens)
+			channel = tokens[2]
+			message = getMessage(tokens, 3)
+			handlePrivateMessage(parent, caller, channel, message) 
+		elif (tokens[3] == ".help"):
+			parent.s.send(PRIVMSG(tokens[0], "USAGE: .lookforupdate [Title ID] [Region] -OR- .lfu [Title ID] [Region] - Returns Firmware Versions Required if exists.", 1))
+			parent.s.send(PRIVMSG(tokens[0], "USAGE: .explain - Returns explanation of WedrBot.", 1))
+		elif (tokens[3] == ".explain"):
+			parent.s.send(PRIVMSG(tokens[0], "Purpose: WedrBot is created in Python 3, for the only sole purpose of practicing Python 3 programming.", 1))
+			parent.s.send(PRIVMSG(tokens[0], "Future: If anyone wishes an IRC bot to do something they desire, please ask the creator, wedr, for suggestions.", 1))
 
