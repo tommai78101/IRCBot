@@ -26,13 +26,13 @@ def parseCSVList(parent, csv, user, titleID, region, isOld3DS):
 							parent.guiParent.print("Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]))
 						else:
 							print("Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]))
-						parent.s.send(PRIVMSG(tokens[2], "Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]), 0))
+						parent.s.send(PRIVMSG(user, "Update(s) for %s : %s" % ("O3DS" if isOld3DS else "N3DS", lineTokens[index]), 1))
 						return
 		if (parent.guiParent != None):
 			parent.guiParent.print("Failed to locate titleID or region for %s. Required firmware version may not exist." % ("O3DS" if isOld3DS else "N3DS"))
 		else:
 			print("Failed to locate titleID or region for %s. Required firmware version may not exist." % ("O3DS" if isOld3DS else "N3DS"))
-		parent.s.send(PRIVMSG(tokens[2], "Cannot locate titleID or region for %s. Required firmware version may not exist." % ("O3DS" if isOld3DS else "N3DS"), 0))
+		parent.s.send(PRIVMSG(user, "Cannot locate titleID or region for %s. Required firmware version may not exist." % ("O3DS" if isOld3DS else "N3DS"), 1))
 	else:
 		if (parent.guiParent != None):
 			parent.guiParent.print("Incorrect CSV List: " + csvList)
@@ -67,7 +67,7 @@ def handlePrivateMessage(parent, user, channel, message):
 						parent.guiParent.print("Cannot parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)))
 					else:
 						print("Cannot parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)))
-					parent.s.send(PRIVMSG(user, "Unable to parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)), 0))
+					parent.s.send(PRIVMSG(channel, "Please contact wedr with this information: Unable to parse update list... : [%s, %s] %s" % (str(frameinfo.filename).split("\\").pop(), frameinfo.lineno, str(error)), 0))
 			else:
 				parent.s.send(PRIVMSG(user, "Incorrect Title ID.", 1))
 		else:
