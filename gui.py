@@ -1,4 +1,5 @@
 import random
+import threading
 import tkinter
 import tkinter.scrolledtext
 
@@ -7,6 +8,8 @@ from time import sleep
 from PluginBot import PluginBot
 from PluginBot import BYTE
 
+def rgb(red, green, blue):
+	return "#%02x%02x%02x" % (red, green, blue)
 
 class GUI:
 	root = None
@@ -51,6 +54,7 @@ class GUI:
 
 		self.channelTags[self.bot.focusedChannel] = self.randomColor()
 		self.textOutput.tag_configure(self.bot.focusedChannel, foreground = self.channelTags[self.bot.focusedChannel])
+		self.textOutput.tag_configure("red", foreground = rgb(255, 0, 0))
 
 	def run(self):
 		self.root.mainloop()
@@ -66,14 +70,16 @@ class GUI:
 					self.textOutput.delete("1.0", "2.0")
 			except Exception as err:
 				self.print(err)
-			self.textOutput.see(tkinter.END)
 			for key in self.channelTags:
 				self.tagPattern(key, key)
+			if (self.bot != None):
+				self.tagPattern(self.bot.nickName, "red")
+			self.textOutput.see(tkinter.END)
 
 
 	def sendMessage(self, event):
 		if (self.entryMessage != ""):
-			tempString = "<%s> WedrBot: %s" % (self.bot.focusedChannel, self.entryMessage)
+			tempString = "[%s] <WedrBot> %s" % (self.bot.focusedChannel, self.entryMessage)
 			if (self.entryMessage[0] == "."):
 				self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
 				tokenString = "WedrBot PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)
@@ -90,8 +96,9 @@ class GUI:
 		return randomTextColor
 
 	def getUserInput(self, event):
-		self.entryMessage = self.entry.get()
-		self.entry.delete(0, tkinter.END)
+		if (event != "-1"):
+			self.entryMessage = self.entry.get()
+			self.entry.delete(0, tkinter.END)
 
 	def tagPattern(self, pattern, tag):
 		start = "1.0"
@@ -101,12 +108,21 @@ class GUI:
 		self.textOutput.mark_set("searchLimit", end)
 		count = tkinter.IntVar()
 		while True:
-			index = self.textOutput.search(pattern, "matchEnd", "searchLimit", count = count, regexp = False)
+			reg = r"(%s([^\>]|\,|\.|\ |\:))" % pattern
+			index = self.textOutput.search(reg, "matchEnd", "searchLimit", count = count, regexp = True)
 			if (index == "" or count.get() == 0):
 				break;
 			self.textOutput.mark_set("matchStart", index)
-			self.textOutput.mark_set("matchEnd", "%s+%sc" % (index, count.get()))
+			self.textOutput.mark_set("matchEnd", "%s+%sc" % (index, count.get()-1))
 			self.textOutput.tag_add(tag, "matchStart", "matchEnd")
+
+	def rejoin(self, event):
+		for key in self.channelTags:
+			self.entryMessage = ("/l %s" % key)
+			self.entryCommand("-1")
+			self.entryMessage = ("/j %s" % key)
+			self.entryCommand("-1")
+		return
 
 	def entryCommand(self, event):
 		self.getUserInput(event)
@@ -133,6 +149,7 @@ class GUI:
 						self.textOutput.tag_configure(tokens[1], foreground = self.channelTags[tokens[1]])
 				else:
 					self.print("Incorrect usage:  /join [channel]")
+				self.entry.delete(0, tkinter.END)
 			elif (tokens[0] == "/q" or tokens[0] == "/e" or tokens[0] == "/quit" or tokens[0] == "/exit"):
 				#Quitting the bot client. Make sure to press any keys in the terminal/command prompt after use.
 				print("Quitting bot.")
@@ -144,6 +161,8 @@ class GUI:
 			elif (tokens[0] == "/i" or tokens[0] == "/identify"):
 				#Identifying the bot to the IRC host, only when the bot is unable to request for verbose, but the connection is still valid.
 				self.bot.identify();
+				workerThread = threading.Thread(target = self.rejoin, args = (event,))
+				workerThread.start()
 			elif (tokens[0] == "/c" or tokens[0] == "/clear"):
 				#Clearing the text output screen.
 				self.textOutput.delete("1.0", tkinter.END)
@@ -169,6 +188,7 @@ class GUI:
 					self.textOutput.tag_delete(tokens[1])
 				else:
 					self.print("Incorrect usage:  /leave [channel]")
+				self.entry.delete(0, tkinter.END)
 			elif (tokens[0] == "/help" or tokens[0] == "/?"):
 				#Help command.
 				self.print("1. Type anything to chat with others in %s." % self.bot.focusedChannel)
