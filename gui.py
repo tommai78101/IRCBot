@@ -2,7 +2,9 @@ import random
 import threading
 import tkinter
 import tkinter.scrolledtext
+import collections
 
+from operator import attrgetter
 from time import sleep
 
 from PluginBot import PluginBot
@@ -52,8 +54,10 @@ class GUI:
 		self.bot.connect()
 		self.bot.start()
 
-		self.channelTags[self.bot.focusedChannel] = self.randomColor()
-		self.textOutput.tag_configure(self.bot.focusedChannel, foreground = self.channelTags[self.bot.focusedChannel])
+		self.addChannel(self.bot.focusedChannel)
+		sortedDict = sorted(self.channelTags, key = lambda x: x.length)
+		for i in range(0, len(sortedDict)):
+			self.textOutput.tag_configure(self.bot.focusedChannel, foreground = self.channelTags[sortedDict[i - len(sortedDict)]])
 		self.textOutput.tag_configure("red", foreground = rgb(255, 0, 0))
 
 	def run(self):
@@ -70,25 +74,26 @@ class GUI:
 					self.textOutput.delete("1.0", "2.0")
 			except Exception as err:
 				self.print(err)
-			for key in self.channelTags:
-				self.tagPattern(key, key)
+			sortedDict = sorted(self.channelTags, key = attrgetter("length"))
+			for i in range(0, len(sortedDict)):
+				self.tagPattern(sortedDict[i-len(sortedDict)].name, sortedDict[i - len(sortedDict)].name)
 			if (self.bot != None):
-				self.tagPattern(self.bot.nickName, "red")
+				self.tagUserPattern(self.bot.nickName, "red")
 			self.textOutput.see(tkinter.END)
 
 
 	def sendMessage(self, event):
 		if (self.entryMessage != ""):
-			tempString = "[%s] <WedrBot> %s" % (self.bot.focusedChannel, self.entryMessage)
+			tempString = "[%s] <%s> %s" % (self.bot.focusedChannel, self.bot.nickName, self.entryMessage)
 			if (self.entryMessage[0] == "."):
 				self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
-				tokenString = "WedrBot PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)
+				tokenString = "%s PRIVMSG %s :%s" % (self.bot.nickName, self.bot.focusedChannel, self.entryMessage)
 				self.bot.handleTokens(self.bot.makeTokens(tokenString))
 			else:
 				self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
 				self.print(text = tempString)
 			self.textOutput.see(tkinter.END)
-			self.entryMessage = ""
+			#self.entryMessage = ""
 			self.entry.delete(0, tkinter.END)
 
 	def randomColor(self):
@@ -99,6 +104,12 @@ class GUI:
 		if (event != "-1"):
 			self.entryMessage = self.entry.get()
 			self.entry.delete(0, tkinter.END)
+
+	def addChannel(self, channel):
+		Channel = collections.namedtuple("Channel", ["name", "length"])
+		c = Channel(name = channel, length = len(channel))
+		self.channelTags[c] = self.randomColor()
+		return sorted(self.channelTags, key = lambda x: x.length)
 
 	def tagPattern(self, pattern, tag):
 		start = "1.0"
@@ -114,14 +125,68 @@ class GUI:
 				break;
 			self.textOutput.mark_set("matchStart", index)
 			self.textOutput.mark_set("matchEnd", "%s+%sc" % (index, count.get()-1))
+			check = False
+
+			temp = self.textOutput.get(index, "%s+%sc" % (index, count.get()))
+			try:
+				o = ord(temp[len(temp)-1])
+				if (o < ord("0") or (ord("9") < o and o < ord("A")) or (ord("Z") < o and o < ord("a")) or (ord("z") < o)):
+					check = False
+				else:
+					check = True
+			except:
+				check = True
+			
+			tags = self.textOutput.tag_names(index)
+			try:
+				for i in range(0, len(tags)):
+					if (tags[i] == tag):
+						check = True
+					if (tags[i] in pattern):
+						check = True
+					if (pattern in tags[i]):
+						check = True
+				if (not check):
+					self.textOutput.tag_add(tag, "matchStart", "matchEnd")
+			except:
+				continue
+
+	def tagUserPattern(self, pattern, tag):
+		start = "1.0"
+		end = tkinter.END
+		self.textOutput.mark_set("matchStart", start)
+		self.textOutput.mark_set("matchEnd", start)
+		self.textOutput.mark_set("searchLimit", end)
+		count = tkinter.IntVar()
+		while True:
+			reg = r"(%s([^\>\]]|\,|\.|\ |\:))" % pattern
+			index = self.textOutput.search(reg, "matchEnd", "searchLimit", count = count, regexp = True)
+			if (index == "" or count.get() == 0):
+				break;
+			lineIndex = "%s.0" % index.split(".")[0]
+			otherCount = tkinter.IntVar()
+			reg = r"\<.+\>"
+			newIndex = self.textOutput.search(reg, lineIndex, "%s lineend" % lineIndex, count = otherCount, regexp = True)
+			if (index == "" or otherCount.get() == 0):
+				self.textOutput.mark_set("matchEnd", "%s+1l" % lineIndex)
+				continue;
+			newIndex = "%s.%s" % (newIndex.split(".")[0], int(newIndex.split(".")[1]) + 1)
+			self.textOutput.mark_set("matchStart", newIndex)
+			self.textOutput.mark_set("matchEnd", "%s+%sc" % (newIndex, otherCount.get()-1))
 			self.textOutput.tag_add(tag, "matchStart", "matchEnd")
+			self.textOutput.mark_set("matchEnd", "%s+1l" % lineIndex)
 
 	def rejoin(self, event):
-		for key in self.channelTags:
-			self.entryMessage = ("/l %s" % key)
+		sortedDict = sorted(self.channelTags, key = lambda x: x.length)
+		for i in range(0, len(sortedDict)):
+			self.entryMessage = ("/l %s" % sortedDict[i - len(sortedDict)].name)
 			self.entryCommand("-1")
-			self.entryMessage = ("/j %s" % key)
+			self.entryMessage = ("/j %s" % sortedDict[i - len(sortedDict)].name)
 			self.entryCommand("-1")
+		self.entryMessage = "/c"
+		self.entryCommand("-1")
+		self.print("  --  Welcome to the channel, %s. Type /help for more info.  --" % self.bot.focusedChannel)
+		self.print(" ")
 		return
 
 	def entryCommand(self, event):
@@ -137,16 +202,22 @@ class GUI:
 						self.bot.switch(tokens[i])
 						self.print("Joining channel %s" % tokens[i])
 						if (tokens[i] not in self.channelTags):
-							self.channelTags[tokens[i]] = self.randomColor()
-							self.textOutput.tag_configure(tokens[i], foreground = self.channelTags[tokens[i]])
+							self.addChannel(tokens[i])
+							for j in range(0, len(sortedDict)):
+								if (tokens[1] == sortedDict[j].name):
+									self.textOutput.tag_configure(tokens[1], foreground = self.channelTags[sortedDict[j]])
+									break
 				elif (len(tokens) == 2):
 					if (tokens[1][0] != "#"):
 						tokens[1] = "#%s" % tokens[1]
 					self.bot.switch(tokens[1])
 					self.print("Joining channel %s" % tokens[1])
 					if (tokens[1] not in self.channelTags):
-						self.channelTags[tokens[1]] = self.randomColor()
-						self.textOutput.tag_configure(tokens[1], foreground = self.channelTags[tokens[1]])
+						sortedDict = self.addChannel(tokens[1])
+						for i in range(0, len(sortedDict)):
+							if (tokens[1] == sortedDict[i].name):
+								self.textOutput.tag_configure(tokens[1], foreground = self.channelTags[sortedDict[i]])
+								break
 				else:
 					self.print("Incorrect usage:  /join [channel]")
 				self.entry.delete(0, tkinter.END)
@@ -165,26 +236,37 @@ class GUI:
 				workerThread.start()
 			elif (tokens[0] == "/c" or tokens[0] == "/clear"):
 				#Clearing the text output screen.
+				if (len(tokens) > 1 and tokens[1] == "tag"):
+					sortedDict = sorted(self.channelTags, key = lambda x: x.length)
+					for i in range(0, len(sortedDict)):
+						self.textOutput.tag_delete(sortedDict[i].name)
 				self.textOutput.delete("1.0", tkinter.END)
 			elif (tokens[0] == "/r" or tokens[0] == "/reload"):
 				#Reloading plugins.
 				self.bot.reloadAll()
 			elif (tokens[0] == "/l" or tokens[0] == "/leave"):
 				#Leaving channels
+				sortedDict = sorted(self.channelTags, key = lambda x: x.length)
 				if (len(tokens) > 2):
 					for i in range(1, len(tokens)):
 						if (tokens[i][0] != "#"):
 							tokens[i] = "#%s" % tokens[i]
 						self.bot.leave(tokens[i], True)
 						self.print("Leaving channel %s" % tokens[i])
-						self.channelTags.pop(tokens[i])
+						for j in range(0, len(sortedDict)):
+							if (sortedDict[j].name == tokens[i]):
+								self.channelTags.pop(sortedDict[j])
+								break
 						self.textOutput.tag_delete(tokens[i])
 				elif (len(tokens) == 2):
 					if (tokens[1][0] != "#"):
 						tokens[1] = "#%s" % tokens[1]
 					self.bot.leave(tokens[1], True)
 					self.print("Leaving channel %s" % tokens[1])
-					self.channelTags.pop(tokens[1])
+					for i in range(0, len(sortedDict)):
+						if (sortedDict[i].name == tokens[1]):
+							self.channelTags.pop(sortedDict[i])
+							break
 					self.textOutput.tag_delete(tokens[1])
 				else:
 					self.print("Incorrect usage:  /leave [channel]")
@@ -201,4 +283,5 @@ class GUI:
 			else:
 				#Send commands over.
 				self.sendMessage(event)
+
 

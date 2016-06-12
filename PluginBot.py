@@ -40,7 +40,7 @@ def getMessage(tokens, startingIndex = 3):
 class PluginBot(threading.Thread):
 	userInput = None
 	s = None
-	focusedChannel = ""
+	focusedChannel = "#wedrbot"
 	channels = []
 	loadedModules = dict()
 	isRunning = False
@@ -50,6 +50,7 @@ class PluginBot(threading.Thread):
 	nickName = "WedrBot"
 	host = "irc.rizon.net" #"chat.freenode.net" #
 	port = 6667 #random.randrange(6667, 6669)
+	master = "wedr"
 
 	def __init__(self, gui = None):
 		super().__init__()
@@ -73,7 +74,6 @@ class PluginBot(threading.Thread):
 		atexit.register(self.quit)
 
 	def connect(self):
-		self.focusedChannel = "#wedrbot"
 		self.channels.clear()
 
 		if (self.s == None):
@@ -101,13 +101,6 @@ class PluginBot(threading.Thread):
 		sleep(0.5)
 
 		if (self.guiParent != None):
-			self.guiParent.print("Identifying...")
-		else:
-			print("Identifying...")
-		self.s.send(BYTE("PRIVMSG NickServ :identify %s" % self.password))
-		sleep(0.5)
-
-		if (self.guiParent != None):
 			self.guiParent.print("Joining %s" % self.focusedChannel)
 		else:
 			print("Joining %s" % self.focusedChannel)
@@ -115,12 +108,12 @@ class PluginBot(threading.Thread):
 		self.channels.append(self.focusedChannel)
 		sleep(0.5)
 
-		#if (self.guiParent != None):
-		#	self.guiParent.print("Requesting Verbose mode.")
-		#else:
-		#	print("Requesting Verbose mode.")
-		#self.s.send(BYTE("PRIVMSG NickServ :identify %s" % self.password))
-		#sleep(0.5)
+		if (self.guiParent != None):
+			self.guiParent.print("Identifying...")
+		else:
+			print("Identifying...")
+		self.s.send(BYTE("PRIVMSG NickServ :identify %s" % self.password))
+		sleep(0.5)
 
 		if (self.guiParent != None):
 			self.guiParent.print("Starting bot thread.")

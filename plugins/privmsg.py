@@ -20,9 +20,12 @@ def plugin_main(parent, tokens):
 	#tokens[3] is the full message with a leading colon. This needs to be stripped.
 	if (len(tokens) > 1):
 		if (tokens[1] == "PRIVMSG"):
-			if (len(tokens) > 2 and tokens[3] == ":\x01VERSION\x01"):
+			if (len(tokens) > 2 and tokens[3] == "\x01VERSION\x01"):
 				print("Sending VERSION")
 				parent.s.send(BYTE("NOTICE %s :\x01VERSION WedrBot v1.0\x01" % tokens[0]))
+				if (parent.guiParent != None):
+					parent.guiParent.entryMessage = "/i"
+					parent.guiParent.entryCommand("-1")
 			else:
 				caller = tokens[0]
 				recipient = tokens[2]
