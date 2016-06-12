@@ -100,20 +100,20 @@ class PluginBot(threading.Thread):
 		self.s.send(BYTE("NICK %s" % self.nickName))
 		sleep(0.5)
 
-		if (self.guiParent != None):
-			self.guiParent.print("Joining %s" % self.focusedChannel)
-		else:
-			print("Joining %s" % self.focusedChannel)
-		self.s.send(BYTE("JOIN %s" % self.focusedChannel))
-		self.channels.append(self.focusedChannel)
-		sleep(0.5)
+		#if (self.guiParent != None):
+		#	self.guiParent.print("Joining %s" % self.focusedChannel)
+		#else:
+		#	print("Joining %s" % self.focusedChannel)
+		#self.s.send(BYTE("JOIN %s" % self.focusedChannel))
+		#self.channels.append(self.focusedChannel)
+		#sleep(0.5)
 
-		if (self.guiParent != None):
-			self.guiParent.print("Identifying...")
-		else:
-			print("Identifying...")
-		self.s.send(BYTE("PRIVMSG NickServ :identify %s" % self.password))
-		sleep(0.5)
+		#if (self.guiParent != None):
+		#	self.guiParent.print("Identifying...")
+		#else:
+		#	print("Identifying...")
+		#self.s.send(BYTE("PRIVMSG NickServ :identify %s" % self.password))
+		#sleep(0.5)
 
 		if (self.guiParent != None):
 			self.guiParent.print("Starting bot thread.")
@@ -224,23 +224,38 @@ class PluginBot(threading.Thread):
 			if (isKicked):
 				self.s.send(BYTE("PART %s :%s" % (channel, "I am leaving.")))
 			self.channels.remove(channel)
-			print("Bot has left the channel, %s" % channel)
+			if (self.guiParent != None):
+				self.guiParent.print("Bot left the channel, %s" % channel)
+			else:
+				print("Bot left the channel, %s" % channel)
 		else:
-			print("Channel, %s, does not exist." % channel)
+			if (self.guiParent != None):
+				self.guiParent.print("Channel, %s, does not exist." % channel)
+			else:
+				print("Channel, %s, does not exist." % channel)
 
-	def switch(self, newChannel):
-		if (newChannel[0] != "#"):
+	def switch(self, newChannel, isJoining = True):
+		if (newChannel != "" and newChannel[0] != "#"):
 			newChannel = "#%s" % newChannel
 		checkFlag = False
+		self.focusedChannel = ""
+		if (not isJoining):
+			return
 		for chan in self.channels:
 			if (chan == newChannel):
 				checkFlag = True;
 				break
 		if (checkFlag):
-			print("Switching to channel %s" % newChannel)
+			if (self.guiParent != None):
+				self.guiParent.print("Switching to channel %s" % newChannel)
+			else:
+				print("Switching to channel %s" % newChannel)
 			self.focusedChannel = newChannel
 		else:
-			print("Joining and switching to channel %s" % newChannel)
+			if (self.guiParent != None):
+				self.guiParent.print("Joining and switching to channel %s" % newChannel)
+			else:
+				print("Joining and switching to channel %s" % newChannel)
 			if (self.s != None):
 				self.s.send(BYTE("JOIN %s" % newChannel))
 			self.channels.append(newChannel)

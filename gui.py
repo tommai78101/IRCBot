@@ -75,8 +75,9 @@ class GUI:
 			except Exception as err:
 				self.print(err)
 			sortedDict = sorted(self.channelTags, key = attrgetter("length"))
-			for i in range(0, len(sortedDict)):
-				self.tagPattern(sortedDict[i-len(sortedDict)].name, sortedDict[i - len(sortedDict)].name)
+			if (len(sortedDict) > 0):
+				for i in range(0, len(sortedDict)):
+					self.tagPattern(sortedDict[i-len(sortedDict)].name, sortedDict[i - len(sortedDict)].name)
 			if (self.bot != None):
 				self.tagUserPattern(self.bot.nickName, "red")
 			self.textOutput.see(tkinter.END)
@@ -84,17 +85,19 @@ class GUI:
 
 	def sendMessage(self, event):
 		if (self.entryMessage != ""):
-			tempString = "[%s] <%s> %s" % (self.bot.focusedChannel, self.bot.nickName, self.entryMessage)
-			if (self.entryMessage[0] == "."):
-				self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
-				tokenString = "%s PRIVMSG %s :%s" % (self.bot.nickName, self.bot.focusedChannel, self.entryMessage)
-				self.bot.handleTokens(self.bot.makeTokens(tokenString))
+			if (self.bot.focusedChannel == ""):
+				self.print("You are not in any channel.")
 			else:
-				self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
-				self.print(text = tempString)
-			self.textOutput.see(tkinter.END)
-			#self.entryMessage = ""
-			self.entry.delete(0, tkinter.END)
+				tempString = "[%s] <%s> %s" % (self.bot.focusedChannel, self.bot.nickName, self.entryMessage)
+				if (self.entryMessage[0] == "."):
+					self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
+					tokenString = "%s PRIVMSG %s :%s" % (self.bot.nickName, self.bot.focusedChannel, self.entryMessage)
+					self.bot.handleTokens(self.bot.makeTokens(tokenString))
+				else:
+					self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
+					self.print(text = tempString)
+				self.textOutput.see(tkinter.END)
+				self.entry.delete(0, tkinter.END)
 
 	def randomColor(self):
 		randomTextColor = "#%02x%02x%02x" % (random.randint(50, 225), random.randint(50, 225), random.randint(50, 225))
@@ -172,15 +175,16 @@ class GUI:
 				continue;
 			newIndex = "%s.%s" % (newIndex.split(".")[0], int(newIndex.split(".")[1]) + 1)
 			self.textOutput.mark_set("matchStart", newIndex)
-			self.textOutput.mark_set("matchEnd", "%s+%sc" % (newIndex, otherCount.get()-1))
+			self.textOutput.mark_set("matchEnd", "%s+%sc" % (newIndex, otherCount.get()-2))
 			self.textOutput.tag_add(tag, "matchStart", "matchEnd")
 			self.textOutput.mark_set("matchEnd", "%s+1l" % lineIndex)
 
 	def rejoin(self, event):
+		#Only used for initializing the bot. Do not use unless explicitly required.
 		sortedDict = sorted(self.channelTags, key = lambda x: x.length)
 		for i in range(0, len(sortedDict)):
-			self.entryMessage = ("/l %s" % sortedDict[i - len(sortedDict)].name)
-			self.entryCommand("-1")
+			#self.entryMessage = ("/l %s" % sortedDict[i - len(sortedDict)].name)
+			#self.entryCommand("-1")
 			self.entryMessage = ("/j %s" % sortedDict[i - len(sortedDict)].name)
 			self.entryCommand("-1")
 		self.entryMessage = "/c"
@@ -190,6 +194,8 @@ class GUI:
 		return
 
 	def entryCommand(self, event):
+		#Handles all user inputs
+		#If event is str(-1), then it skips obtaining user input.
 		self.getUserInput(event)
 		if (self.entryMessage != ""):
 			tokens = self.entryMessage.split(" ")
@@ -200,7 +206,6 @@ class GUI:
 						if (tokens[i][0] != "#"):
 							tokens[i] = "#%s" % tokens[i]
 						self.bot.switch(tokens[i])
-						self.print("Joining channel %s" % tokens[i])
 						if (tokens[i] not in self.channelTags):
 							self.addChannel(tokens[i])
 							for j in range(0, len(sortedDict)):
@@ -211,7 +216,6 @@ class GUI:
 					if (tokens[1][0] != "#"):
 						tokens[1] = "#%s" % tokens[1]
 					self.bot.switch(tokens[1])
-					self.print("Joining channel %s" % tokens[1])
 					if (tokens[1] not in self.channelTags):
 						sortedDict = self.addChannel(tokens[1])
 						for i in range(0, len(sortedDict)):
@@ -252,34 +256,41 @@ class GUI:
 						if (tokens[i][0] != "#"):
 							tokens[i] = "#%s" % tokens[i]
 						self.bot.leave(tokens[i], True)
-						self.print("Leaving channel %s" % tokens[i])
 						for j in range(0, len(sortedDict)):
 							if (sortedDict[j].name == tokens[i]):
 								self.channelTags.pop(sortedDict[j])
-								break
 						self.textOutput.tag_delete(tokens[i])
+					if (len(sortedDict) > 0):
+						self.bot.switch(sortedDict[0].name)
+					else:
+						self.bot.switch("", False)
 				elif (len(tokens) == 2):
 					if (tokens[1][0] != "#"):
 						tokens[1] = "#%s" % tokens[1]
 					self.bot.leave(tokens[1], True)
-					self.print("Leaving channel %s" % tokens[1])
 					for i in range(0, len(sortedDict)):
 						if (sortedDict[i].name == tokens[1]):
 							self.channelTags.pop(sortedDict[i])
-							break
 					self.textOutput.tag_delete(tokens[1])
+					if (len(self.channelTags) > 0):
+						self.bot.switch(sortedDict[0].name)
+					else:
+						self.bot.switch("", False)
 				else:
 					self.print("Incorrect usage:  /leave [channel]")
 				self.entry.delete(0, tkinter.END)
 			elif (tokens[0] == "/help" or tokens[0] == "/?"):
 				#Help command.
-				self.print("1. Type anything to chat with others in %s." % self.bot.focusedChannel)
-				self.print("2. /? or /help -- Bring up the bot commands.")
-				self.print("3. /j or /join -- Join a new channel. Channel focus will switch over.")
-				self.print("4. /l or /leave -- Leave channel. Channel focus will change.")
-				self.print("5. /c or /clear -- Clear the text output screen.")
-				self.print("6. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
-				self.print("7. /q or /quit -- Quit the bot.")
+				if (self.bot.focusedChannel != ""):
+					self.print("1. Type anything to chat with others in %s." % self.bot.focusedChannel)
+					self.print("2. /? or /help -- Bring up the bot commands.")
+					self.print("3. /j or /join -- Join a new channel. Channel focus will switch over.")
+					self.print("4. /l or /leave -- Leave channel. Channel focus will change.")
+					self.print("5. /c or /clear -- Clear the text output screen.")
+					self.print("6. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
+					self.print("7. /q or /quit -- Quit the bot.")
+				else:
+					self.print("You are not in any channel.")
 			else:
 				#Send commands over.
 				self.sendMessage(event)
