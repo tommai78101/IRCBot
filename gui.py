@@ -121,38 +121,26 @@ class GUI:
 		self.textOutput.mark_set("matchEnd", start)
 		self.textOutput.mark_set("searchLimit", end)
 		count = tkinter.IntVar()
+		legitSymbols = [".", ",", "!", "]", ")", "&", "?", "="]
 		while True:
-			reg = r"(%s([^\>]|\,|\.|\ |\:))" % pattern
-			index = self.textOutput.search(reg, "matchEnd", "searchLimit", count = count, regexp = True)
+			index = self.textOutput.search(pattern, "matchEnd", "searchLimit", count = count, regexp = False)
 			if (index == "" or count.get() == 0):
 				break;
-			self.textOutput.mark_set("matchStart", index)
-			self.textOutput.mark_set("matchEnd", "%s+%sc" % (index, count.get()-1))
 			check = False
-
-			temp = self.textOutput.get(index, "%s+%sc" % (index, count.get()))
 			try:
-				o = ord(temp[len(temp)-1])
-				if (o < ord("0") or (ord("9") < o and o < ord("A")) or (ord("Z") < o and o < ord("a")) or (ord("z") < o)):
-					check = False
-				else:
+				newIndex = "%s+%dc" % (index, count.get())
+				temp = self.textOutput.get(newIndex, "%s+1c" % newIndex)
+				if (temp not in legitSymbols):
 					check = True
 			except:
 				check = True
 			
-			tags = self.textOutput.tag_names(index)
-			try:
-				for i in range(0, len(tags)):
-					if (tags[i] == tag):
-						check = True
-					if (tags[i] in pattern):
-						check = True
-					if (pattern in tags[i]):
-						check = True
-				if (not check):
-					self.textOutput.tag_add(tag, "matchStart", "matchEnd")
-			except:
-				continue
+			if (not check):
+				self.textOutput.mark_set("matchStart", index)
+				self.textOutput.mark_set("matchEnd", "%s+%sc" % (index, count.get()))
+				self.textOutput.tag_add(tag, "matchStart", "matchEnd")
+			else:
+				self.textOutput.mark_set("matchEnd", "%s+%sc" % (index, count.get()+1))
 
 	def tagUserPattern(self, pattern, tag):
 		start = "1.0"
