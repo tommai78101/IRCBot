@@ -247,42 +247,65 @@ class GUI:
 					for i in range(1, len(tokens)):
 						if (tokens[i][0] != "#"):
 							tokens[i] = "#%s" % tokens[i]
+						check = False
 						for j in range(0, len(sortedDict)):
 							if (sortedDict[j].name == tokens[i]):
 								self.channelTags.pop(sortedDict[j])
-						self.textOutput.tag_delete(tokens[i])
-						self.bot.leave(tokens[i], True)
+								check = True
+						if (check):
+							self.bot.leave(tokens[i], True)
+							self.textOutput.tag_delete(tokens[i])
+							if (len(self.channelTags) > 0):
+								sortedDict = sorted(self.channelTags, key = lambda x: x.length)
+								self.bot.switch(sortedDict[len(self.channelTags)-1].name)
+							else:
+								self.bot.switch("", False)
+						else:
+							self.print("Channel, %s, is not on the channel list." % tokens[i])
+				elif (len(tokens) == 2):
+					if (tokens[1][0] != "#"):
+						tokens[1] = "#%s" % tokens[1]
+					check = False
+					for i in range(0, len(sortedDict)):
+						if (sortedDict[i].name == tokens[1]):
+							self.channelTags.pop(sortedDict[i])
+							check = True
+					if (check):
+						self.bot.leave(tokens[1], True)
+						self.textOutput.tag_delete(tokens[1])
 						if (len(self.channelTags) > 0):
 							sortedDict = sorted(self.channelTags, key = lambda x: x.length)
 							self.bot.switch(sortedDict[len(self.channelTags)-1].name)
 						else:
 							self.bot.switch("", False)
-				elif (len(tokens) == 2):
-					if (tokens[1][0] != "#"):
-						tokens[1] = "#%s" % tokens[1]
-					for i in range(0, len(sortedDict)):
-						if (sortedDict[i].name == tokens[1]):
-							self.channelTags.pop(sortedDict[i])
-					self.textOutput.tag_delete(tokens[1])
-					self.bot.leave(tokens[1], True)
-					if (len(self.channelTags) > 0):
-						sortedDict = sorted(self.channelTags, key = lambda x: x.length)
-						self.bot.switch(sortedDict[len(self.channelTags)-1].name)
 					else:
-						self.bot.switch("", False)
+						self.print("Channel, %s, is not on the channel list." % tokens[1])
 				else:
 					self.print("Incorrect usage:  /leave [channel]")
 				self.entry.delete(0, tkinter.END)
+			elif (tokens[0] == "/a" or tokens[0] == "/active"):
+				#Gives a list of all channels the bot is active in, or has joined in.
+				tempList = ""
+				sortedDict = sorted(self.channelTags, key = lambda x: x.name)
+				if (len(sortedDict) <= 0):
+					self.print("Joined Channel List is empty.")
+				else:
+					for i in range(0, len(sortedDict)):
+						tempList += sortedDict[i].name
+						if (i < len(sortedDict)-1):
+							tempList += ", "
+					self.print("Joined Channel List: %s" % tempList)
 			elif (tokens[0] == "/help" or tokens[0] == "/?"):
 				#Help command.
 				if (self.bot.focusedChannel != ""):
 					self.print("1. Type anything to chat with others in %s." % self.bot.focusedChannel)
-					self.print("2. /? or /help -- Bring up the bot commands.")
-					self.print("3. /j or /join -- Join a new channel. Channel focus will switch over.")
-					self.print("4. /l or /leave -- Leave channel. Channel focus will change.")
-					self.print("5. /c or /clear -- Clear the text output screen.")
-					self.print("6. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
-					self.print("7. /q or /quit -- Quit the bot.")
+					self.print("2. /a or /active -- Shows the joined channel list.")
+					self.print("3. /? or /help -- Bring up the bot commands.")
+					self.print("4. /j or /join -- Join a new channel. Channel focus will switch over.")
+					self.print("5. /l or /leave -- Leave channel. Channel focus will change.")
+					self.print("6. /c or /clear -- Clear the text output screen.")
+					self.print("7. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
+					self.print("8. /q or /quit -- Quit the bot.")
 				else:
 					self.print("You are not in any channel.")
 			else:

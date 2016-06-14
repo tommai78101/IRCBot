@@ -213,11 +213,13 @@ class PluginBot(threading.Thread):
 				self.guiParent.print("Bot left the channel, %s" % channel)
 			else:
 				print("Bot left the channel, %s" % channel)
+			return True
 		else:
 			if (self.guiParent != None):
 				self.guiParent.print("Channel, %s, does not exist." % channel)
 			else:
 				print("Channel, %s, does not exist." % channel)
+			return False
 
 	def switch(self, newChannel, isJoining = True):
 		if (newChannel != "" and newChannel[0] != "#"):
