@@ -101,7 +101,7 @@ class GUI:
 				self.entry.delete(0, tkinter.END)
 
 	def randomColor(self):
-		randomTextColor = "#%02x%02x%02x" % (random.randint(50, 225), random.randint(50, 225), random.randint(50, 225))
+		randomTextColor = "#%02x%02x%02x" % (random.randint(90, 225), random.randint(90, 225), random.randint(90, 225))
 		return randomTextColor
 
 	def getUserInput(self, event):
@@ -247,25 +247,27 @@ class GUI:
 					for i in range(1, len(tokens)):
 						if (tokens[i][0] != "#"):
 							tokens[i] = "#%s" % tokens[i]
-						self.bot.leave(tokens[i], True)
 						for j in range(0, len(sortedDict)):
 							if (sortedDict[j].name == tokens[i]):
 								self.channelTags.pop(sortedDict[j])
 						self.textOutput.tag_delete(tokens[i])
-					if (len(sortedDict) > 0):
-						self.bot.switch(sortedDict[0].name)
-					else:
-						self.bot.switch("", False)
+						self.bot.leave(tokens[i], True)
+						if (len(self.channelTags) > 0):
+							sortedDict = sorted(self.channelTags, key = lambda x: x.length)
+							self.bot.switch(sortedDict[len(self.channelTags)-1].name)
+						else:
+							self.bot.switch("", False)
 				elif (len(tokens) == 2):
 					if (tokens[1][0] != "#"):
 						tokens[1] = "#%s" % tokens[1]
-					self.bot.leave(tokens[1], True)
 					for i in range(0, len(sortedDict)):
 						if (sortedDict[i].name == tokens[1]):
 							self.channelTags.pop(sortedDict[i])
 					self.textOutput.tag_delete(tokens[1])
+					self.bot.leave(tokens[1], True)
 					if (len(self.channelTags) > 0):
-						self.bot.switch(sortedDict[0].name)
+						sortedDict = sorted(self.channelTags, key = lambda x: x.length)
+						self.bot.switch(sortedDict[len(self.channelTags)-1].name)
 					else:
 						self.bot.switch("", False)
 				else:
