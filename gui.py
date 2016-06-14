@@ -121,7 +121,7 @@ class GUI:
 		self.textOutput.mark_set("matchEnd", start)
 		self.textOutput.mark_set("searchLimit", end)
 		count = tkinter.IntVar()
-		legitSymbols = [".", ",", "!", "]", ")", "&", "?", "="]
+		legitSymbols = [".", ",", " ", "!", "]", "\n", "\r", ")", "&", "?", "=", "'", '"', ";"]
 		while True:
 			index = self.textOutput.search(pattern, "matchEnd", "searchLimit", count = count, regexp = False)
 			if (index == "" or count.get() == 0):
@@ -175,6 +175,8 @@ class GUI:
 			#self.entryCommand("-1")
 			self.entryMessage = ("/j %s" % sortedDict[i - len(sortedDict)].name)
 			self.entryCommand("-1")
+
+		sleep(0.5)
 		self.entryMessage = "/c"
 		self.entryCommand("-1")
 		self.print("  --  Welcome to the channel, %s. Type /help for more info.  --" % self.bot.focusedChannel)

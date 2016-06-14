@@ -21,8 +21,7 @@ def plugin_main(parent, tokens):
 	if (len(tokens) > 1):
 		if (tokens[1] == "PRIVMSG"):
 			if (len(tokens) > 2 and tokens[3] == "\x01VERSION\x01"):
-				print("Sending VERSION")
-				parent.s.send(BYTE("NOTICE %s :\x01VERSION WedrBot v1.0\x01" % tokens[0]))
+				parent.s.send(PRIVMSG(tokens[2], "\x01VERSION WedrBot v1.0\x01", 1))
 				if (parent.guiParent != None):
 					parent.guiParent.entryMessage = "/i"
 					parent.guiParent.entryCommand("-1")
