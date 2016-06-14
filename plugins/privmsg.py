@@ -7,9 +7,13 @@ from PluginBot import getUser
 from PluginBot import getMessage
 
 
+class VersionCheck:
+	flag = False
+versionCheck = VersionCheck()
 
 def version():
 	codecs.register(lambda name: codecs.lookup("utf-8") if name == "cp65001" else None)
+	versionCheck = False
 	return "PrivMsg - v1.0"
 
 def plugin_main(parent, tokens):
@@ -21,10 +25,11 @@ def plugin_main(parent, tokens):
 	if (len(tokens) > 1):
 		if (tokens[1] == "PRIVMSG"):
 			if (len(tokens) > 2 and tokens[3] == "\x01VERSION\x01"):
-				parent.s.send(PRIVMSG(tokens[2], "\x01VERSION WedrBot v1.0\x01", 1))
-				if (parent.guiParent != None):
+				parent.s.send(PRIVMSG(tokens[0], "\x01VERSION WedrBot v1.0\x01", 1))
+				if (parent.guiParent != None and not versionCheck.flag):
 					parent.guiParent.entryMessage = "/i"
 					parent.guiParent.entryCommand("-1")
+					versionCheck.flag = True
 			else:
 				caller = tokens[0]
 				recipient = tokens[2]

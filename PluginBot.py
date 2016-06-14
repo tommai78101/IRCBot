@@ -100,21 +100,6 @@ class PluginBot(threading.Thread):
 		self.s.send(BYTE("NICK %s" % self.nickName))
 		sleep(0.5)
 
-		#if (self.guiParent != None):
-		#	self.guiParent.print("Joining %s" % self.focusedChannel)
-		#else:
-		#	print("Joining %s" % self.focusedChannel)
-		#self.s.send(BYTE("JOIN %s" % self.focusedChannel))
-		#self.channels.append(self.focusedChannel)
-		#sleep(0.5)
-
-		#if (self.guiParent != None):
-		#	self.guiParent.print("Identifying...")
-		#else:
-		#	print("Identifying...")
-		#self.s.send(BYTE("PRIVMSG NickServ :identify %s" % self.password))
-		#sleep(0.5)
-
 		if (self.guiParent != None):
 			self.guiParent.print("Starting bot thread.")
 		else:
