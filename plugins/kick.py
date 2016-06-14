@@ -10,10 +10,10 @@ def version():
 def plugin_main(parent, tokens):
 	if (len(tokens) > 3):
 		if (tokens[1] == "KICK" and tokens[3] == "WedrBot"):
-			parent.leave(tokens[2], True)
 			if (parent.guiParent != None):
 				parent.guiParent.print("%s is kicked from channel, %s" % (tokens[3], tokens[2]))
 				parent.guiParent.entryMessage = "/l %s" % tokens[2]
 				parent.guiParent.entryCommand("-1")
 			else:
+				parent.leave(tokens[2], True)
 				print("%s is kicked from channel, %s" % (tokens[3], tokens[2]))
