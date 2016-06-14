@@ -20,6 +20,7 @@ class GUI:
 	bot = None
 	entry = None
 	channelTags = dict()
+	isPluginInitialized = False
 
 	def __init__(self):
 		self.root = tkinter.Tk()
@@ -111,7 +112,8 @@ class GUI:
 	def addChannel(self, channel):
 		Channel = collections.namedtuple("Channel", ["name", "length"])
 		c = Channel(name = channel, length = len(channel))
-		self.channelTags[c] = self.randomColor()
+		if (c not in self.channelTags):
+			self.channelTags[c] = self.randomColor()
 		return sorted(self.channelTags, key = lambda x: x.length)
 
 	def tagPattern(self, pattern, tag):
@@ -195,23 +197,23 @@ class GUI:
 					for i in range(1, len(tokens)):
 						if (tokens[i][0] != "#"):
 							tokens[i] = "#%s" % tokens[i]
-						self.bot.switch(tokens[i])
 						if (tokens[i] not in self.channelTags):
 							self.addChannel(tokens[i])
 							for j in range(0, len(sortedDict)):
 								if (tokens[1] == sortedDict[j].name):
 									self.textOutput.tag_configure(tokens[1], foreground = self.channelTags[sortedDict[j]])
 									break
+						self.bot.switch(tokens[i])
 				elif (len(tokens) == 2):
 					if (tokens[1][0] != "#"):
 						tokens[1] = "#%s" % tokens[1]
-					self.bot.switch(tokens[1])
 					if (tokens[1] not in self.channelTags):
 						sortedDict = self.addChannel(tokens[1])
 						for i in range(0, len(sortedDict)):
 							if (tokens[1] == sortedDict[i].name):
 								self.textOutput.tag_configure(tokens[1], foreground = self.channelTags[sortedDict[i]])
 								break
+					self.bot.switch(tokens[1])
 				else:
 					self.print("Incorrect usage:  /join [channel]")
 				self.entry.delete(0, tkinter.END)
