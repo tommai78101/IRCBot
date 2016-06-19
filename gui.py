@@ -291,7 +291,10 @@ class GUI:
 					self.print("Joined Channel List is empty.")
 				else:
 					for i in range(0, len(sortedDict)):
-						tempList += sortedDict[i].name
+						tempName = sortedDict[i].name
+						if (tempName == self.bot.focusedChannel):
+							tempName = "[[%s]]" % tempName
+						tempList += tempName
 						if (i < len(sortedDict)-1):
 							tempList += ", "
 					self.print("Joined Channel List: %s" % tempList)
