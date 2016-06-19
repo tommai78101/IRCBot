@@ -22,7 +22,7 @@ def plugin_main(parent, tokens):
 			if (len(tokens) > 2):
 				if (tokens[3] == "\x01VERSION" or tokens[3] == "\x01VERSION\x01"):
 					if (parent.guiParent != None):
-						parent.guiParent.print("Received VERSION request from %s." % tokens[0])
+						parent.guiParent.print("Received VERSION request from %s." % tokens[0], user = tokens[0])
 						if (not parent.guiParent.isPluginInitialized):
 							parent.guiParent.entryMessage = "/i"
 							parent.guiParent.entryCommand("-1")
@@ -33,7 +33,7 @@ def plugin_main(parent, tokens):
 					parent.s.send(PRIVMSG(tokens[0], "                flagrama, imanoob, Gelex, icecream, king_iix, Plailect, Redy, TricksterGuy, Ennea, Rubik", 1))
 				elif (tokens[3] == "\x01ACTION" or tokens[3] == "\x01ACTION\x01"):
 					if (parent.guiParent != None):
-						parent.guiParent.print("[%s] * %s %s" % (tokens[2], tokens[0], getMessage(tokens, 4)))
+						parent.guiParent.print("[%s] * %s %s" % (tokens[2], tokens[0], getMessage(tokens, 4)), user = tokens[0])
 					else:
 						print("[%s] * %s %s" % (tokens[2], tokens[0], getMessage(tokens, 4)))
 				else:
@@ -41,7 +41,7 @@ def plugin_main(parent, tokens):
 					recipient = tokens[2]
 					message = getMessage(tokens, 3)
 					if (parent.guiParent != None):
-						parent.guiParent.print(text = "[%s] <%s> %s" % (recipient, caller, message))
+						parent.guiParent.print(text = "[%s] <%s> %s" % (recipient, caller, message), user = caller)
 						parent.guiParent.textOutput.see(tkinter.END)
 					else:
 						print("[%s] <%s> %s" % (recipient, caller, message))
@@ -50,7 +50,7 @@ def plugin_main(parent, tokens):
 			recipient = tokens[2]
 			message = getMessage(tokens, 3)
 			if (parent.guiParent != None):
-				parent.guiParent.print(text = "[NOTICE] -%s-: %s" % (caller, message))
+				parent.guiParent.print(text = "[NOTICE] -%s-: %s" % (caller, message), user = caller)
 				parent.guiParent.textOutput.see(tkinter.END)
 			else:
 				print("[NOTICE] -%s-: %s" % (caller, message))

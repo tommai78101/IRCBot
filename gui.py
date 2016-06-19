@@ -159,14 +159,16 @@ class GUI:
 				break;
 			lineIndex = "%s.0" % index.split(".")[0]
 			otherCount = tkinter.IntVar()
-			reg = r"\*\ [A-Za-z]+\ "
+			reg = r"\*\ [A-Za-z]+\ " if user == None else r"\*\ %s\ " % user
 			newIndex = self.textOutput.search(reg, lineIndex, "%s lineend" % lineIndex, count = otherCount, regexp = True)
 			if (newIndex == "" or otherCount.get() == 0):
-				reg = r"\<.+\>"
+				reg = r"\<.+\>" if user == None else r"\<%s\>" % user
 				newIndex = self.textOutput.search(reg, lineIndex, "%s lineend" % lineIndex, count = otherCount, regexp = True)
 				if (newIndex == "" or otherCount.get() == 0):
 					self.textOutput.mark_set("matchEnd", "%s+1l" % lineIndex)
 					continue;
+				else:
+					newIndexOffset = 1
 			else:
 				newIndexOffset = 2
 			newIndex = "%s.%s" % (newIndex.split(".")[0], int(newIndex.split(".")[1]) + newIndexOffset)
