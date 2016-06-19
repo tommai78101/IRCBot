@@ -31,6 +31,11 @@ def plugin_main(parent, tokens):
 					parent.s.send(PRIVMSG(tokens[0], "Creator: wedr, Master of WedrBot", 1))
 					parent.s.send(PRIVMSG(tokens[0], "Special Thanks: Tobago, Shadowhand, MasterCheese, Miah_Molkot, Zhenn, BogomilP, leo60228, Ghost37486,", 1))
 					parent.s.send(PRIVMSG(tokens[0], "                flagrama, imanoob, Gelex, icecream, king_iix, Plailect, Redy, TricksterGuy, Ennea, Rubik", 1))
+				elif (tokens[3] == "\x01ACTION" or tokens[3] == "\x01ACTION\x01"):
+					if (parent.guiParent != None):
+						parent.guiParent.print("[%s] * %s %s" % (tokens[2], tokens[0], getMessage(tokens, 4)))
+					else:
+						print("[%s] * %s %s" % (tokens[2], tokens[0], getMessage(tokens, 4)))
 				else:
 					caller = tokens[0]
 					recipient = tokens[2]

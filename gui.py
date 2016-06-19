@@ -64,7 +64,7 @@ class GUI:
 	def run(self):
 		self.root.mainloop()
 
-	def print(self, text = ""):
+	def print(self, text = "", user = None):
 		if (text != ""):
 			self.textOutput.insert(tkinter.END, "\n%s" % text)
 			try:
@@ -80,7 +80,7 @@ class GUI:
 				for i in range(0, len(sortedDict)):
 					self.tagPattern(sortedDict[i-len(sortedDict)].name, sortedDict[i - len(sortedDict)].name)
 			if (self.bot != None):
-				self.tagUserPattern(self.bot.nickName, "red")
+				self.tagUserPattern(self.bot.nickName, "red", user)
 			self.textOutput.see(tkinter.END)
 
 
@@ -144,13 +144,14 @@ class GUI:
 			else:
 				self.textOutput.mark_set("matchEnd", "%s+%sc" % (index, count.get()+1))
 
-	def tagUserPattern(self, pattern, tag):
+	def tagUserPattern(self, pattern, tag, user):
 		start = "1.0"
 		end = tkinter.END
 		self.textOutput.mark_set("matchStart", start)
 		self.textOutput.mark_set("matchEnd", start)
 		self.textOutput.mark_set("searchLimit", end)
 		count = tkinter.IntVar()
+		newIndexOffset = 1
 		while True:
 			reg = r"(%s([^\>\]]|\,|\.|\ |\:))" % pattern
 			index = self.textOutput.search(reg, "matchEnd", "searchLimit", count = count, regexp = True)
@@ -158,12 +159,17 @@ class GUI:
 				break;
 			lineIndex = "%s.0" % index.split(".")[0]
 			otherCount = tkinter.IntVar()
-			reg = r"\<.+\>"
+			reg = r"\*\ [A-Za-z]+\ "
 			newIndex = self.textOutput.search(reg, lineIndex, "%s lineend" % lineIndex, count = otherCount, regexp = True)
-			if (index == "" or otherCount.get() == 0):
-				self.textOutput.mark_set("matchEnd", "%s+1l" % lineIndex)
-				continue;
-			newIndex = "%s.%s" % (newIndex.split(".")[0], int(newIndex.split(".")[1]) + 1)
+			if (newIndex == "" or otherCount.get() == 0):
+				reg = r"\<.+\>"
+				newIndex = self.textOutput.search(reg, lineIndex, "%s lineend" % lineIndex, count = otherCount, regexp = True)
+				if (newIndex == "" or otherCount.get() == 0):
+					self.textOutput.mark_set("matchEnd", "%s+1l" % lineIndex)
+					continue;
+			else:
+				newIndexOffset = 2
+			newIndex = "%s.%s" % (newIndex.split(".")[0], int(newIndex.split(".")[1]) + newIndexOffset)
 			self.textOutput.mark_set("matchStart", newIndex)
 			self.textOutput.mark_set("matchEnd", "%s+%sc" % (newIndex, otherCount.get()-2))
 			self.textOutput.tag_add(tag, "matchStart", "matchEnd")
