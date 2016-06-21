@@ -345,19 +345,19 @@ class GUI:
 					self.print("Joined Channel List: %s" % tempList)
 			elif (tokens[0] == "/help" or tokens[0] == "/?"):
 				#Help command.
-				if (self.bot.focusedChannel != ""):
-					self.print(" 1. Type anything to chat with others in %s." % self.bot.focusedChannel)
-					self.print(" 2. /? or /help -- Bring up the bot commands.")
-					self.print(" 3. /f or /focus -- Print currently focused channel.")
-					self.print(" 4. /a or /active -- Shows the joined channel list.")
-					self.print(" 5. /u or /userlist -- Shows the users list.")
-					self.print(" 6. /j or /join -- Join a new channel. Channel focus will switch over.")
-					self.print(" 7. /l or /leave -- Leave channel. Channel focus will change.")
-					self.print(" 8. /c or /clear -- Clear the text output screen.")
-					self.print(" 9. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
-					self.print("10. /q or /quit -- Quit the bot.")
-				else:
-					self.print("You are not in any channel.")
+				self.print(" 1. Type anything to chat with others in %s." % self.bot.focusedChannel)
+				self.print(" 2. /? or /help -- Bring up the bot commands.")
+				self.print(" 3. /f or /focus -- Print currently focused channel.")
+				self.print(" 4. /a or /active -- Shows the joined channel list.")
+				self.print(" 5. /u or /userlist -- Shows the users list.")
+				self.print(" 6. /j or /join -- Join a new channel. Channel focus will switch over.")
+				self.print(" 7. /l or /leave -- Leave channel. Channel focus will change.")
+				self.print(" 8. /c or /clear -- Clear the text output screen.")
+				self.print(" 9. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
+				self.print("10. /q or /quit -- Quit the bot.")
+				if (self.bot.focusedChannel == ""):
+					self.print("")
+					self.print("You are currently not joined in any channel.")
 			else:
 				#Send commands over.
 				self.sendMessage(event)
