@@ -49,7 +49,7 @@ class PluginBot(threading.Thread):
 	password = "a1b2c3d4"
 	nickName = "WedrBot"
 	host = "irc.rizon.net" #"chat.freenode.net" #
-	port = 6667 #random.randrange(6667, 6669)
+	port = random.randrange(6660, 6669)
 	master = "wedr"
 
 	def __init__(self, gui = None):

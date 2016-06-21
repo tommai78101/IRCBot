@@ -21,6 +21,7 @@ class GUI:
 	entry = None
 	channelTags = dict()
 	isPluginInitialized = False
+	usernameList = dict()
 
 	def __init__(self):
 		self.root = tkinter.Tk()
@@ -83,7 +84,6 @@ class GUI:
 				self.tagUserPattern(self.bot.nickName, "red", user)
 			self.textOutput.see(tkinter.END)
 
-
 	def sendMessage(self, event):
 		if (self.entryMessage != ""):
 			if (self.bot.focusedChannel == ""):
@@ -115,6 +115,12 @@ class GUI:
 		if (c not in self.channelTags):
 			self.channelTags[c] = self.randomColor()
 		return sorted(self.channelTags, key = lambda x: x.length)
+
+	def addUser(self, user, channel):
+		if (channel not in self.usernameList):
+			self.usernameList.setdefault(channel, [])
+		if (user not in self.usernameList[channel]):
+			self.usernameList[channel].append(user)
 
 	def tagPattern(self, pattern, tag):
 		start = "1.0"
@@ -189,9 +195,28 @@ class GUI:
 		sleep(0.5)
 		self.entryMessage = "/c"
 		self.entryCommand("-1")
+		self.entryMessage = "/u clear"
+		self.entryCommand("-1")
 		self.print("  --  Welcome to the channel, %s. Type /help for more info.  --" % self.bot.focusedChannel)
 		self.print(" ")
 		return
+
+	def showUserList(self, channel):
+		try:
+			arrayList = self.usernameList[channel]
+		except:
+			self.usernameList.setdefault(channel, [])
+			arrayList = self.usernameList[channel]
+		if (len(arrayList) <= 0):
+			self.print("Known users list in %s is empty." % channel)
+			return;
+		tempStr = ""
+		for i in range(0, len(arrayList)):
+			if (i != len(arrayList) - 1):
+				tempStr += "%s, " % arrayList[i]
+			else:
+				tempStr += "%s" % arrayList[i]
+		self.print("Known %s users list: %s" % (channel, tempStr))
 
 	def entryCommand(self, event):
 		#Handles all user inputs
@@ -248,6 +273,18 @@ class GUI:
 			elif (tokens[0] == "/r" or tokens[0] == "/reload"):
 				#Reloading plugins.
 				self.bot.reloadAll()
+			elif (tokens[0] == "/f" or tokens[0] == "/focus"):
+				self.print("Focused channel is %s." % self.bot.focusedChannel)
+			elif (tokens[0] == "/u" or tokens[0] == "/userlist" or tokens[0] == "/userslist"):
+				if (len(tokens) > 1):
+					if (tokens[1] == "clear"):
+						self.usernameList.clear()
+					else:
+						if (tokens[1][0] != "#"):
+							tokens[1] = "#%s" % tokens[1]
+						self.showUserList(tokens[1])
+				else:
+					self.showUserList(self.bot.focusedChannel)
 			elif (tokens[0] == "/l" or tokens[0] == "/leave"):
 				#Leaving channels
 				sortedDict = sorted(self.channelTags, key = lambda x: x.length)
@@ -309,14 +346,16 @@ class GUI:
 			elif (tokens[0] == "/help" or tokens[0] == "/?"):
 				#Help command.
 				if (self.bot.focusedChannel != ""):
-					self.print("1. Type anything to chat with others in %s." % self.bot.focusedChannel)
-					self.print("2. /a or /active -- Shows the joined channel list.")
-					self.print("3. /? or /help -- Bring up the bot commands.")
-					self.print("4. /j or /join -- Join a new channel. Channel focus will switch over.")
-					self.print("5. /l or /leave -- Leave channel. Channel focus will change.")
-					self.print("6. /c or /clear -- Clear the text output screen.")
-					self.print("7. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
-					self.print("8. /q or /quit -- Quit the bot.")
+					self.print(" 1. Type anything to chat with others in %s." % self.bot.focusedChannel)
+					self.print(" 2. /? or /help -- Bring up the bot commands.")
+					self.print(" 3. /f or /focus -- Print currently focused channel.")
+					self.print(" 4. /a or /active -- Shows the joined channel list.")
+					self.print(" 5. /u or /userlist -- Shows the users list.")
+					self.print(" 6. /j or /join -- Join a new channel. Channel focus will switch over.")
+					self.print(" 7. /l or /leave -- Leave channel. Channel focus will change.")
+					self.print(" 8. /c or /clear -- Clear the text output screen.")
+					self.print(" 9. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
+					self.print("10. /q or /quit -- Quit the bot.")
 				else:
 					self.print("You are not in any channel.")
 			else:
