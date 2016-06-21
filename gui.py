@@ -343,18 +343,18 @@ class GUI:
 						if (i < len(sortedDict)-1):
 							tempList += ", "
 					self.print("Joined Channel List: %s" % tempList)
-			elif (tokens[0] == "/help" or tokens[0] == "/?"):
+			elif (tokens[0] == "/?" or tokens[0] == "/help"):
 				#Help command.
 				self.print(" 1. Type anything to chat with others.")
 				self.print(" 2. /? or /help -- Bring up the bot commands.")
-				self.print(" 3. /f or /focus -- Print currently focused channel.")
 				self.print(" 4. /a or /active -- Shows the joined channel list.")
-				self.print(" 5. /u or /userlist -- Shows the users list.")
+				self.print(" 8. /c or /clear -- Clear the text output screen.")
+				self.print(" 3. /f or /focus -- Print currently focused channel.")
 				self.print(" 6. /j or /join -- Join a new channel. Channel focus will switch over.")
 				self.print(" 7. /l or /leave -- Leave channel. Channel focus will change.")
-				self.print(" 8. /c or /clear -- Clear the text output screen.")
-				self.print(" 9. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
 				self.print("10. /q or /quit -- Quit the bot.")
+				self.print(" 9. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
+				self.print(" 5. /u or /userlist -- Shows the users list.")
 				if (self.bot.focusedChannel == ""):
 					self.print("")
 					self.print("You are currently not joined in any channel.")
