@@ -101,7 +101,7 @@ class GUI:
 				self.entry.delete(0, tkinter.END)
 
 	def randomColor(self):
-		randomTextColor = "#%02x%02x%02x" % (random.randint(90, 225), random.randint(90, 225), random.randint(90, 225))
+		randomTextColor = "#%02x%02x%02x" % (random.randint(90, 200), random.randint(90, 200), random.randint(90, 200))
 		return randomTextColor
 
 	def getUserInput(self, event):
