@@ -345,7 +345,7 @@ class GUI:
 					self.print("Joined Channel List: %s" % tempList)
 			elif (tokens[0] == "/help" or tokens[0] == "/?"):
 				#Help command.
-				self.print(" 1. Type anything to chat with others in %s." % self.bot.focusedChannel)
+				self.print(" 1. Type anything to chat with others.")
 				self.print(" 2. /? or /help -- Bring up the bot commands.")
 				self.print(" 3. /f or /focus -- Print currently focused channel.")
 				self.print(" 4. /a or /active -- Shows the joined channel list.")
