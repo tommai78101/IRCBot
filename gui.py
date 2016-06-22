@@ -256,8 +256,10 @@ class GUI:
 				self.lastUserSuggestion = tempList[(tempList.index(tempToken) + 1) % len(tempList)]
 				self.entry.delete(cursorIndexBegin, tkinter.END)
 				self.entry.insert(cursorIndexBegin, "%s " % self.lastUserSuggestion if cursorIndexBegin == 0 else " %s" % self.lastUserSuggestion)
+			#We return the string, "break", for tcl/tkinter to drop double events, due to TAB key firing off multiple platform-specific events.
 			return "break"
 		except:
+			#We return the string, "break", for tcl/tkinter to drop double events, due to TAB key firing off multiple platform-specific events.
 			return "break"
 
 	def showUserList(self, channel):
