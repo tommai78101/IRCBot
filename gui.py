@@ -213,7 +213,7 @@ class GUI:
 	def autocomplete(self, event, token, lower = True):
 		cursorIndex = self.entry.index(tkinter.INSERT)
 		cursorIndexBegin = cursorIndex-1
-		cursorIndexEnd = cursorIndex+1
+		cursorIndexEnd = cursorIndex
 		try:
 			if (token[cursorIndexBegin] == " "):
 				cursorIndexBegin -= 1
@@ -222,8 +222,6 @@ class GUI:
 		except:
 			cursorIndexBegin = 0
 		try:
-			if (token[cursorIndexEnd] == " "):
-				cursorIndexEnd += 1
 			while (token[cursorIndexEnd] != " "):
 				cursorIndexEnd += 1
 		except:
@@ -249,7 +247,7 @@ class GUI:
 				self.lastSortedSuggestionDict = sorted(tempDict, key = tempDict.get, reverse = True)
 				if (len(self.lastSortedSuggestionDict) > 0):
 					self.lastUserSuggestion = self.lastSortedSuggestionDict[0]
-					self.entry.delete(cursorIndexBegin, tkinter.END)
+					self.entry.delete(cursorIndexBegin, cursorIndexEnd)
 					self.entry.insert(cursorIndexBegin, "%s " % self.lastUserSuggestion if cursorIndexBegin == 0 else " %s" % self.lastUserSuggestion)
 				elif (lower == True):
 					self.autocomplete(event, token, lower = False)
@@ -257,7 +255,7 @@ class GUI:
 				#tempList = self.usernameList[self.bot.focusedChannel]
 				#self.lastUserSuggestion = tempList[(tempList.index(tempToken) + 1) % len(tempList)]
 				self.lastUserSuggestion = self.lastSortedSuggestionDict[(self.lastSortedSuggestionDict.index(tempToken) + 1) % len(self.lastSortedSuggestionDict)]
-				self.entry.delete(cursorIndexBegin, tkinter.END)
+				self.entry.delete(cursorIndexBegin, cursorIndexEnd)
 				self.entry.insert(cursorIndexBegin, "%s " % self.lastUserSuggestion if cursorIndexBegin == 0 else " %s" % self.lastUserSuggestion)
 			#We return the string, "break", for tcl/tkinter to drop double events, due to TAB key firing off multiple platform-specific events.
 			return "break"
