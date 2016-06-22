@@ -47,7 +47,7 @@ class PluginBot(threading.Thread):
 	guiParent = None
 	realName = "WedrPython3Bot"
 	password = "a1b2c3d4"
-	nickName = "WedrBot"
+	nickName = "WedrClient"
 	host = "irc.rizon.net" #"chat.freenode.net" #
 	port = random.randrange(6660, 6669)
 	master = "wedr"
