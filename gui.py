@@ -97,16 +97,38 @@ class GUI:
 			if (self.bot.focusedChannel == ""):
 				self.print("You are not in any channel.")
 			else:
-				tempString = "[%s] <%s> %s" % (self.bot.focusedChannel, self.bot.nickName, self.entryMessage)
-				if (self.entryMessage[0] == "."):
-					self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
-					tokenString = "%s PRIVMSG %s :%s" % (self.bot.nickName, self.bot.focusedChannel, self.entryMessage)
-					self.bot.handleTokens(self.bot.makeTokens(tokenString))
+				if (len(self.entryMessage) > 432):
+					currentLength = len(self.entryMessage)
+					beginMessage = 0
+					while (currentLength > 432):
+						tempString = "[%s] <%s> %s" % (self.bot.focusedChannel, self.bot.nickName, self.entryMessage[beginMessage:beginMessage + 432])
+						if (self.entryMessage[0] == "."):
+							self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage[beginMessage:beginMessage + 432])))
+							tokenString = "%s PRIVMSG %s :%s" % (self.bot.nickName, self.bot.focusedChannel, self.entryMessage[beginMessage:beginMessage + 432])
+							self.bot.handleTokens(self.bot.makeTokens(tokenString))
+						else:
+							self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage[beginMessage:beginMessage + 432])))
+							self.print(text = tempString)
+						currentLength -= 432
+						beginMessage += 432
+					if (self.entryMessage[0] == "."):
+						self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage[beginMessage:currentLength])))
+						tokenString = "%s PRIVMSG %s :%s" % (self.bot.nickName, self.bot.focusedChannel, self.entryMessage[beginMessage:beginMessage + currentLength])
+						self.bot.handleTokens(self.bot.makeTokens(tokenString))
+					else:
+						self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage[beginMessage:beginMessage + currentLength])))
+						self.print(text = tempString)
 				else:
-					self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
-					self.print(text = tempString)
-				self.textOutput.see(tkinter.END)
-				self.entry.delete(0, tkinter.END)
+					tempString = "[%s] <%s> %s" % (self.bot.focusedChannel, self.bot.nickName, self.entryMessage)
+					if (self.entryMessage[0] == "."):
+						self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
+						tokenString = "%s PRIVMSG %s :%s" % (self.bot.nickName, self.bot.focusedChannel, self.entryMessage)
+						self.bot.handleTokens(self.bot.makeTokens(tokenString))
+					else:
+						self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
+						self.print(text = tempString)
+					self.textOutput.see(tkinter.END)
+					self.entry.delete(0, tkinter.END)
 
 	def randomColor(self):
 		randomTextColor = "#%02x%02x%02x" % (random.randint(90, 200), random.randint(90, 200), random.randint(90, 200))
