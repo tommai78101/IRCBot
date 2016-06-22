@@ -6,6 +6,7 @@ import collections
 import re
 
 from operator import attrgetter
+from operator import itemgetter
 from time import sleep
 
 from PluginBot import PluginBot
@@ -24,6 +25,7 @@ class GUI:
 	isPluginInitialized = False
 	usernameList = dict()
 	lastUserSuggestion = ""
+	lastSortedSuggestionDict = None
 
 	def __init__(self):
 		self.root = tkinter.Tk()
@@ -244,16 +246,17 @@ class GUI:
 								tempDict[user] = i
 							else:
 								break;
-				sortedDict = sorted(tempDict, key = lambda x: x[1])
-				if (len(sortedDict) > 0):
-					self.lastUserSuggestion = sortedDict[0]
+				self.lastSortedSuggestionDict = sorted(tempDict, key = tempDict.get, reverse = True)
+				if (len(self.lastSortedSuggestionDict) > 0):
+					self.lastUserSuggestion = self.lastSortedSuggestionDict[0]
 					self.entry.delete(cursorIndexBegin, tkinter.END)
 					self.entry.insert(cursorIndexBegin, "%s " % self.lastUserSuggestion if cursorIndexBegin == 0 else " %s" % self.lastUserSuggestion)
 				elif (lower == True):
 					self.autocomplete(event, token, lower = False)
 			else:
-				tempList = self.usernameList[self.bot.focusedChannel]
-				self.lastUserSuggestion = tempList[(tempList.index(tempToken) + 1) % len(tempList)]
+				#tempList = self.usernameList[self.bot.focusedChannel]
+				#self.lastUserSuggestion = tempList[(tempList.index(tempToken) + 1) % len(tempList)]
+				self.lastUserSuggestion = self.lastSortedSuggestionDict[(self.lastSortedSuggestionDict.index(tempToken) + 1) % len(self.lastSortedSuggestionDict)]
 				self.entry.delete(cursorIndexBegin, tkinter.END)
 				self.entry.insert(cursorIndexBegin, "%s " % self.lastUserSuggestion if cursorIndexBegin == 0 else " %s" % self.lastUserSuggestion)
 			#We return the string, "break", for tcl/tkinter to drop double events, due to TAB key firing off multiple platform-specific events.
