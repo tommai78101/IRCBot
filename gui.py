@@ -3,6 +3,7 @@ import threading
 import tkinter
 import tkinter.scrolledtext
 import collections
+import re
 
 from operator import attrgetter
 from time import sleep
@@ -22,6 +23,7 @@ class GUI:
 	channelTags = dict()
 	isPluginInitialized = False
 	usernameList = dict()
+	lastUserSuggestion = ""
 
 	def __init__(self):
 		self.root = tkinter.Tk()
@@ -34,23 +36,25 @@ class GUI:
 		logMessageFrame = tkinter.Frame(master = self.root)
 		logMessageFrame.grid(row = 0, column = 0, sticky = (tkinter.N, tkinter.W, tkinter.E, tkinter.S))
 		self.textOutput = tkinter.scrolledtext.ScrolledText(master = logMessageFrame, wrap = tkinter.WORD)
+		self.textOutput.config(state = tkinter.DISABLED)
 		self.textOutput.pack(expand = 1, fill = tkinter.BOTH)
 
 		userInputFrame = tkinter.Frame(master = self.root, borderwidth = 4)
 		userInputFrame.grid(row = 1, column = 0, sticky = (tkinter.W, tkinter.E, tkinter.S), pady = 2)
-		button = tkinter.Button(master = userInputFrame, text = "Send", command = lambda: self.sendMessage(None))
-		button.bind("<Return>", self.sendMessage)
-		button.grid(row = 0, column = 0, sticky = (tkinter.W, tkinter.E), padx = 1.5)
+		#button = tkinter.Button(master = userInputFrame, text = "Send", command = lambda: self.sendMessage(None))
+		#button.bind("<Return>", self.sendMessage)
+		#button.grid(row = 0, column = 0, sticky = (tkinter.W, tkinter.E), padx = 1.5)
 		self.entry = tkinter.Entry(master = userInputFrame)
 		self.entry.bind("<Return>", self.entryCommand)
-		self.entry.grid(row = 0, column = 1, sticky = (tkinter.W, tkinter.E), padx = 1.5)
+		self.entry.bind("<Tab>", lambda event: self.autocomplete(event, self.entry.get()))
+		self.entry.grid(row = 0, column = 0, sticky = (tkinter.W, tkinter.E), padx = 1.5)
 
 		self.root.grid_rowconfigure(0, weight = 15)
 		self.root.grid_rowconfigure(1, weight = 1)
 		self.root.grid_columnconfigure(0, weight = 1)
 		userInputFrame.grid_rowconfigure(0, weight = 1)
 		userInputFrame.grid_columnconfigure(0, weight = 1)
-		userInputFrame.grid_columnconfigure(1, weight = 7)
+		#userInputFrame.grid_columnconfigure(1, weight = 7)
 
 		self.bot = PluginBot(self)
 		self.bot.connect()
@@ -67,6 +71,7 @@ class GUI:
 
 	def print(self, text = "", user = None):
 		if (text != ""):
+			self.textOutput.config(state = "normal")
 			self.textOutput.insert(tkinter.END, "\n%s" % text)
 			try:
 				indexCount = int(self.textOutput.index("%s-1c" % tkinter.END).split(".")[0])
@@ -83,6 +88,7 @@ class GUI:
 			if (self.bot != None):
 				self.tagUserPattern(self.bot.nickName, "red", user)
 			self.textOutput.see(tkinter.END)
+			self.textOutput.config(state = tkinter.DISABLED)
 
 	def sendMessage(self, event):
 		if (self.entryMessage != ""):
@@ -197,9 +203,62 @@ class GUI:
 		self.entryCommand("-1")
 		self.entryMessage = "/u clear"
 		self.entryCommand("-1")
-		self.print("  --  Welcome to the channel, %s. Type /help for more info.  --" % self.bot.focusedChannel)
+		self.print("  --  Welcome to Channel %s. Type /help for more info.      --" % self.bot.focusedChannel)
+		self.print("  --  Type in the input text area, then press ENTER key to chat.  --")
 		self.print(" ")
 		return
+
+	def autocomplete(self, event, token, lower = True):
+		cursorIndex = self.entry.index(tkinter.INSERT)
+		cursorIndexBegin = cursorIndex-1
+		cursorIndexEnd = cursorIndex+1
+		try:
+			if (token[cursorIndexBegin] == " "):
+				cursorIndexBegin -= 1
+			while (token[cursorIndexBegin] != " "):
+				cursorIndexBegin -= 1
+		except:
+			cursorIndexBegin = 0
+		try:
+			if (token[cursorIndexEnd] == " "):
+				cursorIndexEnd += 1
+			while (token[cursorIndexEnd] != " "):
+				cursorIndexEnd += 1
+		except:
+			cursorIndexEnd = self.entry.index(tkinter.END)
+		if (cursorIndexBegin < 0):
+			cursorIndexBegin = 0
+		tempToken = token[cursorIndexBegin:cursorIndexEnd].strip(" ")
+		try:
+			if (self.lastUserSuggestion != tempToken):
+				tempDict = dict()
+				for user in self.usernameList[self.bot.focusedChannel]:
+					for i in range(0, len(tempToken)):
+						if (lower):
+							if (tempToken[i].lower() == user[i].lower()):
+								tempDict[user] = i
+							else:
+								break;
+						else:
+							if (tempToken[i].upper() == user[i].upper()):
+								tempDict[user] = i
+							else:
+								break;
+				sortedDict = sorted(tempDict, key = lambda x: x[1])
+				if (len(sortedDict) > 0):
+					self.lastUserSuggestion = sortedDict[0]
+					self.entry.delete(cursorIndexBegin, tkinter.END)
+					self.entry.insert(cursorIndexBegin, "%s " % self.lastUserSuggestion if cursorIndexBegin == 0 else " %s" % self.lastUserSuggestion)
+				elif (lower == True):
+					self.autocomplete(event, token, lower = False)
+			else:
+				tempList = self.usernameList[self.bot.focusedChannel]
+				self.lastUserSuggestion = tempList[(tempList.index(tempToken) + 1) % len(tempList)]
+				self.entry.delete(cursorIndexBegin, tkinter.END)
+				self.entry.insert(cursorIndexBegin, "%s " % self.lastUserSuggestion if cursorIndexBegin == 0 else " %s" % self.lastUserSuggestion)
+			return "break"
+		except:
+			return "break"
 
 	def showUserList(self, channel):
 		try:
@@ -265,11 +324,13 @@ class GUI:
 				workerThread.start()
 			elif (tokens[0] == "/c" or tokens[0] == "/clear"):
 				#Clearing the text output screen.
+				self.textOutput.config(state = "normal")
 				if (len(tokens) > 1 and tokens[1] == "tag"):
 					sortedDict = sorted(self.channelTags, key = lambda x: x.length)
 					for i in range(0, len(sortedDict)):
 						self.textOutput.tag_delete(sortedDict[i].name)
 				self.textOutput.delete("1.0", tkinter.END)
+				self.textOutput.config(state = tkinter.DISABLED)
 			elif (tokens[0] == "/r" or tokens[0] == "/reload"):
 				#Reloading plugins.
 				self.bot.reloadAll()
@@ -345,19 +406,20 @@ class GUI:
 					self.print("Joined Channel List: %s" % tempList)
 			elif (tokens[0] == "/?" or tokens[0] == "/help"):
 				#Help command.
-				self.print(" 1. Type anything to chat with others.")
-				self.print(" 2. /? or /help -- Bring up the bot commands.")
-				self.print(" 3. /a or /active -- Shows the joined channel list.")
-				self.print(" 4. /c or /clear -- Clear the text output screen.")
-				self.print(" 5. /e or /exit -- Quit the bot.")
-				self.print(" 6. /f or /focus -- Print currently focused channel.")
-				self.print(" 7. /j or /join -- Join a new channel. Channel focus will switch over.")
-				self.print(" 8. /l or /leave -- Leave channel. Channel focus will change.")
-				self.print(" 9. /q or /quit -- Quit the bot.")
-				self.print("10. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
-				self.print("11. /u or /userlist -- Shows the users list.")
+				self.print(" ")
+				self.print("Type anything in the input text area, then press ENTER key to chat with others.")
+				self.print(" 1. /? or /help -- Bring up the bot commands.")
+				self.print(" 2. /a or /active -- Shows the joined channel list.")
+				self.print(" 3. /c or /clear -- Clear the text output screen.")
+				self.print(" 4. /e or /exit -- Quit the bot.")
+				self.print(" 5. /f or /focus -- Print currently focused channel.")
+				self.print(" 6. /j or /join -- Join a new channel. Channel focus will switch over.")
+				self.print(" 7. /l or /leave -- Leave channel. Channel focus will change.")
+				self.print(" 8. /q or /quit -- Quit the bot.")
+				self.print(" 9. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
+				self.print("10. /u or /userlist -- Shows the users list.")
 				if (self.bot.focusedChannel == ""):
-					self.print("")
+					self.print(" ")
 					self.print("You are currently not joined in any channel.")
 			else:
 				#Send commands over.
