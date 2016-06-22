@@ -24,7 +24,7 @@ def plugin_main(parent, tokens):
 					if (parent.guiParent != None):
 						parent.guiParent.print("\u0ca0_\u0ca0")
 					else:
-						print("ಠ_ಠ")
+						print("Giving the look of disapproval.")
 				except:
 					if (parent.guiParent != None):
 						parent.guiParent.print("Giving the look of disapproval.")
@@ -32,16 +32,10 @@ def plugin_main(parent, tokens):
 						print("Giving the look of disapproval.")
 		elif (tokens[3] == ".flip"):
 			parent.s.send(PRIVMSG(tokens[2], " -- (\u256f\u25e6\u25ab\u25e6)\u256f \u2312 \u2538\u2014\u2538", 0))
-			#try:
-			#	if (parent.guiParent != None):
-			#		parent.guiParent.print(" (╯°□°)╯︵ ┻━┻")
-			#	else:
-			#		print(" (╯°□°)╯︵ ┻━┻")
-			#except:
-			#	if (parent.guiParent != None):
-			#		parent.guiParent.print("Flips table!")
-			#	else:
-			#		print("Flips table!")
+			if (parent.guiParent != None):
+				parent.guiParent.print("Flips table!")
+			else:
+				print("Flips table!")
 		elif (tokens[3] == ".help"):
 			parent.s.send(PRIVMSG(tokens[0], "USAGE: .ugh / .sigh / .facepalm - Gives a look of disapproval.", 1))
 			parent.s.send(PRIVMSG(tokens[0], "USAGE: .ugh / .sigh / .facepalm [user] - Gives a look of disapproval to the user.", 1))
