@@ -47,7 +47,7 @@ class GUI:
 		#button.bind("<Return>", self.sendMessage)
 		#button.grid(row = 0, column = 0, sticky = (tkinter.W, tkinter.E), padx = 1.5)
 		self.entry = tkinter.Entry(master = userInputFrame)
-		self.entry.bind("<Return>", self.entryCommand)
+		self.entry.bind("<Return>", self.threadedEntryCommand)
 		self.entry.bind("<Tab>", lambda event: self.autocomplete(event, self.entry.get()))
 		self.entry.grid(row = 0, column = 0, sticky = (tkinter.W, tkinter.E), padx = 1.5)
 
@@ -301,6 +301,11 @@ class GUI:
 			else:
 				tempStr += "%s" % arrayList[i]
 		self.print("Known %s users list: %s" % (channel, tempStr))
+
+	def threadedEntryCommand(self, event):
+		t = threading.Thread(target = self.entryCommand, args = (event,))
+		t.setDaemon(True)
+		t.start()
 
 	def entryCommand(self, event):
 		#Handles all user inputs
