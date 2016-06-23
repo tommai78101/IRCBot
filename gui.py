@@ -10,6 +10,7 @@ from operator import itemgetter
 from time import sleep
 
 from PluginBot import PluginBot
+from PluginBot import getMessage
 from PluginBot import BYTE
 
 def rgb(red, green, blue):
@@ -101,14 +102,13 @@ class GUI:
 					currentLength = len(self.entryMessage)
 					beginMessage = 0
 					while (currentLength > 432):
-						tempString = "[%s] <%s> %s" % (self.bot.focusedChannel, self.bot.nickName, self.entryMessage[beginMessage:beginMessage + 432])
 						if (self.entryMessage[0] == "."):
 							self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage[beginMessage:beginMessage + 432])))
 							tokenString = "%s PRIVMSG %s :%s" % (self.bot.nickName, self.bot.focusedChannel, self.entryMessage[beginMessage:beginMessage + 432])
 							self.bot.handleTokens(self.bot.makeTokens(tokenString))
 						else:
 							self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage[beginMessage:beginMessage + 432])))
-							self.print(text = tempString)
+							self.print(text = "[%s] <%s> %s" % (self.bot.focusedChannel, self.bot.nickName, self.entryMessage[beginMessage:beginMessage + 432]))
 						currentLength -= 432
 						beginMessage += 432
 					if (self.entryMessage[0] == "."):
@@ -119,16 +119,24 @@ class GUI:
 						self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage[beginMessage:beginMessage + currentLength])))
 						self.print(text = tempString)
 				else:
-					tempString = "[%s] <%s> %s" % (self.bot.focusedChannel, self.bot.nickName, self.entryMessage)
 					if (self.entryMessage[0] == "."):
 						self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
 						tokenString = "%s PRIVMSG %s :%s" % (self.bot.nickName, self.bot.focusedChannel, self.entryMessage)
 						self.bot.handleTokens(self.bot.makeTokens(tokenString))
 					else:
 						self.bot.s.send(BYTE("PRIVMSG %s :%s" % (self.bot.focusedChannel, self.entryMessage)))
-						self.print(text = tempString)
+						self.print(text = "[%s] <%s> %s" % (self.bot.focusedChannel, self.bot.nickName, self.entryMessage))
 					self.textOutput.see(tkinter.END)
 					self.entry.delete(0, tkinter.END)
+
+	def sendActionMessage(self, event, message):
+		if (self.entryMessage != ""):
+			if (self.bot.focusedChannel == ""):
+				self.print("You are not in any channel.")
+			else:
+				self.bot.s.send(BYTE("PRIVMSG %s :\x01ACTION %s\x01" % (self.bot.focusedChannel, message)))
+				self.print("[%s] * %s %s" % (self.bot.focusedChannel, self.bot.nickName, message))
+
 
 	def randomColor(self):
 		randomTextColor = "#%02x%02x%02x" % (random.randint(90, 200), random.randint(90, 200), random.randint(90, 200))
@@ -419,6 +427,13 @@ class GUI:
 				else:
 					self.print("Incorrect usage:  /leave [channel]")
 				self.entry.delete(0, tkinter.END)
+			elif (tokens[0] == "/m" or tokens[0] == "/me"):
+				#Emote command
+				if (len(tokens) > 1):
+					message = getMessage(tokens, 1)
+					self.sendActionMessage(event, message)
+				else:
+					self.print("ACTION message is empty.")
 			elif (tokens[0] == "/a" or tokens[0] == "/active"):
 				#Gives a list of all channels the bot is active in, or has joined in.
 				tempList = ""
@@ -445,9 +460,10 @@ class GUI:
 				self.print(" 5. /f or /focus -- Print currently focused channel.")
 				self.print(" 6. /j or /join -- Join a new channel. Channel focus will switch over.")
 				self.print(" 7. /l or /leave -- Leave channel. Channel focus will change.")
-				self.print(" 8. /q or /quit -- Quit the bot.")
-				self.print(" 9. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
-				self.print("10. /u or /userlist -- Shows the users list.")
+				self.print(" 8. /m or /me -- print ACTION message.")
+				self.print(" 9. /q or /quit -- Quit the bot.")
+				self.print("10. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
+				self.print("11. /u or /userlist -- Shows the users list.")
 				if (self.bot.focusedChannel == ""):
 					self.print(" ")
 					self.print("You are currently not joined in any channel.")
