@@ -5,7 +5,7 @@ def version():
 
 def plugin_main(parent, tokens):
 	if (len(tokens) > 3):
-		if (tokens[3] == ".ugh" or tokens[3] == ".sigh" or tokens[3] == ".facepalm"):
+		if (tokens[3] == ".ugh" or tokens[3] == ".sigh"):
 			if (len(tokens) > 4):
 				parent.s.send(PRIVMSG(tokens[2], " -- \u0ca0_\u0ca0 at %s." % tokens[4], 0))
 				try:
@@ -36,6 +36,21 @@ def plugin_main(parent, tokens):
 				parent.guiParent.print("Flips table!")
 			else:
 				print("Flips table!")
+		elif (tokens[3] == ".cm" or tokens[3] == ".checkmate"):
+			parent.s.send(PRIVMSG(tokens[2], "☜(\u25ef\u15ca\u25ef\u14d3 ☜)", 0))
+			if (parent.guiParent != None):
+				parent.guiParent.print("Checkmate! ☜ ")
+			else:
+				print("Checkmate! ☜ ")
+		elif (tokens[3] == ".facepalm" or tokens[3] == ".fp"):
+			if (len(tokens) > 4):
+				parent.s.send(PRIVMSG(tokens[2], "(-\u032d \u10da) at %s" % tokens[4], 0))
+			else:
+				parent.s.send(PRIVMSG(tokens[2], "(-\u032d \u10da)", 0))
+			if (parent.guiParent != None):
+				parent.guiParent.print("Facepalm!")
+			else:
+				print("Facepalm!")
 		elif (tokens[3] == ".help"):
 			parent.s.send(PRIVMSG(tokens[0], "USAGE: .ugh / .sigh / .facepalm - Gives a look of disapproval.", 1))
 			parent.s.send(PRIVMSG(tokens[0], "USAGE: .ugh / .sigh / .facepalm [user] - Gives a look of disapproval to the user.", 1))
