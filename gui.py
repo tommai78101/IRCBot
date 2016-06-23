@@ -460,7 +460,7 @@ class GUI:
 				self.print(" 5. /f or /focus -- Print currently focused channel.")
 				self.print(" 6. /j or /join -- Join a new channel. Channel focus will switch over.")
 				self.print(" 7. /l or /leave -- Leave channel. Channel focus will change.")
-				self.print(" 8. /m or /me -- print ACTION message.")
+				self.print(" 8. /m or /me -- Print ACTION message.")
 				self.print(" 9. /q or /quit -- Quit the bot.")
 				self.print("10. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
 				self.print("11. /u or /userlist -- Shows the users list.")
