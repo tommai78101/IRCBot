@@ -1,4 +1,5 @@
 ﻿from PluginBot import PRIVMSG
+from PluginBot import getMessage
 
 def version():
 	return "Look of Disapproval v1.0"
@@ -31,17 +32,34 @@ def plugin_main(parent, tokens):
 					else:
 						print("Giving the look of disapproval.")
 		elif (tokens[3] == ".flip"):
-			parent.s.send(PRIVMSG(tokens[2], " -- (\u256f\u25e6\u25ab\u25e6)\u256f \u2312 \u2538\u2014\u2538", 0))
-			if (parent.guiParent != None):
-				parent.guiParent.print("Flips table!")
+			if (len(tokens) > 4):
+				message = getMessage(tokens, 4)
+				parent.s.send(PRIVMSG(tokens[2], " -- (\u256f\u25e6\u25ab\u25e6)\u256f \u2312 \u2538\u2014\u2538   - %s" % message, 0))
+				if (parent.guiParent != None):
+					parent.guiParent.print("Flips table for %s!" % message)
+				else:
+					print("Flips table!")
 			else:
-				print("Flips table!")
+				parent.s.send(PRIVMSG(tokens[2], " -- (\u256f\u25e6\u25ab\u25e6)\u256f \u2312 \u2538\u2014\u2538", 0))
+				if (parent.guiParent != None):
+					parent.guiParent.print("Flips table!")
+				else:
+					print("Flips table!")
 		elif (tokens[3] == ".cm" or tokens[3] == ".checkmate"):
-			parent.s.send(PRIVMSG(tokens[2], "☜(\u25ef\u15ca\u25ef\u14d3 ☜)", 0))
-			if (parent.guiParent != None):
-				parent.guiParent.print("Checkmate! ☜ ")
+			#☚(°ヮ°)☚ 
+			if (len(tokens) > 4):
+				message = getMessage(tokens, 4)
+				parent.s.send(PRIVMSG(tokens[2], " -- ☜(\u25e6\u30ee\u25e6)☜  - %s" % message, 0))
+				if (parent.guiParent != None):
+					parent.guiParent.print("Checkmate! ☜ with message")
+				else:
+					print("Checkmate! ☜ with message")
 			else:
-				print("Checkmate! ☜ ")
+				parent.s.send(PRIVMSG(tokens[2], "☜(\u25e6\u30ee\u25e6)☜", 0))
+				if (parent.guiParent != None):
+					parent.guiParent.print("Checkmate! ☜ ")
+				else:
+					print("Checkmate! ☜ ")
 		elif (tokens[3] == ".facepalm" or tokens[3] == ".fp"):
 			if (len(tokens) > 4):
 				parent.s.send(PRIVMSG(tokens[2], "(-\u032d \u10da) at %s" % tokens[4], 0))
@@ -51,6 +69,21 @@ def plugin_main(parent, tokens):
 				parent.guiParent.print("Facepalm!")
 			else:
 				print("Facepalm!")
+		elif (tokens[3] == ".le"):
+			#´_>`
+			if (len(tokens) > 4):
+				message = getMessage(tokens, 4)
+				parent.s.send(PRIVMSG(tokens[2], "  -- %s  ´_>`" % message, 0))
+				if (parent.guiParent != None):
+					parent.guiParent.print("´_>` with message")
+				else:
+					print("´_>` with message")
+			else:
+				parent.s.send(PRIVMSG(tokens[2], "´_>`", 0))
+				if (parent.guiParent != None):
+					parent.guiParent.print("´_>`")
+				else:
+					print("´_>`")
 		elif (tokens[3] == ".help"):
 			parent.s.send(PRIVMSG(tokens[0], "USAGE: .ugh / .sigh / .facepalm - Gives a look of disapproval.", 1))
 			parent.s.send(PRIVMSG(tokens[0], "USAGE: .ugh / .sigh / .facepalm [user] - Gives a look of disapproval to the user.", 1))
