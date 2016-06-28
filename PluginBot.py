@@ -49,7 +49,7 @@ class PluginBot(threading.Thread):
 	password = "a1b2c3d4"
 	nickName = "WedrClient"
 	host = "irc.rizon.net" #"chat.freenode.net" #
-	port = random.randrange(6660, 6669)
+	port = random.randrange(6661, 6668)
 	master = "wedr"
 
 	def __init__(self, gui = None):
@@ -83,7 +83,11 @@ class PluginBot(threading.Thread):
 			self.guiParent.print("Connecting to host \"%s\" with port %d." % (self.host, self.port))
 		else:
 			print("Connecting to host \"%s\" with port %d." % (self.host, self.port))
-		self.s.connect((self.host, self.port))
+		try:
+			self.s.connect((self.host, self.port))
+		except TimeoutError:
+			print("Timeout error. Please retry.")
+			return
 		sleep(0.5)
 
 		if (self.guiParent != None):
