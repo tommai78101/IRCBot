@@ -3,7 +3,6 @@ import threading
 import tkinter
 import tkinter.scrolledtext
 import collections
-import re
 
 from operator import attrgetter
 from operator import itemgetter
@@ -18,15 +17,19 @@ def rgb(red, green, blue):
 
 class GUI:
 	root = None
-	textOutput = None
-	entryMessage = ""
 	bot = None
 	entry = None
-	channelTags = dict()
-	isPluginInitialized = False
-	usernameList = dict()
+	textOutput = None
+	entryMessage = ""
 	lastUserSuggestion = ""
+	channelTags = dict()
+	usernameList = dict()
+	isPluginInitialized = False
 	lastSortedSuggestionDict = None
+	previousMessageLog = collections.deque([])
+	messageCounter = 0
+	messageLogMode = 0
+
 
 	def __init__(self):
 		self.root = tkinter.Tk()
@@ -50,6 +53,8 @@ class GUI:
 		self.entry = tkinter.Entry(master = userInputFrame)
 		self.entry.bind("<Return>", self.threadedEntryCommand)
 		self.entry.bind("<Tab>", lambda event: self.autocomplete(event, self.entry.get()))
+		self.entry.bind("<Up>", self.previousMessage)
+		self.entry.bind("<Down>", self.nextMessage)
 		self.entry.grid(row = 0, column = 0, sticky = (tkinter.W, tkinter.E), padx = 1.5)
 
 		self.root.grid_rowconfigure(0, weight = 15)
@@ -128,6 +133,10 @@ class GUI:
 						self.print(text = "[%s] <%s> %s" % (self.bot.focusedChannel, self.bot.nickName, self.entryMessage))
 					self.textOutput.see(tkinter.END)
 					self.entry.delete(0, tkinter.END)
+			self.previousMessageLog.appendleft(self.entryMessage)
+			self.messageLogMode = 0
+			if (len(self.previousMessageLog) > 10):
+				self.previousMessageLog.pop()
 
 	def sendActionMessage(self, event, message):
 		if (self.entryMessage != ""):
@@ -136,7 +145,43 @@ class GUI:
 			else:
 				self.bot.s.send(BYTE("PRIVMSG %s :\x01ACTION %s\x01" % (self.bot.focusedChannel, message)))
 				self.print("[%s] * %s %s" % (self.bot.focusedChannel, self.bot.nickName, message))
+			self.previousMessageLog.appendleft(self.entryMessage)
+			self.messageLogMode = 0
+			if (len(self.previousMessageLog) > 10):
+				self.previousMessageLog.pop()
 
+
+	def previousMessage(self, event):
+		if (self.messageLogMode == 0):
+			if (len(self.previousMessageLog) > 0):
+				self.messageCounter = 0
+				self.entry.delete(0, tkinter.END)
+				self.entry.insert(0, self.previousMessageLog[self.messageCounter])
+				self.messageLogMode = 1
+		elif (self.messageLogMode == 1):
+			#Previous
+			self.messageCounter += 1
+			if (self.messageCounter > len(self.previousMessageLog) -1):
+				self.messageCounter = len(self.previousMessageLog) - 1
+			self.entry.delete(0, tkinter.END)
+			self.entry.insert(0, self.previousMessageLog[self.messageCounter])
+		return "break"
+
+	def nextMessage(self, event):
+		if (self.messageLogMode == 0):
+			if (len(self.previousMessageLog) > 0):
+				self.messageCounter = 0
+				self.entry.delete(0, tkinter.END)
+				self.entry.insert(0, self.previousMessageLog[self.messageCounter])
+				self.messageLogMode = 1
+		elif (self.messageLogMode == 1):
+			#Previous
+			self.messageCounter -= 1
+			if (self.messageCounter < 0):
+				self.messageCounter = 0
+			self.entry.delete(0, tkinter.END)
+			self.entry.insert(0, self.previousMessageLog[self.messageCounter])
+		return "break"
 
 	def randomColor(self):
 		randomTextColor = "#%02x%02x%02x" % (random.randint(90, 200), random.randint(90, 200), random.randint(90, 200))
