@@ -55,6 +55,8 @@ class GUI:
 		self.entry.bind("<Tab>", lambda event: self.autocomplete(event, self.entry.get()))
 		self.entry.bind("<Up>", self.previousMessage)
 		self.entry.bind("<Down>", self.nextMessage)
+		self.entry.bind("<Control-Alt-Left>", lambda event: self.previousChannel(event))
+		self.entry.bind("<Control-Alt-Right>", lambda event: self.nextChannel(event))
 		self.entry.grid(row = 0, column = 0, sticky = (tkinter.W, tkinter.E), padx = 1.5)
 
 		self.root.grid_rowconfigure(0, weight = 15)
@@ -182,6 +184,24 @@ class GUI:
 			self.entry.delete(0, tkinter.END)
 			self.entry.insert(0, self.previousMessageLog[self.messageCounter])
 		return "break"
+
+	def previousChannel(self, event):
+		currentIndex = self.bot.channels.index(self.bot.focusedChannel)
+		if (currentIndex > 0):
+			currentIndex -= 1
+		else:
+			currentIndex = len(self.bot.channels) - 1
+		self.bot.focusedChannel = self.bot.channels[currentIndex]
+		self.print("Currently focused channel: %s" % self.bot.focusedChannel)
+
+	def nextChannel(self, event):
+		currentIndex = self.bot.channels.index(self.bot.focusedChannel)
+		if (currentIndex < len(self.bot.channels) - 1):
+			currentIndex += 1
+		else:
+			currentIndex = 0
+		self.bot.focusedChannel = self.bot.channels[currentIndex]
+		self.print("Currently focused channel: %s" % self.bot.focusedChannel)
 
 	def randomColor(self):
 		randomTextColor = "#%02x%02x%02x" % (random.randint(90, 200), random.randint(90, 200), random.randint(90, 200))
@@ -497,7 +517,9 @@ class GUI:
 			elif (tokens[0] == "/?" or tokens[0] == "/help"):
 				#Help command.
 				self.print(" ")
-				self.print("Type anything in the input text area, then press ENTER key to chat with others.")
+				self.print("Type anything in the input text area, then press ENTER to chat with others.")
+				self.print("CTRL+ALT+LEFT ARROW or CTRL+ALT+RIGHT ARROW to quickly iterate through joined channels.")
+				self.print("UP ARROW or DOWN ARROW to fetch the last 10 sent messages.")
 				self.print(" 1. /? or /help -- Bring up the bot commands.")
 				self.print(" 2. /a or /active -- Shows the joined channel list.")
 				self.print(" 3. /c or /clear -- Clear the text output screen.")
