@@ -29,11 +29,12 @@ class GUI:
 	previousMessageLog = collections.deque([])
 	messageCounter = 0
 	messageLogMode = 0
+	TITLE_TEXT = "WedrClient - IRC Client Bot"
 
 
 	def __init__(self):
 		self.root = tkinter.Tk()
-		self.root.title("WedrBot - IRC Bot Client")
+		self.root.title(self.TITLE_TEXT)
 
 		width = 650
 		height = 500
@@ -193,6 +194,7 @@ class GUI:
 			currentIndex = len(self.bot.channels) - 1
 		self.bot.focusedChannel = self.bot.channels[currentIndex]
 		self.print("Currently focused channel: %s" % self.bot.focusedChannel)
+		self.root.title("%s - %s" % (self.TITLE_TEXT, self.bot.focusedChannel))
 
 	def nextChannel(self, event):
 		currentIndex = self.bot.channels.index(self.bot.focusedChannel)
@@ -202,6 +204,7 @@ class GUI:
 			currentIndex = 0
 		self.bot.focusedChannel = self.bot.channels[currentIndex]
 		self.print("Currently focused channel: %s" % self.bot.focusedChannel)
+		self.root.title("%s - %s" % (self.TITLE_TEXT, self.bot.focusedChannel))
 
 	def randomColor(self):
 		randomTextColor = "#%02x%02x%02x" % (random.randint(90, 200), random.randint(90, 200), random.randint(90, 200))
@@ -303,6 +306,7 @@ class GUI:
 		self.print("  --  Welcome to Channel %s. Type /help for more info.      --" % self.bot.focusedChannel)
 		self.print("  --  Type in the input text area, then press ENTER key to chat.  --")
 		self.print(" ")
+		self.root.title("%s - %s" % (self.TITLE_TEXT, self.bot.focusedChannel))
 		return
 
 	def autocomplete(self, event, token, lower = True):
@@ -412,6 +416,7 @@ class GUI:
 				else:
 					self.print("Incorrect usage:  /join [channel]")
 				self.entry.delete(0, tkinter.END)
+				self.root.title("%s - %s" % (self.TITLE_TEXT, self.bot.focusedChannel))
 			elif (tokens[0] == "/q" or tokens[0] == "/e" or tokens[0] == "/quit" or tokens[0] == "/exit"):
 				#Quitting the bot client. Make sure to press any keys in the terminal/command prompt after use.
 				print("Quitting bot.")
@@ -521,7 +526,7 @@ class GUI:
 				self.print("CTRL+ALT+LEFT ARROW or CTRL+ALT+RIGHT ARROW to quickly iterate through joined channels.")
 				self.print("UP ARROW or DOWN ARROW to fetch the last 10 sent messages.")
 				self.print(" 1. /? or /help -- Bring up the bot commands.")
-				self.print(" 2. /a or /active -- Shows the joined channel list.")
+				self.print(" 2. /a or /active -- Shows the joined channels list.")
 				self.print(" 3. /c or /clear -- Clear the text output screen.")
 				self.print(" 4. /e or /exit -- Quit the bot.")
 				self.print(" 5. /f or /focus -- Print currently focused channel.")
