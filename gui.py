@@ -195,6 +195,7 @@ class GUI:
 		self.bot.focusedChannel = self.bot.channels[currentIndex]
 		self.print("Currently focused channel: %s" % self.bot.focusedChannel)
 		self.root.title("%s - %s" % (self.TITLE_TEXT, self.bot.focusedChannel))
+		return "break"
 
 	def nextChannel(self, event):
 		currentIndex = self.bot.channels.index(self.bot.focusedChannel)
@@ -205,6 +206,7 @@ class GUI:
 		self.bot.focusedChannel = self.bot.channels[currentIndex]
 		self.print("Currently focused channel: %s" % self.bot.focusedChannel)
 		self.root.title("%s - %s" % (self.TITLE_TEXT, self.bot.focusedChannel))
+		return "break"
 
 	def randomColor(self):
 		randomTextColor = "#%02x%02x%02x" % (random.randint(90, 200), random.randint(90, 200), random.randint(90, 200))
