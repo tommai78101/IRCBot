@@ -8,19 +8,19 @@ def plugin_main(parent, tokens):
 	if (len(tokens) > 3):
 		if (tokens[3] == ".ugh" or tokens[3] == ".sigh"):
 			if (len(tokens) > 4):
-				parent.s.send(PRIVMSG(tokens[2], " -- \u0ca0_\u0ca0 at %s." % tokens[4], 0))
+				parent.s.send(PRIVMSG(tokens[2], "  -- \u0ca0_\u0ca0 at %s." % tokens[4], 0))
 				try:
 					if (parent.guiParent != None):
-						parent.guiParent.print(" -- %s ಠ_ಠ" % tokens[4])
+						parent.guiParent.print("  -- %s ಠ_ಠ" % tokens[4])
 					else:
-						print(" -- %s ಠ_ಠ" % tokens[4])
+						print("  -- %s ಠ_ಠ" % tokens[4])
 				except:
 					if (parent.guiParent != None):
 						parent.guiParent.print("Giving the look of disapproval towards %s." % tokens[4])
 					else:
 						print("Giving the look of disapproval towards %s." % tokens[4])
 			else:
-				parent.s.send(PRIVMSG(tokens[2], " -- \u0ca0_\u0ca0", 0))
+				parent.s.send(PRIVMSG(tokens[2], "  -- \u0ca0_\u0ca0", 0))
 				try:
 					if (parent.guiParent != None):
 						parent.guiParent.print("\u0ca0_\u0ca0")
@@ -34,13 +34,13 @@ def plugin_main(parent, tokens):
 		elif (tokens[3] == ".flip"):
 			if (len(tokens) > 4):
 				message = getMessage(tokens, 4)
-				parent.s.send(PRIVMSG(tokens[2], " -- (\u256f\u25e6\u25ab\u25e6)\u256f \u2312 \u2538\u2014\u2538   - %s" % message, 0))
+				parent.s.send(PRIVMSG(tokens[2], "  -- (\u256f\u25e6\u25ab\u25e6)\u256f \u2312 \u2538\u2014\u2538   - %s" % message, 0))
 				if (parent.guiParent != None):
 					parent.guiParent.print("Flips table for %s!" % message)
 				else:
 					print("Flips table!")
 			else:
-				parent.s.send(PRIVMSG(tokens[2], " -- (\u256f\u25e6\u25ab\u25e6)\u256f \u2312 \u2538\u2014\u2538", 0))
+				parent.s.send(PRIVMSG(tokens[2], "  -- (\u256f\u25e6\u25ab\u25e6)\u256f \u2312 \u2538\u2014\u2538", 0))
 				if (parent.guiParent != None):
 					parent.guiParent.print("Flips table!")
 				else:
@@ -49,22 +49,22 @@ def plugin_main(parent, tokens):
 			#☚(°ヮ°)☚ 
 			if (len(tokens) > 4):
 				message = getMessage(tokens, 4)
-				parent.s.send(PRIVMSG(tokens[2], " -- ☜(\u25e6\u30ee\u25e6)☜  - %s" % message, 0))
+				parent.s.send(PRIVMSG(tokens[2], "  -- ☜(\u25e6\u30ee\u25e6)☜  - %s" % message, 0))
 				if (parent.guiParent != None):
 					parent.guiParent.print("Checkmate! ☜ with message")
 				else:
 					print("Checkmate! ☜ with message")
 			else:
-				parent.s.send(PRIVMSG(tokens[2], "☜(\u25e6\u30ee\u25e6)☜", 0))
+				parent.s.send(PRIVMSG(tokens[2], "  -- ☜(\u25e6\u30ee\u25e6)☜", 0))
 				if (parent.guiParent != None):
 					parent.guiParent.print("Checkmate! ☜ ")
 				else:
 					print("Checkmate! ☜ ")
 		elif (tokens[3] == ".facepalm" or tokens[3] == ".fp"):
 			if (len(tokens) > 4):
-				parent.s.send(PRIVMSG(tokens[2], "(-\u032d \u10da) at %s" % tokens[4], 0))
+				parent.s.send(PRIVMSG(tokens[2], "  -- (-\u032d \u10da) at %s" % tokens[4], 0))
 			else:
-				parent.s.send(PRIVMSG(tokens[2], "(-\u032d \u10da)", 0))
+				parent.s.send(PRIVMSG(tokens[2], "  -- (-\u032d \u10da)", 0))
 			if (parent.guiParent != None):
 				parent.guiParent.print("Facepalm!")
 			else:
@@ -79,7 +79,7 @@ def plugin_main(parent, tokens):
 				else:
 					print("´_>` with message")
 			else:
-				parent.s.send(PRIVMSG(tokens[2], "´_>`", 0))
+				parent.s.send(PRIVMSG(tokens[2], "  -- ´_>`", 0))
 				if (parent.guiParent != None):
 					parent.guiParent.print("´_>`")
 				else:

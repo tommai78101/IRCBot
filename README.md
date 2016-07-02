@@ -19,9 +19,10 @@ Please create new issues to request for new features, report bugs, and other thi
 * **Updates Lookup** - For Nintendo 3DS, this bot parses the data gather from [this site](https://yls8.mtheall.com/ninupdates/reports.php), and tells the users what the minimum firmware update is required for their respective games. The updates repository can be located [here](https://github.com/yellows8/ninupdates).   
 * **Custom Plugins Support** - Creating new plugins to run in this bot is now more centralized and streamlined.    
 * **Streamlined Commands** - Typing a command into the IRC bot is now very straightforward, and it acts just like any other IRC clients.   
-* **Username AutoCompletion** - Pressing TAB key will autocomplete the usernames of known users in focused channels.
-* **Query Lists of Active Channels and Users** - See active channels you have joined, and users already in the channels.
-* **And many more plugins!!**
+* **Username AutoCompletion** - Pressing TAB key will autocomplete the usernames of known users in focused channels.   
+* **Query Lists of Active Channels and Users** - See active channels you have joined, and users already in the channels.   
+* **Fast toggling joined channels** - Quickly switch to other joined channels using `CTRL+ALT+Left/Right Arrow`.   
+* **And many more plugins!!**  
 
 
 ### How to Use:
@@ -40,10 +41,15 @@ Please create new issues to request for new features, report bugs, and other thi
 6. To reload your plugins, type `"/reload"` in the command prompt/terminal to reload all plugins.
 7. Type `/help` for all the information you need to know.
 
+### Known Issues:
+
+* This IRC client does not support all `/CTCP` commands, and only complies with bare minimum requirements from IRC channel servers.   
+* This IRC client may not support certain commands. If you use a certain command you see wrongly, please file an issues report about this.   
+
 ### Credits:
 
 **asperatology (wedr) / tom_mai78101** - For the creation of the IRC Bot Client.    
-**yellows8** - Many contributions on finding required firmware update versions.
+**yellows8** - Many contributions on finding required firmware update versions.   
 
 ### License:
 
