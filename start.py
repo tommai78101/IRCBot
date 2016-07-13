@@ -63,8 +63,10 @@ def test():
 		try:
 			if (i == 1):
 				value = int(sys.argv[i])
+				print("Test Value: %d" % value)
 			elif (i > 1):
 				hostID = int(sys.argv[i])
+				print("Host ID Value: %d" % hostID)
 		except ValueError:
 			value = 2
 	if (hostID != -1):
@@ -77,4 +79,5 @@ def test():
 #     1: EFNet
 #     2: Freenode
 if (__name__ == "__main__"):
+	print(sys.argv)
 	test()
