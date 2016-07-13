@@ -73,8 +73,22 @@ class PluginBot(threading.Thread):
 			self.userInput = UserInput.UserInput(self)
 		atexit.register(self.quit)
 
-	def connect(self):
+	def connect(self, hostID = -1):
 		self.channels.clear()
+
+		if (hostID == 0):
+			self.host = "irc.rizon.net"
+			self.nickName = "WedrClient"
+			self.password = "a1b2c3d4"
+		elif (hostID == 1):
+			self.host = "irc.efnet.org"
+			self.nickName = "WedrBot"
+			self.password = "a1b2c3d4"
+		elif (hostID == 2):
+			self.host = "chat.freenode.net"
+			self.realName = "tom_mai78101"
+			self.password = "a1b2c3d4"
+			self.nickName = "WedrClient"
 
 		if (self.s == None):
 			self.s = socket.socket()

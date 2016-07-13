@@ -33,7 +33,7 @@ class WorkerThread(threading.Thread):
 		self.bot.quit()
 
 
-def main(isTest):
+def main(isTest, hostID = -1):
 	if (isTest == 0):
 		bot = PluginBot.PluginBot()
 		bot.connect()
@@ -52,18 +52,29 @@ def main(isTest):
 		print("Success!")
 		sleep(1)
 	elif (isTest == 2):
-		myGUI = gui.GUI()
+		myGUI = gui.GUI(hostID)
 		myGUI.run()
 
 	
 def test():
 	value = 2
+	hostID = -1
 	for i in range(len(sys.argv)):
 		try:
-			value = int(sys.argv[i])
+			if (i == 1):
+				value = int(sys.argv[i])
+			elif (i > 1):
+				hostID = int(sys.argv[i])
 		except ValueError:
 			value = 2
-	main(value)
+	if (hostID != -1):
+		main(value, hostID)
+	else:
+		main(value)
 
+#  HostID values:
+#     0: Rizon
+#     1: EFNet
+#     2: Freenode
 if (__name__ == "__main__"):
 	test()

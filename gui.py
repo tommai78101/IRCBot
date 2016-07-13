@@ -32,7 +32,7 @@ class GUI:
 	TITLE_TEXT = "WedrClient - IRC Client Bot"
 
 
-	def __init__(self):
+	def __init__(self, hostID = -1):
 		self.root = tkinter.Tk()
 		self.root.title(self.TITLE_TEXT)
 
@@ -68,7 +68,7 @@ class GUI:
 		#userInputFrame.grid_columnconfigure(1, weight = 7)
 
 		self.bot = PluginBot(self)
-		self.bot.connect()
+		self.bot.connect(hostID)
 		self.bot.start()
 
 		self.addChannel(self.bot.focusedChannel)
