@@ -84,7 +84,37 @@ def plugin_main(parent, tokens):
 					parent.guiParent.print("´_>`")
 				else:
 					print("´_>`")
+		elif (tokens[3] == ".wnk"):
+			#( ͝° ͜ʖ͡°)ᕤ ✧
+			parent.s.send(PRIVMSG(tokens[2], "  -- \u0028\u0020\u035D\u00B0\u0020\u035C\u0296\u0361\u00B0\u0029\u1564\u0020\u2727", 0))
+			try:
+				if (parent.guiParent != None):
+					parent.guiParent.print("\u0028\u0020\u035D\u00B0\u0020\u035C\u0296\u0361\u00B0\u0029\u1564\u0020\u2727")
+				else:
+					print("Giving the wink.")
+			except:
+				if (parent.guiParent != None):
+					parent.guiParent.print("Giving the wink.")
+				else:
+					print("Giving the wink.")
+		elif (tokens[3] == ".mf"):
+			#ಠ︵ಠ 凸
+			parent.s.send(PRIVMSG(tokens[2], "  -- \u0CA0\uFE35\u0CA0\u0020\u51F8", 0))
+			try:
+				if (parent.guiParent != None):
+					parent.guiParent.print("\u0CA0\uFE35\u0CA0\u0020\u51F8")
+				else:
+					print("Giving the finger.")
+			except:
+				if (parent.guiParent != None):
+					parent.guiParent.print("Giving the finger.")
+				else:
+					print("Giving the finger.")
 		elif (tokens[3] == ".help"):
 			parent.s.send(PRIVMSG(tokens[0], "USAGE: .ugh / .sigh / .facepalm - Gives a look of disapproval.", 1))
 			parent.s.send(PRIVMSG(tokens[0], "USAGE: .ugh / .sigh / .facepalm [user] - Gives a look of disapproval to the user.", 1))
-			parent.s.send(PRIVMSG(tokens[0], "USAGE: .flip - Flips table.", 1))
+			parent.s.send(PRIVMSG(tokens[0], "USAGE: .checkmate [message] / .cm [message] - Gives a sarcastic look with the optional following message.", 1))
+			parent.s.send(PRIVMSG(tokens[0], "USAGE: .le [message] - Gives a sarcastic look with the optional following message.", 1))
+			parent.s.send(PRIVMSG(tokens[0], "USAGE: .wnk - Gives a confident wink!", 1))
+			parent.s.send(PRIVMSG(tokens[0], "USAGE: .mf - Gives THE FINGER.", 1))
+			parent.s.send(PRIVMSG(tokens[0], "USAGE: .flip [message] - Flips table with the optional following message.", 1))
