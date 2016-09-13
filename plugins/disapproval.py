@@ -85,11 +85,11 @@ def plugin_main(parent, tokens):
 				else:
 					print("´_>`")
 		elif (tokens[3] == ".wnk"):
-			#( ͝° ͜ʖ͡°)ᕤ ✧
-			parent.s.send(PRIVMSG(tokens[2], "  -- \u0028\u0020\u035D\u00B0\u0020\u035C\u0296\u0361\u00B0\u0029\u1564\u0020\u2727", 0))
+			#(ง ͡~ ͜ʖ͡°)ᕤ ✧
+			parent.s.send(PRIVMSG(tokens[2], "  -- \u0028\u00E07\u0020\u0361\u007E\u0020\u035C\u0296\u0361\u00B0\u0029\u1564\u0020\u2727", 0))
 			try:
 				if (parent.guiParent != None):
-					parent.guiParent.print("\u0028\u0020\u035D\u00B0\u0020\u035C\u0296\u0361\u00B0\u0029\u1564\u0020\u2727")
+					parent.guiParent.print("\u0028\u00E07\u0020\u0361\u007E\u0020\u035C\u0296\u0361\u00B0\u0029\u1564\u0020\u2727")
 				else:
 					print("Giving the wink.")
 			except:
@@ -110,6 +110,19 @@ def plugin_main(parent, tokens):
 					parent.guiParent.print("Giving the finger.")
 				else:
 					print("Giving the finger.")
+		elif (tokens[3] == ".lenny"):
+			#( ͡° ͜ʖ ͡° )
+			parent.s.send(PRIVMSG(tokens[2], "  -- \u0028\u0020\u0361\u00B0\u0020\u035C\u0296\u0020\u0361\u00B0\u0020\u0029", 0))
+			try:
+				if (parent.guiParent != None):
+					parent.guiParent.print("\u0028\u0020\u0361\u00B0\u0020\u035C\u0296\u0020\u0361\u00B0\u0020\u0029")
+				else:
+					print("Lenny.")
+			except:
+				if (parent.guiParent != None):
+					parent.guiParent.print("Lenny.")
+				else:
+					print("Lenny.")
 		elif (tokens[3] == ".help"):
 			parent.s.send(PRIVMSG(tokens[0], "USAGE: .ugh / .sigh / .facepalm - Gives a look of disapproval.", 1))
 			parent.s.send(PRIVMSG(tokens[0], "USAGE: .ugh / .sigh / .facepalm [user] - Gives a look of disapproval to the user.", 1))
