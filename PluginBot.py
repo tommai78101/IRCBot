@@ -73,6 +73,12 @@ class PluginBot(threading.Thread):
 			self.userInput = UserInput.UserInput(self)
 		atexit.register(self.quit)
 
+	def out(self, msg):
+		if (self.guiParent != None):
+			self.guiParent.print(msg);
+		else:
+			print(msg);
+
 	def connect(self, hostID = -1):
 		self.channels.clear()
 
@@ -89,33 +95,36 @@ class PluginBot(threading.Thread):
 			self.realName = "tom_mai78101"
 			self.password = "a1b2c3d4"
 			self.nickName = "WedrClient"
+		elif (hostID == 3):
+			self.host = "Ox.panicbnc.net"
+			self.realName = "wedr"
+			self.password = "Bb4CF37a"
+			self.nickName = "wedr/efnet"
+			self.port = 1337
 
 		if (self.s == None):
 			self.s = socket.socket()
 
-		if (self.guiParent != None):
-			self.guiParent.print("Connecting to host \"%s\" with port %d." % (self.host, self.port))
-		else:
-			print("Connecting to host \"%s\" with port %d." % (self.host, self.port))
+
+		self.out("Connecting to host \"%s\" with port %d." % (self.host, self.port));
 		try:
 			self.s.connect((self.host, self.port))
+			sleep(0.5)
 		except TimeoutError:
 			print("Timeout error. Please retry.")
 			return
-		sleep(0.5)
 
-		if (self.guiParent != None):
-			self.guiParent.print("Setting mode for %s" % (self.realName))
-		else:
-			print("Setting mode for %s" % (self.realName))
-		self.s.send(BYTE("USER %s %s unused :%s" % (self.password, self.host, self.realName)))
-		sleep(0.5)
+		if (hostID == 3):
+			self.out("Attempting to use the bouncer.");
+			self.s.send(BYTE("PASS %s:%s" % (self.nickName, self.password)));
+			sleep(0.5)
 
-		if (self.guiParent != None):
-			self.guiParent.print("Logging in using nickname.")
-		else:
-			print("Logging in using nickname.")
+		self.out("Logging in using nickname.");
 		self.s.send(BYTE("NICK %s" % self.nickName))
+		sleep(0.5)
+
+		self.out("Setting mode for %s" % (self.realName));
+		self.s.send(BYTE("USER %s %s unused :%s" % (self.password, self.host, self.realName)))
 		sleep(0.5)
 
 		if (self.guiParent != None):
@@ -251,16 +260,10 @@ class PluginBot(threading.Thread):
 				checkFlag = True;
 				break
 		if (checkFlag):
-			if (self.guiParent != None):
-				self.guiParent.print("Switching to channel %s" % newChannel)
-			else:
-				print("Switching to channel %s" % newChannel)
+			self.out("Switching to channel %s" % newChannel);
 			self.focusedChannel = newChannel
 		else:
-			if (self.guiParent != None):
-				self.guiParent.print("Joining and switching to channel %s" % newChannel)
-			else:
-				print("Joining and switching to channel %s" % newChannel)
+			self.out("Joining and switching to channel %s" % newChannel);
 			if (self.s != None):
 				self.s.send(BYTE("JOIN %s" % newChannel))
 			self.channels.append(newChannel)
@@ -275,6 +278,7 @@ class PluginBot(threading.Thread):
 					temp = self.s.recv(1024).decode("UTF-8")
 					if (temp == ""):
 						self.isRunning = False
+						self.out("IRC client has stopped running...");
 					else:
 						readBuffer += temp
 						temp = readBuffer.split("\n")
@@ -283,8 +287,11 @@ class PluginBot(threading.Thread):
 							self.handleTokens(self.makeTokens(line))
 			except Exception:
 				traceback.print_tb(sys.exc_info()[2])
-		print("Closing socket...")
-		self.s.shutdown(socket.SHUT_RDWR)
+		self.out("Closing socket...");
+		try:
+			self.s.shutdown(socket.SHUT_RDWR)
+		except Exception:
+			traceback.print_tb(sys.exc_info()[2])
 		sleep(0.5)
 		self.s.close()
 		atexit.unregister(self.quit)
