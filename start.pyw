@@ -58,7 +58,7 @@ def main(isTest, hostID = -1):
 	
 def test():
 	value = 2
-	hostID = -1
+	hostID = 3
 	for i in range(len(sys.argv)):
 		try:
 			if (i == 1):

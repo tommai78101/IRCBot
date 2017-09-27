@@ -48,9 +48,12 @@ class PluginBot(threading.Thread):
 	realName = "WedrPython3Bot"
 	password = "a1b2c3d4"
 	nickName = "WedrClient"
+	bouncerName = "wedr/efnet"
+	bouncerPassword = "Bb4CF37a"
 	host = "irc.rizon.net" #"chat.freenode.net" #
 	port = random.randrange(6661, 6668)
 	master = "wedr"
+	isUsingBouncer = False
 
 	def __init__(self, gui = None):
 		super().__init__()
@@ -75,11 +78,13 @@ class PluginBot(threading.Thread):
 
 	def out(self, msg):
 		if (self.guiParent != None):
-			self.guiParent.print(msg);
+			self.guiParent.print(msg)
 		else:
-			print(msg);
+			print(msg)
 
 	def connect(self, hostID = -1):
+		if (hostID == 3):
+			self.isUsingBouncer = True
 		self.channels.clear()
 
 		if (hostID == 0):
@@ -98,15 +103,15 @@ class PluginBot(threading.Thread):
 		elif (hostID == 3):
 			self.host = "Ox.panicbnc.net"
 			self.realName = "wedr"
-			self.password = "Bb4CF37a"
-			self.nickName = "wedr/efnet"
+			self.password = "a1b2c3d4"
+			self.nickName = "wedr"
 			self.port = 1337
 
 		if (self.s == None):
 			self.s = socket.socket()
 
 
-		self.out("Connecting to host \"%s\" with port %d." % (self.host, self.port));
+		self.out("Connecting to host \"%s\" with port %d." % (self.host, self.port))
 		try:
 			self.s.connect((self.host, self.port))
 			sleep(0.5)
@@ -115,11 +120,11 @@ class PluginBot(threading.Thread):
 			return
 
 		if (hostID == 3):
-			self.out("Attempting to use the bouncer.");
-			self.s.send(BYTE("PASS %s:%s" % (self.nickName, self.password)));
+			self.out("Attempting to use the bouncer.")
+			self.s.send(BYTE("PASS %s:%s" % (self.bouncerName, self.bouncerPassword)))
 			sleep(0.5)
 
-		self.out("Logging in using nickname.");
+		self.out("Logging in using nickname.")
 		self.s.send(BYTE("NICK %s" % self.nickName))
 		sleep(0.5)
 
@@ -154,10 +159,7 @@ class PluginBot(threading.Thread):
 		return ""
 
 	def identify(self):
-		if (self.guiParent != None):
-			self.guiParent.print("Identifying...")
-		else:
-			print("Identifying...")
+		self.out("Identifying...");
 		self.s.send(BYTE("USER %s %s unused :%s" % (self.password, self.host, self.realName)))
 		sleep(0.5)
 		self.s.send(BYTE("PRIVMSG NickServ :identify %s" % self.password))
@@ -186,10 +188,7 @@ class PluginBot(threading.Thread):
 					if (module != ""):
 						self.loadedModules[name] = module
 					else:
-						if (self.guiParent != None):
-							self.guiParent.print(" --- %s - Invalid plugin." % name)
-						else:
-							print(" --- %s - Invalid plugin." % name)
+						self.out(" --- %s - Invalid plugin." % name)
 		else:
 			tempList = []
 			for i in self.loadedModules:
@@ -223,7 +222,7 @@ class PluginBot(threading.Thread):
 
 
 	def quit(self):
-		print("Quitting by closing window.")
+		self.out("Quitting by closing window.")
 		if (self.s != None):
 			while (len(self.channels) > 0):
 				self.s.send(BYTE("PART %s :[Bot has left the scene.]" % self.channels[len(self.channels)-1]))
@@ -236,16 +235,10 @@ class PluginBot(threading.Thread):
 			if (isKicked):
 				self.s.send(BYTE("PART %s :%s" % (channel, "I am leaving.")))
 			self.channels.remove(channel)
-			if (self.guiParent != None):
-				self.guiParent.print("Bot left the channel, %s" % channel)
-			else:
-				print("Bot left the channel, %s" % channel)
+			self.out("Bot left the channel, %s" % channel)
 			return True
 		else:
-			if (self.guiParent != None):
-				self.guiParent.print("Channel, %s, does not exist." % channel)
-			else:
-				print("Channel, %s, does not exist." % channel)
+			self.out("Channel, %s, does not exist." % channel)
 			return False
 
 	def switch(self, newChannel, isJoining = True):
@@ -257,13 +250,13 @@ class PluginBot(threading.Thread):
 			return
 		for chan in self.channels:
 			if (chan == newChannel):
-				checkFlag = True;
+				checkFlag = True
 				break
 		if (checkFlag):
-			self.out("Switching to channel %s" % newChannel);
+			self.out("Switching to channel %s" % newChannel)
 			self.focusedChannel = newChannel
 		else:
-			self.out("Joining and switching to channel %s" % newChannel);
+			self.out("Joining and switching to channel %s" % newChannel)
 			if (self.s != None):
 				self.s.send(BYTE("JOIN %s" % newChannel))
 			self.channels.append(newChannel)
@@ -278,7 +271,7 @@ class PluginBot(threading.Thread):
 					temp = self.s.recv(1024).decode("UTF-8")
 					if (temp == ""):
 						self.isRunning = False
-						self.out("IRC client has stopped running...");
+						self.out("IRC client has stopped running...")
 					else:
 						readBuffer += temp
 						temp = readBuffer.split("\n")
@@ -287,13 +280,15 @@ class PluginBot(threading.Thread):
 							self.handleTokens(self.makeTokens(line))
 			except Exception:
 				traceback.print_tb(sys.exc_info()[2])
-		self.out("Closing socket...");
 		try:
 			self.s.shutdown(socket.SHUT_RDWR)
 		except Exception:
 			traceback.print_tb(sys.exc_info()[2])
 		sleep(0.5)
+
+		self.out("Closing socket...")
 		self.s.close()
+
 		atexit.unregister(self.quit)
 
 	def makeTokens(self, line):
@@ -319,4 +314,6 @@ class PluginBot(threading.Thread):
 				try:
 					self.loadedModules[i].plugin_main(self, tokens)
 				except Exception as error:
-					print("%s: %s" % (i, error))
+					self.print()
+					self.out("ERROR - %s: %s" % (i, error))
+					self.print()

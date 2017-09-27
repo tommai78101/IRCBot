@@ -18,7 +18,10 @@ def plugin_main(parent, tokens):
 	#tokens[2] is the channel or recipient name.
 	#tokens[3] is the full message with a leading colon. This needs to be stripped.
 	if (len(tokens) > 1):
-		#print(tokens)
+
+		#This is where we use print() to debug the tokens that were sent from the server to the client.
+		print(tokens)
+
 		if (tokens[1] == "PRIVMSG"):
 			if (len(tokens) > 2):
 				if (tokens[3] == "\x01VERSION" or tokens[3] == "\x01VERSION\x01"):
@@ -145,3 +148,15 @@ def plugin_main(parent, tokens):
 				parent.guiParent.textOutput.see(tkinter.END)
 			else:
 				print("[NOTICE] -%s-: %s" % (caller, message))
+		elif (tokens[1].isdigit()):
+			caller = tokens[0]
+			recipient = tokens[2]
+			message = getMessage(tokens, 3)
+			if ("irc" in caller):
+				#This is from a bouncer.
+				if (parent.guiParent != None):
+					parent.guiParent.print(text = "[PanicBNC] %s" % (message), user = caller)
+					parent.guiParent.addUser(tokens[0], tokens[2])
+					parent.guiParent.textOutput.see(tkinter.END)
+				else:
+					print("[PanicBNC] %s" % (message))

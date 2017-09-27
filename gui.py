@@ -30,9 +30,13 @@ class GUI:
 	messageCounter = 0
 	messageLogMode = 0
 	TITLE_TEXT = "WedrClient - IRC Client Bot"
+	isUsingBouncer = False
 
 
 	def __init__(self, hostID = -1):
+		if (hostID == 3):
+			self.isUsingBouncer = True
+
 		self.root = tkinter.Tk()
 		self.root.title(self.TITLE_TEXT)
 
@@ -153,6 +157,11 @@ class GUI:
 			if (len(self.previousMessageLog) > 10):
 				self.previousMessageLog.pop()
 
+	def changeNickname(self, newName):
+		if (self.entryMessage != ""):
+			self.bot.s.send(BYTE("NICK %s" % newName))
+			self.print("Changing nickname to %s" % newName)
+		return "break"
 
 	def previousMessage(self, event):
 		if (self.messageLogMode == 0):
@@ -241,7 +250,7 @@ class GUI:
 		while True:
 			index = self.textOutput.search(pattern, "matchEnd", "searchLimit", count = count, regexp = False)
 			if (index == "" or count.get() == 0):
-				break;
+				break
 			check = False
 			try:
 				newIndex = "%s+%dc" % (index, count.get())
@@ -270,7 +279,7 @@ class GUI:
 			reg = r"(%s([^\>\]]|\,|\.|\ |\:))" % pattern
 			index = self.textOutput.search(reg, "matchEnd", "searchLimit", count = count, regexp = True)
 			if (index == "" or count.get() == 0):
-				break;
+				break
 			lineIndex = "%s.0" % index.split(".")[0]
 			otherCount = tkinter.IntVar()
 			reg = r"\*\ [A-Za-z]+\ " if user == None else r"\*\ %s\ " % user
@@ -280,7 +289,7 @@ class GUI:
 				newIndex = self.textOutput.search(reg, lineIndex, "%s lineend" % lineIndex, count = otherCount, regexp = True)
 				if (newIndex == "" or otherCount.get() == 0):
 					self.textOutput.mark_set("matchEnd", "%s+1l" % lineIndex)
-					continue;
+					continue
 				else:
 					newIndexOffset = 1
 			else:
@@ -303,8 +312,15 @@ class GUI:
 		sleep(0.5)
 		self.entryMessage = "/c"
 		self.entryCommand("-1")
-		self.entryMessage = "/u clear"
-		self.entryCommand("-1")
+
+		if (not self.isUsingBouncer):
+			self.entryMessage = "/u clear"
+			self.entryCommand("-1")
+		else:
+			self.entryMessage = " "
+			self.entryCommand("-1")
+			self.entryMessage = " "
+			self.entryCommand("-1")
 		self.print("  --  Welcome to Channel %s. Type /help for more info.      --" % self.bot.focusedChannel)
 		self.print("  --  Type in the input text area, then press ENTER key to chat.  --")
 		self.print(" ")
@@ -339,12 +355,12 @@ class GUI:
 							if (tempToken[i].lower() == user[i].lower()):
 								tempDict[user] = i
 							else:
-								break;
+								break
 						else:
 							if (tempToken[i].upper() == user[i].upper()):
 								tempDict[user] = i
 							else:
-								break;
+								break
 				self.lastSortedSuggestionDict = sorted(tempDict, key = tempDict.get, reverse = True)
 				if (len(self.lastSortedSuggestionDict) > 0):
 					self.lastUserSuggestion = self.lastSortedSuggestionDict[0]
@@ -372,7 +388,7 @@ class GUI:
 			arrayList = self.usernameList[channel]
 		if (len(arrayList) <= 0):
 			self.print("Known users list in %s is empty." % channel)
-			return;
+			return
 		tempStr = ""
 		for i in range(0, len(arrayList)):
 			if (i != len(arrayList) - 1):
@@ -429,7 +445,7 @@ class GUI:
 				return
 			elif (tokens[0] == "/i" or tokens[0] == "/identify"):
 				#Identifying the bot to the IRC host, only when the bot is unable to request for verbose, but the connection is still valid.
-				self.bot.identify();
+				self.bot.identify()
 				workerThread = threading.Thread(target = self.rejoin, args = (event,))
 				workerThread.start()
 			elif (tokens[0] == "/c" or tokens[0] == "/clear"):
@@ -476,6 +492,8 @@ class GUI:
 								self.bot.switch(sortedDict[len(self.channelTags)-1].name)
 							else:
 								self.bot.switch("", False)
+						elif (self.isUsingBouncer):
+							self.bot.s.send(BYTE("PART %s :%s" % (tokens[i], "I am leaving.")))
 						else:
 							self.print("Channel, %s, is not on the channel list." % tokens[i])
 				elif (len(tokens) == 2):
@@ -494,6 +512,8 @@ class GUI:
 							self.bot.switch(sortedDict[len(self.channelTags)-1].name)
 						else:
 							self.bot.switch("", False)
+					elif (self.isUsingBouncer):
+						self.bot.s.send(BYTE("PART %s :%s" % (tokens[1], "I am leaving.")))
 					else:
 						self.print("Channel, %s, is not on the channel list." % tokens[1])
 				else:
@@ -521,6 +541,10 @@ class GUI:
 						if (i < len(sortedDict)-1):
 							tempList += ", "
 					self.print("Joined Channel List: %s" % tempList)
+			elif (tokens[0] == "/n" or tokens[0] == "/nick"):
+				#Changing nicknames
+				if (len(tokens) > 1):
+					self.changeNickname(tokens[1])
 			elif (tokens[0] == "/?" or tokens[0] == "/help"):
 				#Help command.
 				self.print(" ")
@@ -535,9 +559,10 @@ class GUI:
 				self.print(" 6. /j or /join -- Join a new channel. Channel focus will switch over.")
 				self.print(" 7. /l or /leave -- Leave channel. Channel focus will change.")
 				self.print(" 8. /m or /me -- Print ACTION message.")
-				self.print(" 9. /q or /quit -- Quit the bot.")
-				self.print("10. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
-				self.print("11. /u or /userlist -- Shows the users list.")
+				self.print(" 9. /n or /nick -- Change nickname.")
+				self.print("10. /q or /quit -- Quit the bot.")
+				self.print("11. /r or /reload -- Reload all plugins. (Hotswapping is supported.)")
+				self.print("12. /u or /userlist -- Shows the users list.")
 				if (self.bot.focusedChannel == ""):
 					self.print(" ")
 					self.print("You are currently not joined in any channel.")
