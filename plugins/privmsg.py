@@ -149,6 +149,8 @@ def plugin_main(parent, tokens):
 			else:
 				print("[NOTICE] -%s-: %s" % (caller, message))
 		elif (tokens[1].isdigit()):
+			#Documentation for the IRC numerics.
+			#https://defs.ircdocs.horse/defs/numerics.html
 			caller = tokens[0]
 			recipient = tokens[2]
 			message = getMessage(tokens, 3)
