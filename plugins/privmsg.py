@@ -154,11 +154,11 @@ def plugin_main(parent, tokens):
 			caller = tokens[0]
 			recipient = tokens[2]
 			message = getMessage(tokens, 3)
-			if ("irc" in caller):
-				#This is from a bouncer.
-				if (parent.guiParent != None):
-					parent.guiParent.print(text = "[PanicBNC] %s" % (message), user = caller)
-					parent.guiParent.addUser(tokens[0], tokens[2])
-					parent.guiParent.textOutput.see(tkinter.END)
-				else:
-					print("[PanicBNC] %s" % (message))
+
+			#This is from a bouncer. 
+			if (parent.guiParent != None):
+				parent.guiParent.print(text = "[PanicBNC] %s" % (message), user = caller)
+				parent.guiParent.addUser(tokens[0], tokens[2])
+				parent.guiParent.textOutput.see(tkinter.END)
+			else:
+				print("[PanicBNC] %s" % (message))

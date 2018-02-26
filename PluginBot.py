@@ -48,7 +48,8 @@ class PluginBot(threading.Thread):
 	realName = "WedrPython3Bot"
 	password = "a1b2c3d4"
 	nickName = "WedrClient"
-	bouncerName = "wedr/efnet"
+	bouncerNameEFNET = "wedr/efnet"
+	bouncerNameFreenode = "wedr/freenode"
 	bouncerPassword = "Bb4CF37a"
 	host = "irc.rizon.net" #"chat.freenode.net" #
 	port = random.randrange(6661, 6668)
@@ -87,6 +88,7 @@ class PluginBot(threading.Thread):
 			self.isUsingBouncer = True
 		self.channels.clear()
 
+		# Client passwords
 		if (hostID == 0):
 			self.host = "irc.rizon.net"
 			self.nickName = "WedrClient"
@@ -120,17 +122,45 @@ class PluginBot(threading.Thread):
 			return
 
 		if (hostID == 3):
-			self.out("Attempting to use the bouncer.")
-			self.s.send(BYTE("PASS %s:%s" % (self.bouncerName, self.bouncerPassword)))
+			self.out("Attempting to use the bouncer for EFNet.")
+			#EFNet
+			self.s.send(BYTE("PASS %s:%s" % (self.bouncerNameEFNET, self.bouncerPassword)))
 			sleep(0.5)
-
-		self.out("Logging in using nickname.")
-		self.s.send(BYTE("NICK %s" % self.nickName))
-		sleep(0.5)
-
-		self.out("Setting mode for %s" % (self.realName));
-		self.s.send(BYTE("USER %s %s unused :%s" % (self.password, self.host, self.realName)))
-		sleep(0.5)
+			self.out("Logging in using nickname.")
+			self.s.send(BYTE("NICK %s" % self.nickName))
+			sleep(0.5)
+			self.out("Setting mode for %s" % (self.realName));
+			self.s.send(BYTE("USER %s %s unused :%s" % (self.password, self.host, self.realName)))
+			sleep(5.5)
+			self.out("Joining default EFNet channels.")
+			self.switch("3dsdev")
+			self.switch("switchdev")
+			#EFNet end
+			#Freenode
+			#self.out("Attempting to use the bouncer for Freenode.")
+			# NOTE(Thompson): There's no need to re-login more than once on the bouncer.
+			#self.s.send(BYTE("PASS %s:%s" % (self.bouncerNameFreenode, self.bouncerPassword)))
+			#sleep(0.5)
+			#self.out("Logging in using nickname.")
+			#self.s.send(BYTE("NICK %s" % self.nickName))
+			#sleep(0.5)
+			#self.out("Setting mode for %s" % (self.realName));
+			#self.s.send(BYTE("USER %s %s unused :%s" % (self.password, self.host, self.realName)))
+			#sleep(0.5)
+			self.out("Joining default Freenode channels.")
+			self.switch("programming")
+			self.switch("javascript")
+			self.switch("gamedev")
+			#Freenode end
+			self.out("Joining all default channels is complete.")
+			sleep(0.5)
+		else:
+			self.out("Logging in using nickname.")
+			self.s.send(BYTE("NICK %s" % self.nickName))
+			sleep(0.5)
+			self.out("Setting mode for %s" % (self.realName));
+			self.s.send(BYTE("USER %s %s unused :%s" % (self.password, self.host, self.realName)))
+			sleep(0.5)
 
 		if (self.guiParent != None):
 			self.guiParent.print("Starting bot thread.")
