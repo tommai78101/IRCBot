@@ -31,6 +31,7 @@ class GUI:
 	messageLogMode = 0
 	TITLE_TEXT = "WedrClient - IRC Client Bot"
 	isUsingBouncer = False
+	messageBuffer = 4096
 
 
 	def __init__(self, hostID = -1):
@@ -90,7 +91,7 @@ class GUI:
 			self.textOutput.insert(tkinter.END, "\n%s" % text)
 			try:
 				indexCount = int(self.textOutput.index("%s-1c" % tkinter.END).split(".")[0])
-				if (indexCount > 300):
+				if (indexCount > messageBuffer):
 					#Index number count starts from 1.0.
 					# X.Y:  X is the line number. Y is the character index of line X.
 					self.textOutput.delete("1.0", "2.0")
