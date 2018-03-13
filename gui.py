@@ -91,7 +91,7 @@ class GUI:
 			self.textOutput.insert(tkinter.END, "\n%s" % text)
 			try:
 				indexCount = int(self.textOutput.index("%s-1c" % tkinter.END).split(".")[0])
-				if (indexCount > messageBuffer):
+				if (indexCount > self.messageBuffer):
 					#Index number count starts from 1.0.
 					# X.Y:  X is the line number. Y is the character index of line X.
 					self.textOutput.delete("1.0", "2.0")
