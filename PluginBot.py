@@ -48,9 +48,14 @@ class PluginBot(threading.Thread):
 	realName = "WedrPython3Bot"
 	password = "a1b2c3d4"
 	nickName = "WedrClient"
+	
+	# Rizon account
+	# username: wedr
+	# password: tom_mai78101
+	
 	bouncerNameEFNET = "wedr/efnet"
 	bouncerNameFreenode = "wedr/freenode"
-	bouncerPassword = "Bb4CF37a"
+	bouncerPassword = "5b92a73b"
 	host = "irc.rizon.net" #"chat.freenode.net" #
 	port = random.randrange(6661, 6668)
 	master = "wedr"
@@ -103,7 +108,7 @@ class PluginBot(threading.Thread):
 			self.password = "a1b2c3d4"
 			self.nickName = "WedrClient"
 		elif (hostID == 3):
-			self.host = "Ox.panicbnc.net"
+			self.host = "Rabbit.panicbnc.net"
 			self.realName = "wedr"
 			self.password = "a1b2c3d4"
 			self.nickName = "wedr"
@@ -148,9 +153,9 @@ class PluginBot(threading.Thread):
 			#self.s.send(BYTE("USER %s %s unused :%s" % (self.password, self.host, self.realName)))
 			#sleep(0.5)
 			self.out("Joining default Freenode channels.")
-			self.switch("programming")
-			self.switch("javascript")
-			self.switch("gamedev")
+			#self.switch("programming")
+			#self.switch("javascript")
+			#self.switch("gamedev")
 			#Freenode end
 			self.out("Joining all default channels is complete.")
 			sleep(0.5)

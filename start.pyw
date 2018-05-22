@@ -35,7 +35,8 @@ class WorkerThread(threading.Thread):
 
 def main(isTest, hostID = -1):
 	if (isTest == 0):
-		bot = PluginBot.PluginBot()
+		if (bot is None):
+			bot = PluginBot.PluginBot()
 		bot.connect()
 		bot.userInput.join()
 		bot.join()
